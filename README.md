@@ -4,9 +4,17 @@ Dieses Repository beinhaltet die Projektarbeit "Von Beats zu Beliebtheit". Die I
 
 ## Tasklist
 Task: Was soll getan werden?
+
+
 Category: Datenbereinigung, Plausibilisierung, Vorhersagemethoden, Analyse, Doku
+
+
 Status: Wartend, Bereit umzusetzen, In Arbeit, Testbereit, Fertig
+
+
 Branch: Bitte ein Branch pro Task alla `feat/kurzbeschreibung-task`
+
+
 
 | Task | Category | Wer arbeitet daran? | Status | Branch|
 |--|--|--|--|--|
@@ -14,6 +22,12 @@ Branch: Bitte ein Branch pro Task alla `feat/kurzbeschreibung-task`
 
 ## Contributers
 Rebekka von Wartburg
+
+
 Safiyya Waldburger
+
+
 Fabian C. Annaheim
+
+
 Gabriel Nobel
