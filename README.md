@@ -19,7 +19,7 @@ Branch: Bitte ein Branch pro Task alla `feat/kurzbeschreibung-task`
 | Task | Category | Wer arbeitet daran? | Status | Branch|
 |--|--|--|--|--|
 | README initialisieren | Doku | @yingrjimsch | In Arbeit | main |
-| Inkonsistente, Fehlerhafte, Missing Daten dokumentieren und bereinigen | Datenbereinigung | waldbsaf, vonwareb | |
+| Inkonsistente, Fehlerhafte, Missing Daten dokumentieren und bereinigen | Datenbereinigung | waldbsaf, vonwareb | In Arbeit |
 | Alle Werte "messbar" machen, transformieren | Datenbereinigung | waldbsaf, vonwareb | |
 | Encoding fixen (z.B. Trackname) | Datenbereinigung | waldbsaf, vonwareb | |
 | Datentypen in R auf Korrektheit prüfen | Datenbereinigung | waldbsaf, vonwareb | |
