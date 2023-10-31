@@ -3,7 +3,7 @@
 ################################# Datenbereinigung ###################################
 
 
-spotify_songs <- read.csv("spotify-2023.csv", encoding="latin1")
+spotify_songs <- read.csv("spotify-2023.csv", encoding="ISO-8859-1")
 summary(spotify_songs) # Summary des Datasets
 str(spotify_songs) # Struktur des Datasets
 
@@ -14,14 +14,16 @@ sum(is.na(spotify_songs$artist.s._name)) # missings erkennen
 #### 1. Inkonsistente, Fehlerhafte, Missing Daten dokumentieren ####
 
 # track_name -> -> drop, da aufwändig um numerisch zu verwenden und encoding von ausländischen Artisten "verhauen"
-# artist.s._name -> vorerst behalten und versuchen zu bereinigung (encoding fixen)
-# artist_count -> belassen, keine missings und bereits numersisch
+# artist.s._name -> vorerst behalten und versuchen zu bereinigung (encoding fixen) -> streams/artist/Monat (zuerst muss encoding gefixt werden)
+# artist_count -> belassen, keine missings und bereits numerisch
 # released_year -> umwandeln in numerischen Wert (2023 - released_year) -> Wie lange gibt es den Song schon
 # released_month -> belasssen bereits numerisch und keine missings
-# released_day -> vorerst belassen (falls möglich weekend eruieren)
+# released_day -> vorerst belassen -> Einführung Prädiktor "weekday"
 # in_spotify_playlists -> belassen
 # in_apple_charts -> vorerst belassen (Recherche, was es genau ist)
+
 # streams -> ZIELVARIABLE! numerisch konvertieren
+
 # in_apple_playlists -> belassen und verwenden
 # in_apple_charts -> belassen und verwenden
 # in_deezer_playlists -> numerisch konvertieren und verwenden
@@ -40,6 +42,9 @@ sum(is.na(spotify_songs$artist.s._name)) # missings erkennen
 
 #### 2. Inkonsistente, Fehlerhafte, Missing Daten bereinigen ####
 #### Encoding fixen (z.B. Trackname)
+
+
+
 
 # track_name -> drop, da aufwändig um numerisch zu verwenden und encoding von ausländischen Artisten "verhauen"
 spotify_songs$track_name<- NULL # erst entfernen, wenn artist.s._name cleaned ist
@@ -88,11 +93,8 @@ spotify_songs$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_so
 spotify_songs$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Arcangel, De La Ghetto, Justin Quiles, Lenny Tavï¿½ï¿½rez, Sech, Dalex, Dimelo Flow, Rich Music", "Arcangel, De La Ghetto, Justin Quiles, Lenny Tavárez, Sech, Dalex, Dimelo Flow, Rich Music")
 spotify_songs$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Beyoncï¿", "Beyoncé")
 
-factor_column_artist.s._name <- as.factor(spotify_songs$artist.s._name)
-levels(factor_column_artist.s._name)
-spotify_songs$artist.s._name <- as.numeric(as.factor(spotify_songs$artist.s._name))
 
-
+# write.csv(spotify_songs, "spotify-2023_cleaned.csv", row.names = FALSE)
 
 # artist_count -> belassen, keine missings und bereits numerisch
 # belassen
