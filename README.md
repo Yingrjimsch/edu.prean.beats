@@ -20,10 +20,10 @@ Branch: Bitte ein Branch pro Task alla `feat/kurzbeschreibung-task`
 |--|--|--|--|--|
 | README initialisieren | Doku | @yingrjimsch | In Arbeit | main |
 | Inkonsistente, Fehlerhafte, Missing Daten dokumentieren und bereinigen | Datenbereinigung | waldbsaf, vonwareb | In Arbeit |
-| Alle Werte "messbar" machen, transformieren | Datenbereinigung | waldbsaf, vonwareb | |
-| Encoding fixen (z.B. Trackname) | Datenbereinigung | waldbsaf, vonwareb | |
-| Datentypen in R auf Korrektheit prüfen | Datenbereinigung | waldbsaf, vonwareb | |
-| Verteilung, Symetrie, Ausreisser pro Prädiktor plotten und beschreiben | Plausibilisieren | waldbsaf, vonwareb | |
+| Alle Werte "messbar" machen, transformieren | Datenbereinigung | waldbsaf, vonwareb | In Arbeit |
+| Encoding fixen (z.B. Trackname) | Datenbereinigung | waldbsaf, vonwareb | In Arbeit |
+| Datentypen in R auf Korrektheit prüfen | Datenbereinigung | waldbsaf, vonwareb | In Arbeit |
+| Verteilung, Symetrie, Ausreisser pro Prädiktor plotten und beschreiben | Plausibilisieren | waldbsaf, vonwareb | In Arbeit |
 | Fehlende Variablen beschreiben | Plausibilisieren | waldbsaf, vonwareb | |
 | Lineare Regression | Vorhersagemethoden | | |
 | Multivariante Regression | Vorhersagemethoden | | |
