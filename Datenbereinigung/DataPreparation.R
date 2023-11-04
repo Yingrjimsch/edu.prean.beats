@@ -3,16 +3,17 @@
 ################################# Datenbereinigung ###################################
 
 
-spotify_songs <- read.csv("spotify-2023.csv", encoding="latin1")
+spotify_songs <- read.csv("spotify-2023.csv", encoding="latin1") # dataframe mit csv von kaggle
+spotify_songs_cleaned <- data.frame() # leeres Dataframe, in welchem die "bereinigten" Prädiktoren abgelegt werden
+
+
 summary(spotify_songs) # Summary des Datasets
 str(spotify_songs) # Struktur des Datasets
 
-#Beispiele
-#sort(unique(spotify_songs$speechiness_.), na.last=TRUE) # sortiert alle unterschiedlichen Werte und hängt NaN's am Schluss an
-
-sapply(spotify_songs, function(x) sum(is.nan(x))) # gibt Spaltenweise Anzahl NaN's zurück
-sapply(spotify_songs, function(x) sum(is.na(x))) # gibt Spaltenweise Anzahl Na's zurück
-
+sapply(spotify_songs, function(x) sum(is.nan(x))) # gibt Spaltenweise Anzahl NaN's zurück -> keine
+sapply(spotify_songs, function(x) sum(is.na(x))) # gibt Spaltenweise Anzahl Na's zurück -> keine
+sapply(spotify_songs, function(x) sum(x == "")) # gibt Spaltenweise Anzahl leerer Strings zurück zurück -> key = 95
+sapply(spotify_songs, function(x) grep("ï¿½", x)) # gibt Spaltenweise Indices der Einträge mit fehlerhaftem Encoding zurück zurück -> track_name und artist.s._name 
 
 #### 1. Inkonsistente, Fehlerhafte, Missing Daten dokumentieren ####
 
@@ -50,6 +51,9 @@ sum(is.na(spotify_songs$streams)) # missings erkennen -> 1
 spotify_songs <-spotify_songs[-575,] # wenn Index bekannt so löschen
 sum(is.na(spotify_songs$streams)) # missings erkennen -> 0
 
+# streams dem "cleanded" dataframe hinzufügen
+spotify_songs_cleaned <- data.frame(streams = spotify_songs$streams)
+
 ## track_name -> drop, da aufwändig um numerisch zu verwenden und encoding von ausländischen Artisten "verhauen"
 indices_with_encoding_errors <-grep("ï¿½", spotify_songs$track_name)
 values_with_encoding_errors <- spotify_songs$track_name[indices_with_encoding_errors]
@@ -58,6 +62,8 @@ spotify_songs$track_name <- NULL # erst entfernen, wenn artist.s._name cleaned i
 
 
 ## artist.s._name -> vorerst behalten und versuchen zu bereinigung (encoding fixen)
+# mittels web scraping versuchen die Streams pro artist pro Monat zu ermitteln; sind in einem track_name 
+# mehrere artisten beteiligt -> Mittelwert verwenden
 spotify_songs$artist.s._name
 sum(is.na(spotify_songs$artist.s._name)) # missings erkennen -> 0
 Encoding(spotify_songs$artist.s._name) # viele "unknowns" -> encoding kann nicht angepasst werden -> manuelle Korrektur
@@ -121,31 +127,44 @@ spotify_songs$artist_count
 sum(is.na(spotify_songs$artist_count)) # missings erkennen -> 0
 barplot(table(spotify_songs$artist_count), main="Barplot artist_count", xlab="artist_count", ylab="Frequency")
 
+# artist_count dem "cleaned dataframe" hinzufügen
+spotify_songs_cleaned["artist_count"] <- data.frame(artist_count = spotify_songs$artist_count)
 
 # released_day -> z. B. Datum zusammenfügen und den Wochentag daraus extrahieren 
 # ???? Ansatz unten: Released Datum aus year, month und day zusammensetzen; weekday eruieren und numerisch konvertieren
 spotify_songs$released_date <- as.Date(paste(spotify_songs$released_year, spotify_songs$released_month, spotify_songs$released_day, sep="-"), format="%Y-%m-%d")
-spotify_songs$weekday <- weekdays(spotify_songs$released_date)
-spotify_songs$weekday
+spotify_songs$released_weekday <- weekdays(spotify_songs$released_date)
+spotify_songs$released_weekday
 day_mapping <- c("Montag" = 1, "Dienstag" = 2, "Mittwoch" = 3, "Donnerstag" = 4, "Freitag" = 5, "Samstag" = 6, "Sonntag" = 7)
-spotify_songs$weekday <- as.numeric(day_mapping[spotify_songs$weekday])
-spotify_songs$weekday
-sum(is.na(spotify_songs$artist_count)) # missings erkennen -> 0
+spotify_songs$released_weekday <- as.numeric(day_mapping[spotify_songs$released_weekday])
+spotify_songs$released_weekday
+sum(is.na(spotify_songs$released_weekday)) # missings erkennen -> 0
 
+# plot
+barplot(table(spotify_songs$released_weekday), main="Barplot weekday", xlab="weekday", ylab="Frequency")
+# spotify_songs$released_date <- NULL # -> zusammengesetztes release_date wieder entfernen
 
-barplot(table(spotify_songs$weekday), main="Barplot weekday", xlab="weekday", ylab="Frequency")
-spotify_songs$released_date <- NULL # -> zusammengesetztes release_date wieder entfernen
+# released_weekday dem "cleaned dataframe" hinzufügen
+spotify_songs_cleaned["released_weekday"] <- data.frame(released_weekday = spotify_songs$released_weekday)
 
 ## released_year -> umwandeln in numerischen Wert (2023 - released_year) -> Wie lange gibt es den Song schon
-spotify_songs$released_year <- 2023 - spotify_songs$released_year
-sum(is.na(spotify_songs$released_year)) # missings erkennen -> 0
-spotify_songs$released_year
-hist(spotify_songs$released_year)
+spotify_songs$years_since_release <- 2023 - spotify_songs$released_year
+sum(is.na(spotify_songs$years_since_release)) # missings erkennen -> 0
+spotify_songs$years_since_release
+hist(spotify_songs$years_since_release)
+
+# years_since_release dem "cleaned dataframe" hinzufügen
+spotify_songs_cleaned["years_since_release"] <- data.frame(years_since_release = spotify_songs$years_since_release)
+
 
 ## released_month -> belasssen bereits numerisch und keine missings
 spotify_songs$released_month
 sum(is.na(spotify_songs$released_month)) # missings erkennen -> 0
 barplot(table(spotify_songs$released_month), main="Barplot released_month", xlab="Month", ylab="Frequency")
+
+# released_month dem "cleaned dataframe" hinzufügen
+spotify_songs_cleaned["released_month"] <- data.frame(released_month = spotify_songs$released_month)
+
 
 ## in_spotify_playlists -> belassen
 spotify_songs$in_spotify_playlists
@@ -156,11 +175,17 @@ hist(log(spotify_songs$in_spotify_playlists))
 qqnorm(log(spotify_songs$in_spotify_playlists))
 qqline(log(spotify_songs$in_spotify_playlists), col = "red")
 
+# log(in_spotify_playlists) dem "cleaned dataframe" hinzufügen
+spotify_songs_cleaned["in_spotify_playlists"] <- data.frame(in_spotify_playlists = log(spotify_songs$in_spotify_playlists))
+
 # in_spotify_charts -> vorerst belassen (Recherche, was es genau ist)
 spotify_songs$in_spotify_charts
 sum(is.na(spotify_songs$in_spotify_charts)) # missings erkennen -> 0
 hist(spotify_songs$in_spotify_charts) # rechtsschief -> Transformierung mittels Log() sinnvoll?
 hist(log(spotify_songs$in_spotify_charts))
+
+# log(in_spotify_charts) dem "cleaned dataframe" hinzufügen
+spotify_songs_cleaned["in_spotify_charts"] <- data.frame(in_spotify_charts = log(spotify_songs$in_spotify_charts))
 
 ## in_apple_playlists -> belassen und verwenden
 spotify_songs$in_apple_playlists
@@ -168,11 +193,17 @@ sum(is.na(spotify_songs$in_apple_playlists)) # missings erkennen -> 0
 hist(spotify_songs$in_apple_playlists) # rechtsschief -> Transformierung mittels Log() sinnvoll?
 hist(log(spotify_songs$in_apple_playlists))
 
+# log(in_apple_playlists) dem "cleaned dataframe" hinzufügen
+spotify_songs_cleaned["in_apple_playlists"] <- data.frame(in_apple_playlists = log(spotify_songs$in_apple_playlists))
+
+
 ## in_apple_charts -> belassen und verwenden
 spotify_songs$in_apple_charts
 sum(is.na(spotify_songs$in_apple_charts)) # missings erkennen -> 0
 hist(spotify_songs$in_apple_charts)
 
+# in_apple_charts dem "cleaned dataframe" hinzufügen
+spotify_songs_cleaned["in_apple_charts"] <- data.frame(in_apple_charts = spotify_songs$in_apple_charts)
 
 ## in_deezer_playlists -> numerisch konvertieren und verwenden
 sum(is.na(spotify_songs$in_deezer_playlists)) # missings erkennen -> 0
@@ -184,12 +215,18 @@ spotify_songs$in_deezer_playlists[is.na(spotify_songs$in_deezer_playlists)] # ke
 hist(spotify_songs$in_deezer_playlists) # rechtsschief -> Transformierung mittels Log() sinnvoll?
 hist(log(spotify_songs$in_deezer_playlists))
 
+# log(in_deezer_playlists) dem "cleaned dataframe" hinzufügen
+spotify_songs_cleaned["in_deezer_playlists"] <- data.frame(in_deezer_playlists = log(spotify_songs$in_deezer_playlists))
+
 
 ## in_deezer_charts -> belassen und verwenden
 spotify_songs$in_deezer_charts
 sum(is.na(spotify_songs$in_deezer_charts)) # missings erkennen -> 0
 hist(spotify_songs$in_deezer_charts) # rechtsschief -> Transformierung mittels Log() sinnvoll?
 hist(log(spotify_songs$in_deezer_charts))
+
+# log(in_deezer_charts) dem "cleaned dataframe" hinzufügen
+spotify_songs_cleaned["in_deezer_charts"] <- data.frame(in_deezer_charts = log(spotify_songs$in_deezer_charts))
 
 ## in_shazam_charts -> numerisch konvertieren und verwenden; missings
 spotify_songs$in_shazam_charts # -> enthält Werte > 1000, welche jedoch als z. B. 1,959 erfasst wurden
@@ -202,12 +239,19 @@ spotify_songs$in_shazam_charts[is.na(spotify_songs$in_shazam_charts)] <-round(me
 hist(spotify_songs$in_shazam_charts) # rechtsschief -> Transformierung mittels Log() sinnvoll?
 hist(log(spotify_songs$in_shazam_charts))
 
+# log(in_shazam_charts) dem "cleaned dataframe" hinzufügen
+spotify_songs_cleaned["in_shazam_charts"] <- data.frame(in_shazam_charts = log(spotify_songs$in_shazam_charts))
+
+
 ## bpm -> verwenden und belassen
 spotify_songs$bpm
 sum(is.na(spotify_songs$bpm))  # missings erkennen -> 0
 hist(spotify_songs$bpm)
 qqnorm(spotify_songs$bpm)
 qqline(spotify_songs$bpm, col = "red")
+
+# bpm dem "cleaned dataframe" hinzufügen
+spotify_songs_cleaned["bpm"] <- data.frame(bpm = spotify_songs$bpm)
 
 
 ## key -> numerisch konvertieren (encoden) und verwenden
@@ -222,6 +266,9 @@ spotify_songs$key <- as.factor(spotify_songs$key)
 barplot(table(spotify_songs$key), main="Barplot key", xlab="Key", ylab="Frequency")
 spotify_songs$key <- as.numeric(spotify_songs$key)
 
+# key dem "cleaned dataframe" hinzufügen
+spotify_songs_cleaned["key"] <- data.frame(key = spotify_songs$key)
+
 
 ## mode -> numerisch konvertieren (encoden) und verwenden
 spotify_songs$mode
@@ -229,12 +276,20 @@ sum(is.na(spotify_songs$mode))  # missings erkennen -> 0
 spotify_songs$mode <-ifelse(spotify_songs$mode == "Minor", 1, 0)
 barplot(table(spotify_songs$mode), main="Barplot mode", xlab="Mode", ylab="Frequency", names.arg=c("Major", "Minor"), col=c("blue", "red"))
 
+
+# mode dem "cleaned dataframe" hinzufügen
+spotify_songs_cleaned["mode"] <- data.frame(mode = spotify_songs$mode)
+
+
 ## danceability_. -> verwenden und belassen
 spotify_songs$danceability_.
 sum(is.na(spotify_songs$danceability_.))  # missings erkennen -> 0
 hist(spotify_songs$danceability_.)
 qqnorm(spotify_songs$danceability_.)
 qqline(spotify_songs$danceability_., col = "red")
+
+# danceability_. dem "cleaned dataframe" hinzufügen
+spotify_songs_cleaned["danceability_."] <- data.frame(danceability_. = spotify_songs$danceability_.)
 
 
 ## valence_. -> Recherche was es ist. ggf. verwenden und belassen
@@ -244,12 +299,20 @@ hist(spotify_songs$valence_.)
 qqnorm(spotify_songs$valence_.)
 qqline(spotify_songs$valence_., col = "red")
 
+
+# valence_. dem "cleaned dataframe" hinzufügen
+spotify_songs_cleaned["valence_."] <- data.frame(valence_. = spotify_songs$valence_.)
+
 ## energy_. -> verwenden und belassen
 spotify_songs$energy_.
 sum(is.na(spotify_songs$energy_.))  # missings erkennen -> 0
 hist(spotify_songs$energy_.)
 qqnorm(spotify_songs$energy_.)
 qqline(spotify_songs$energy_., col = "red")
+
+# energy_. dem "cleaned dataframe" hinzufügen
+spotify_songs_cleaned["energy_."] <- data.frame(energy_. = spotify_songs$energy_.)
+
 
 ## acousticness_. -> verwenden und belassen
 spotify_songs$acousticness_.
@@ -258,10 +321,15 @@ hist(spotify_songs$acousticness_.)
 qqnorm(spotify_songs$acousticness_.)
 qqline(spotify_songs$acousticness_., col = "red")
 
+# acousticness_. dem "cleaned dataframe" hinzufügen
+spotify_songs_cleaned["acousticness_."] <- data.frame(acousticness_. = spotify_songs$acousticness_.)
+
+
 ## instrumentalness_.-> evtl. verwerfen, da praktisch alle Werte = 0
 spotify_songs$instrumentalness_.
 sum(is.na(spotify_songs$instrumentalness_.))  # missings erkennen -> 0
 sum(spotify_songs$instrumentalness_.== 0) # 865 Einträge mit dem Wert 0!!
+
 
 ## liveness_. -> verwenden und belassen
 spotify_songs$liveness_.
@@ -271,6 +339,10 @@ hist(log(spotify_songs$liveness_.))
 qqnorm(log(spotify_songs$liveness_.))
 qqline(log(spotify_songs$liveness_.), col = "red")
 
+# log(liveness_.) dem "cleaned dataframe" hinzufügen
+spotify_songs_cleaned["liveness_."] <- data.frame(liveness_. = log(spotify_songs$liveness_.))
+
+
 ## speechiness_. -> verwenden und belassen
 spotify_songs$speechiness_.
 sum(is.na(spotify_songs$speechiness_.))  # missings erkennen -> 0
@@ -278,6 +350,11 @@ hist(spotify_songs$speechiness_.) # rechtsschief -> Transformierung mittels Log(
 hist(log(spotify_songs$speechiness_.))
 qqnorm(log(spotify_songs$speechiness_.))
 qqline(log(spotify_songs$speechiness_.), col = "red")
+
+
+# log(speechiness_.) dem "cleaned dataframe" hinzufügen
+spotify_songs_cleaned["speechiness_."] <- data.frame(speechiness_. = log(spotify_songs$speechiness_.))
+
 
 #### 3 Alle Werte "messbar" machen ######
 
@@ -316,7 +393,7 @@ create_plots <- function(predictor, spotify_songs) {
 par(mar=c(3,3,2,2)) 
 
 # Anwenden der Funktion auf jeden Prädiktor
-lapply(names(spotify_songs), create_plots, spotify_songs)
+lapply(names(spotify_songs_cleaned), create_plots, spotify_songs_cleaned)
 
 #### 2 Alle Werte, wo notwendig transformieren #####
 
@@ -344,4 +421,4 @@ lapply(names(spotify_songs), create_plots, spotify_songs)
 
 # Wenn Dataset bereit für Modellbildung:
 
-write.csv(spotify_songs, "spotify-2023_cleaned.csv", row.names = FALSE)
+write.csv(spotify_songs_cleaned, "spotify-2023_cleaned.csv", row.names = FALSE)
