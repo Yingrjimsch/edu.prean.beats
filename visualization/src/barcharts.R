@@ -19,7 +19,6 @@ plot_and_save_bar_chart <- function(column_name, data) {
   category_means <- aggregate(streams ~ get(column_name), data, mean)
   names(category_means) <- c(column_name, "MeanStreams")
 
-  # Create  bar chart
   p <- ggplot(category_means, aes_string(x = column_name, y = 'MeanStreams', fill = column_name)) +
     geom_bar(stat = "identity", color = "black", alpha = 0.7) +
     scale_fill_viridis_d() +
@@ -36,7 +35,6 @@ plot_and_save_bar_chart <- function(column_name, data) {
       y = "Mean Number of Streams"
     )
   
-  # Save plot to PNG file
   ggsave(paste0("../plots/bar_chart_", column_name, ".png"), plot = p, width = 10, height = 6, dpi = 300)
 }
 
