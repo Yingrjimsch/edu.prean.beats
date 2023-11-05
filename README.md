@@ -19,6 +19,7 @@ Branch: Bitte ein Branch pro Task alla `feat/kurzbeschreibung-task`
 | Task | Category | Wer arbeitet daran? | Status | Branch|
 |--|--|--|--|--|
 | README initialisieren | Doku | @yingrjimsch | In Arbeit | main |
+| Datenvisualisierung | Doku | annahfab | In Arbeit | feat/data-visualization |
 | Inkonsistente, Fehlerhafte, Missing Daten dokumentieren und bereinigen | Datenbereinigung | waldbsaf, vonwareb | In Arbeit |
 | Alle Werte "messbar" machen, transformieren | Datenbereinigung | waldbsaf, vonwareb | In Arbeit |
 | Encoding fixen (z.B. Trackname) | Datenbereinigung | waldbsaf, vonwareb | In Arbeit |
