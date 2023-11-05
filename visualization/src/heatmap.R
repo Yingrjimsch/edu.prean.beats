@@ -28,3 +28,17 @@ p <- ggplot(data = melted_corr_matrix, aes(Var1, Var2, fill = value)) +
 
 # Save plot
 ggsave("../plots/heatmap_correlation_matrix.png", plot = p, width = 12, height = 10, dpi = 300)
+
+# Heatmap correlation results
+# Positive correlations:
+#   *in_spotify_playlists and in_apple_playlists: This suggests that songs which are in Spotify playlists 
+#   are also likely to be in Apple playlists. This might indicate that popular songs tend to be featured across different streaming platforms.
+#   *in_deezer_charts and in_apple_charts: Similarly, this suggests that songs charting on Deezer are also likely to chart on Apple Music.
+#   in_spotify_charts and in_apple_charts: There is a strong correlation indicating that songs which are on Spotify charts tend also to be on Apple charts, 
+#   which again could reflect a general trend in music popularity across platforms.
+#   *bpm (beats per minute) and energy: This is a common correlation in music where higher BPM tends to be associated with more energetic tracks.
+#   *danceability and valence: Danceable songs often have a higher valence, meaning they tend to be more joyful or positive.
+# Negative correlations:
+#   There are not many strong negative correlations in this heatmap, but some mild negative correlations between artist_count and variables 
+#   such as in_spotify_charts, in_deezer_charts, in_apple_charts. This could suggest that songs by solo artists or fewer artists might be more prevalent in 
+#   charts than songs by multiple artists, though the correlation is not very strong.
