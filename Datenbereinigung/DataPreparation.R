@@ -116,12 +116,15 @@ barplot(table(spotify_songs$artist_count), main="Barplot artist_count", xlab="ar
 hist(sqrt(spotify_songs$artist_count)) # keine Veränderung
 hist(sqrt(spotify_songs$artist_count)) # keine Veränderung
 boxcox(lm(spotify_songs$artist_count ~ 1)) 
-hist((1/spotify_songs$artist_count**2)) # linksschief
-# Transformation nicht möglich -> evtl. verwerfen
-
+hist((1/spotify_songs$artist_count^2)) # linksschief
+# Transformation nicht möglich -> evtl. verwerfen oder als kategorieller Prädiktor verwenden
 
 # artist_count dem "cleaned dataframe" hinzufügen, falls verwendet wird!
-spotify_songs_cleaned <- data.frame(artist_count = spotify_songs$artist_count)
+spotify_songs_cleaned <- data.frame(artist_count = factor(spotify_songs$artist_count))
+barplot(table(spotify_songs_cleaned$artist_count), main="Barplot artist_count", xlab="artist_count", ylab="Frequency") # rechtsschief -> Transformation?
+
+# artist_count dem "cleaned dataframe" hinzufügen, falls verwendet wird!
+#spotify_songs_cleaned <- data.frame(artist_count = spotify_songs$artist_count)
 
 # released_day -> z. B. Datum zusammenfügen und den Wochentag daraus extrahieren 
 # ???? Ansatz unten: Released Datum aus year, month und day zusammensetzen; weekday eruieren und numerisch konvertieren
@@ -146,17 +149,24 @@ barplot(table(spotify_songs_cleaned$released_weekday), main="Barplot weekday", x
 
 ## released_year -> umwandeln in numerischen Wert (2023 - released_year) -> Wie lange gibt es den Song schon (year_since_release)
 # wahrscheinlich verwerfen, da keine Transformation erfolgreich ist
-spotify_songs_cleaned$years_since_release <- 2023 - spotify_songs$released_year
-sum(is.na(spotify_songs_cleaned$years_since_release)) # missings erkennen -> 0
-spotify_songs_cleaned$years_since_release
-hist(spotify_songs_cleaned$years_since_release) # rechtsschief
-hist(log(spotify_songs_cleaned$years_since_release)) # keine Veränderung
-hist(sqrt(spotify_songs_cleaned$years_since_release)) # keine Veränderung
-hist(1/(spotify_songs_cleaned$years_since_release)) # leichte Veränderung 
+spotify_songs_man$years_since_release <- 2023 - spotify_songs_man$released_year
+sum(is.na(spotify_songs_man$years_since_release)) # missings erkennen -> 0
+spotify_songs_man$years_since_release
+hist(spotify_songs_man$years_since_release) # rechtsschief
+hist(log(spotify_songs_man$years_since_release)) # keine Veränderung
+hist(sqrt(spotify_songs_man$years_since_release)) # keine Veränderung
+hist(1/(spotify_songs_man$years_since_release)) # leichte Veränderung 
 # Versuch mögliche Ausreisser wegzulassen:
 hist(spotify_songs$released_year[spotify_songs$released_year >= 2000])
 hist(log(spotify_songs$released_year[spotify_songs$released_year >= 2000]))
 # zeigt kein Erfolg
+
+# optimale Transformation mittels boxcox ermitteln
+boxcox(lm((spotify_songs_man$years_since_release + 1) ~ 1)) # optimales lambda = -0.5 
+hist(2 * (1 - (1 / sqrt((spotify_songs_man$years_since_release + 1)))))
+
+spotify_songs_cleaned["years_since_release"] <- 2 * (1 - (1 / sqrt((spotify_songs_man$years_since_release + 1))))
+
 
 ## released_month -> belasssen bereits numerisch und keine missings
 spotify_songs$released_month
@@ -186,11 +196,10 @@ hist(spotify_songs$in_spotify_charts) # rechtsschief -> Transformierung mittels 
 hist(log(spotify_songs$in_spotify_charts)) # Transformation mittels log() erzeugt -Inf Werte
 hist(sqrt(spotify_songs$in_spotify_charts)) # rechtsschief
 hist(1/(spotify_songs$in_spotify_charts)) # rechtsschief
-
-hist(log(spotify_songs$in_spotify_charts + 0.0001))
-
 spotify_songs_man$in_spotify_charts[spotify_songs_man$in_spotify_charts == 0] <- 0.0001 
-hist(spotify_songs_man$in_spotify_charts)
+hist(log(spotify_songs_man$in_spotify_charts))
+boxcox(lm((spotify_songs_man$in_spotify_charts) ~ 1)) #optimales lambda nahe 0 -> log Transformation
+
 
 # in_spotify_charts dem "cleaned dataframe" hinzufügen
 spotify_songs_cleaned["in_spotify_charts"] <- data.frame(in_spotify_charts = log(spotify_songs_man$in_spotify_charts))
@@ -203,8 +212,9 @@ hist(log(spotify_songs$in_apple_playlists))
 
 spotify_songs_man$in_apple_playlists[spotify_songs_man$in_apple_playlists == 0] <- 0.0001 
 hist(log(spotify_songs_man$in_apple_playlists))
+boxcox(lm((spotify_songs_man$in_apple_playlists) ~ 1)) # optimales lambda nahe 0 -> log Transformation
 
-# in_apple_playlists dem "cleaned dataframe" hinzufügen
+# log(in_apple_playlists) dem "cleaned dataframe" hinzufügen
 spotify_songs_cleaned["in_apple_playlists"] <- data.frame(in_apple_playlists = log(spotify_songs_man$in_apple_playlists))
 
 ## in_apple_charts -> belassen und verwenden
@@ -215,9 +225,10 @@ hist(log(spotify_songs$in_apple_charts))
 
 spotify_songs_man$in_apple_charts[spotify_songs_man$in_apple_charts == 0] <- 0.0001 
 hist(log(spotify_songs_man$in_apple_charts))
+boxcox(lm((spotify_songs_man$in_apple_charts) ~ 1)) # optimales lambda nahe 0 -> log Transformation
 
-# in_apple_charts dem "cleaned dataframe" hinzufügen
-spotify_songs_cleaned["in_apple_charts"] <- data.frame(in_apple_charts = spotify_songs$in_apple_charts)
+# log(in_apple_charts) dem "cleaned dataframe" hinzufügen
+spotify_songs_cleaned["in_apple_charts"] <- data.frame(in_apple_charts = log(spotify_songs_man$in_apple_charts))
 
 ## in_deezer_playlists -> numerisch konvertieren und verwenden
 sum(is.na(spotify_songs$in_deezer_playlists)) # missings erkennen -> 0
@@ -226,11 +237,13 @@ spotify_songs_man$in_deezer_playlists <- gsub(",", "", spotify_songs_man$in_deez
 spotify_songs_man$in_deezer_playlists <- as.numeric(spotify_songs_man$in_deezer_playlists)
 spotify_songs_man$in_deezer_playlists[is.na(spotify_songs_man$in_deezer_playlists)] # keine NA's mehr
 
-hist(spotify_songs_man$in_deezer_playlists) # rechtsschief -> Transformierung mittels Log() sinnvoll?
+hist(spotify_songs_man$in_deezer_playlists) # rechtsschief -> Transformierung mittels Log() sinnvoll? -> erzeugt -Inf Werte
 hist(log(spotify_songs_man$in_deezer_playlists))
 
 spotify_songs_man$in_deezer_playlists[spotify_songs_man$in_deezer_playlists == 0] <- 0.0001 
 hist(log(spotify_songs_man$in_deezer_playlists))
+boxcox(lm((spotify_songs_man$in_deezer_playlists) ~ 1)) # optimales lambda nahe 0 -> log Transformation
+
 
 # log(in_deezer_playlist) dem "cleaned dataframe" hinzufügen
 spotify_songs_cleaned["in_deezer_playlists"] <- data.frame(in_deezer_charts = log(spotify_songs_man$in_deezer_charts))
@@ -241,8 +254,13 @@ sum(is.na(spotify_songs$in_deezer_charts)) # missings erkennen -> 0
 hist(spotify_songs$in_deezer_charts) # rechtsschief -> Transformierung mittels Log() sinnvoll?
 hist(log(spotify_songs$in_deezer_charts))
 
-# in_deezer_charts dem "cleaned dataframe" hinzufügen
-spotify_songs_cleaned["in_deezer_charts"] <- data.frame(in_deezer_charts = spotify_songs$in_deezer_charts)
+
+spotify_songs_man$in_deezer_charts[spotify_songs_man$in_deezer_charts == 0] <- 0.0001 
+hist(log(spotify_songs_man$in_deezer_charts))
+boxcox(lm((spotify_songs_man$in_deezer_charts) ~ 1)) # optimales lambda nahe 0 -> log Transformation
+
+# log(in_deezer_charts) dem "cleaned dataframe" hinzufügen
+spotify_songs_cleaned["in_deezer_charts"] <- data.frame(in_deezer_charts = log(spotify_songs$in_deezer_charts))
 
 ## in_shazam_charts -> numerisch konvertieren und verwenden; missings
 spotify_songs$in_shazam_charts # -> enthält Werte > 1000, welche jedoch als z. B. 1,959 erfasst wurden
@@ -254,10 +272,14 @@ sum(is.na(spotify_songs_man$in_shazam_charts))  # missings erkennen -> 50
 # Wie NA's handeln??? unten Variante mit median
 spotify_songs_man$in_shazam_charts[is.na(spotify_songs_man$in_shazam_charts)] <-round(median(spotify_songs_man$in_shazam_charts, na.rm = TRUE))
 hist(spotify_songs_man$in_shazam_charts) # rechtsschief -> Transformierung mittels Log() sinnvoll?
-hist(log(spotify_songs_man$in_shazam_charts + 1))
+hist(log(spotify_songs_man$in_shazam_charts))
 
-# in_shazam_charts dem "cleaned dataframe" hinzufügen
-spotify_songs_cleaned["in_shazam_charts"] <- data.frame(in_shazam_charts = spotify_songs_man$in_shazam_charts)
+spotify_songs_man$in_shazam_charts[spotify_songs_man$in_shazam_charts == 0] <- 0.0001 
+hist(log(spotify_songs_man$in_shazam_charts))
+boxcox(lm((spotify_songs_man$in_shazam_charts) ~ 1)) # optimales lambda nahe 0 -> log Transformation
+
+# log(n_shazam_charts) dem "cleaned dataframe" hinzufügen
+spotify_songs_cleaned["in_shazam_charts"] <- data.frame(in_shazam_charts = (spotify_songs_man$in_shazam_charts))
 
 ## bpm -> verwenden und belassen
 spotify_songs$bpm
@@ -274,12 +296,11 @@ spotify_songs$key # -> enthält leere Strings ""
 sum(spotify_songs$key == "")  # 95 leere Strings
 #key_value <- as.character(names(sort(table(spotify_songs$key), decreasing=TRUE)[1])) # ermittelt häfigst verwendeter Key
 # key dem "cleaned dataframe" hinzufügen
-spotify_songs_man["key"] <- data.frame(key = spotify_songs_man$key)
 spotify_songs_man$key[spotify_songs_man$key == ""] <- "Keine Angabe" # -> setzt den ermittelten key für den leeren String ein
 
 factor_column_key <- as.factor(spotify_songs_man$key) # faktorisiert den key
 levels(factor_column_key) # 1 - 11 : "A"  "A#" "B"  "C#" "D"  "D#" "E"  "F"  "F#" "G"  "G#" "Keine Angabe"
-spotify_songs_man$key <- as.factor(spotify_songs_cleaned$key)
+spotify_songs_man$key <- as.factor(spotify_songs_man$key)
 barplot(table(spotify_songs_man$key), main="Barplot key", xlab="Key", ylab="Frequency")
 
 # key dem "cleaned dataframe" hinzufügen
@@ -339,12 +360,16 @@ spotify_songs_cleaned["energy_."] <- data.frame(energy_. = spotify_songs$energy_
 spotify_songs$acousticness_.
 sum(is.na(spotify_songs$acousticness_.))  # missings erkennen -> 0
 hist(spotify_songs$acousticness_.)
-hist(log(spotify_songs$acousticness_. + 1))
+hist(log(spotify_songs$acousticness_.))
 qqnorm(spotify_songs$acousticness_.)
 qqline(spotify_songs$acousticness_., col = "red")
 
-# log(acousticness_. + 1) dem "cleaned dataframe" hinzufügen
-spotify_songs_cleaned["acousticness_."] <- data.frame(acousticness_. = log(spotify_songs$acousticness_. + 1))
+spotify_songs_man$acousticness_.[spotify_songs_man$acousticness_. == 0] <- 0.0001 
+hist(log(spotify_songs_man$acousticness_.))
+boxcox(lm((spotify_songs_man$acousticness_.) ~ 1)) # optimales lambda nahe 0 -> log Transformation
+
+# log(acousticness_.) dem "cleaned dataframe" hinzufügen
+spotify_songs_cleaned["acousticness_."] <- data.frame(acousticness_. = log(spotify_songs$acousticness_.))
 
 ## instrumentalness_.-> evtl. verwerfen, da praktisch alle Werte = 0
 spotify_songs$instrumentalness_.
@@ -371,7 +396,7 @@ qqnorm(log(spotify_songs$speechiness_.))
 qqline(log(spotify_songs$speechiness_.), col = "red")
 
 # log(speechiness_.) dem "cleaned dataframe" hinzufügen
-spotify_songs_cleaned["speechiness_."] <- data.frame(speechiness_. = spotify_songs$log(speechiness_.))
+spotify_songs_cleaned["speechiness_."] <- data.frame(speechiness_. = log(spotify_songs$speechiness_.))
 
 ## streams -> ZIELVARIABLE! numerisch konvertieren
 spotify_songs_man$streams <- as.numeric(spotify_songs$streams)
