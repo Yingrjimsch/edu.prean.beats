@@ -1,18 +1,19 @@
-
+library(MASS)
 
 ################################# Datenbereinigung ###################################
 
 spotify_songs <- read.csv("spotify-2023.csv", encoding="latin1") # dataframe mit csv von kaggle
-spotify_songs_cleaned <- data.frame() # leeres Dataframe, in welchem die "bereinigten" Prädiktoren abgelegt werden
+spotify_songs_man <- spotify_songs # kopiertes Dataframe für Manipulationen
+spotify_songs_cleaned <- data.frame() # leeres Dataframe, in welchem die "bereinigten" Prädiktoren abgelegt werden (bereit für Modellbildung)
 
-
+# Ausgangslage des Datasets
 summary(spotify_songs) # Summary des Datasets
 str(spotify_songs) # Struktur des Datasets
 
 sapply(spotify_songs, function(x) sum(is.nan(x))) # gibt Spaltenweise Anzahl NaN's zurück -> keine
 sapply(spotify_songs, function(x) sum(is.na(x))) # gibt Spaltenweise Anzahl Na's zurück -> keine
-sapply(spotify_songs, function(x) sum(x == "")) # gibt Spaltenweise Anzahl leerer Strings zurück zurück -> key = 95
-sapply(spotify_songs, function(x) grep("ï¿½", x)) # gibt Spaltenweise Indices der Einträge mit fehlerhaftem Encoding zurück zurück -> track_name und artist.s._name 
+sapply(spotify_songs, function(x) sum(x == "")) # gibt Spaltenweise Anzahl leerer Strings zurück zurück -> key = 95; in_shazam_charts = 50
+sapply(spotify_songs, function(x) grep("ï¿½", x)) # gibt Spaltenweise Indices der Einträge mit fehlerhaftem Encoding zurück zurück -> track_name = 58; artist.s._name = 40
 
 #### 1. Inkonsistente, Fehlerhafte, Missing Daten dokumentieren ####
 
@@ -62,65 +63,71 @@ values_with_encoding_errors <- spotify_songs$artist.s._name[indices_with_encodin
 values_with_encoding_errors # alle spotify_songs$artist.s._name mit encoding errors (40 Outputs)
 
 # Manuelle Korrektur
-spotify_songs$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Mï¿½ï¿½ne", "Måneskin")
-spotify_songs$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Michael Bublï¿", "Michael Bublé")
-spotify_songs$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Quevedo, La Pantera, Juseph, Cruz Cafunï¿½ï¿½, Bï¿½ï¿½jo, Abhir Hathi", "Quevedo, La Pantera, Juseph, Cruz Cafuné, Bejo, Abhir Hathi")
-spotify_songs$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Rauw Alejandro, ROSALï¿½", "Rauw Alejandro, Rosalía")
-spotify_songs$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Rï¿½ï", "Rema")
-spotify_songs$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Rï¿½ï¿½ma, Selena G", "Rema, Selena G")  
-spotify_songs$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Rich The Kid, Matuï¿", "Rich The Kid, Matuê")
-spotify_songs$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "ROSALï¿½", "Rosalía")
-spotify_songs$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Schï¿½ï¿½rze, DJ R", "Schürze, DJ Robin")
-spotify_songs$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Sebastian Yatra, Manuel Turizo, Beï¿½ï", "Sebastian Yatra, Manuel Turizo, Beéle")
-spotify_songs$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Semicenk, Doï¿½ï¿½u ", "Semicenk, Doğu Swag")                                
-spotify_songs$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "The Weeknd, ROSALï¿½", "The Weeknd, Rosalía")
-spotify_songs$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Tiï¿½ï¿", "Tiësto")
-spotify_songs$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Tiï¿½ï¿½sto, Ava", "Tiësto, Ava")
-spotify_songs$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Tiï¿½ï¿½sto, Kar", "Tiësto, Karol G")
-spotify_songs$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Tiï¿½ï¿½sto, Tate M", "Tiësto, Tate McRae")
-spotify_songs$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Wisin & Yandel, ROSALï¿½", "Wisin & Yandel, Rosalía")
-spotify_songs$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Xamï¿½ï¿½, Gustah, Neo B", NA) # -> droppen
-spotify_songs$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Zï¿½ï¿½ Fe", "Zé Felipe")
-spotify_songs$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Zï¿½ï¿½ Neto & Crist", "Zé Neto e Cristiano")
-spotify_songs$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Matuï¿½ï¿½, Wiu, ", "Matuê, Teto, WIU")
-spotify_songs$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Marï¿½ï¿½lia Mendonï¿½ï¿½a, Maiara &", "Marília Mendonça, Maiara & Maraisa")
-spotify_songs$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Marï¿½ï¿½lia Mendonï¿½ï¿½a, Hugo & G", "Marília Mendonça, Hugo & Guilherme")
-spotify_songs$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Marï¿½ï¿½lia Mendonï¿½ï¿½a, George Henrique &", "Marília Mendonça, George Henrique & Rodrigo")
-spotify_songs$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Marï¿½ï¿½lia Mendo", "Marília Mendonça")
-spotify_songs$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Luï¿½ï¿½sa Sonza, MC Frog, Dj Gabriel do Borel, Davi K", "Luísa Sonza, MC Frog, Dj Gabriel do Borel, Davi K")
-spotify_songs$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Luciano, Aitch, Bï¿½", "Luciano, Aitch, BIA")
-spotify_songs$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Kendrick Lamar, Beyoncï¿", "Kendrick Lamar, Beyoncé")
-spotify_songs$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Justin Quiles, Lenny Tavï¿½ï¿½rez, BL", "Justin Quiles, Lenny Tavarez, BL")
-spotify_songs$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Junior H, Eden Muï¿½ï", "Junior H, Eden Muñoz")
-spotify_songs$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Josï¿½ï¿½ Felic", "José Feliciano")
-spotify_songs$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Jordan Fisher, Josh Levi, Finneas O'Connell, 4*TOWN (From Disney and Pixarï¿½ï¿½ï¿½s Turning Red), Topher Ngo, Grayson Vill", "Jordan Fisher, Josh Levi, Finneas O'Connell, 4*TOWN (From Disney and Pixar's Turning Red), Topher Ngo, Grayson Vill")
-spotify_songs$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Jasiel Nuï¿½ï¿½ez, Peso P", "Jasiel Nuñez, Peso P")
-spotify_songs$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Eden Muï¿½ï", "Eden Muñoz")
-spotify_songs$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Dj LK da Escï¿½ï¿½cia, Tchakabum, mc jhenny, M", "Dj LK da Escócia,Tchakabum, MC Ryan SP, mc jhenny")
-spotify_songs$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Bomba Estï¿½ï¿½reo, Bad B", "Bomba Estéreo, Bad Bunny")
-spotify_songs$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Bad Bunny, The Marï¿½ï", "Bad Bunny, The Marías")
-spotify_songs$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Arcangel, De La Ghetto, Justin Quiles, Lenny Tavï¿½ï¿½rez, Sech, Dalex, Dimelo Flow, Rich Music", "Arcangel, De La Ghetto, Justin Quiles, Lenny Tavárez, Sech, Dalex, Dimelo Flow, Rich Music")
-spotify_songs$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Beyoncï¿", "Beyoncé")
+spotify_songs_man$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Mï¿½ï¿½ne", "Måneskin")
+spotify_songs_man$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Michael Bublï¿", "Michael Bublé")
+spotify_songs_man$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Quevedo, La Pantera, Juseph, Cruz Cafunï¿½ï¿½, Bï¿½ï¿½jo, Abhir Hathi", "Quevedo, La Pantera, Juseph, Cruz Cafuné, Bejo, Abhir Hathi")
+spotify_songs_man$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Rauw Alejandro, ROSALï¿½", "Rauw Alejandro, Rosalía")
+spotify_songs_man$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Rï¿½ï", "Rema")
+spotify_songs_man$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Rï¿½ï¿½ma, Selena G", "Rema, Selena G")  
+spotify_songs_man$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Rich The Kid, Matuï¿", "Rich The Kid, Matuê")
+spotify_songs_man$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "ROSALï¿½", "Rosalía")
+spotify_songs_man$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Schï¿½ï¿½rze, DJ R", "Schürze, DJ Robin")
+spotify_songs_man$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Sebastian Yatra, Manuel Turizo, Beï¿½ï", "Sebastian Yatra, Manuel Turizo, Beéle")
+spotify_songs_man$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Semicenk, Doï¿½ï¿½u ", "Semicenk, Doğu Swag")                                
+spotify_songs_man$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "The Weeknd, ROSALï¿½", "The Weeknd, Rosalía")
+spotify_songs_man$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Tiï¿½ï¿", "Tiësto")
+spotify_songs_man$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Tiï¿½ï¿½sto, Ava", "Tiësto, Ava")
+spotify_songs_man$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Tiï¿½ï¿½sto, Kar", "Tiësto, Karol G")
+spotify_songs_man$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Tiï¿½ï¿½sto, Tate M", "Tiësto, Tate McRae")
+spotify_songs_man$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Wisin & Yandel, ROSALï¿½", "Wisin & Yandel, Rosalía")
+spotify_songs_man$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Xamï¿½ï¿½, Gustah, Neo B", NA) # -> droppen
+spotify_songs_man$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Zï¿½ï¿½ Fe", "Zé Felipe")
+spotify_songs_man$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Zï¿½ï¿½ Neto & Crist", "Zé Neto e Cristiano")
+spotify_songs_man$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Matuï¿½ï¿½, Wiu, ", "Matuê, Teto, WIU")
+spotify_songs_man$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Marï¿½ï¿½lia Mendonï¿½ï¿½a, Maiara &", "Marília Mendonça, Maiara & Maraisa")
+spotify_songs_man$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Marï¿½ï¿½lia Mendonï¿½ï¿½a, Hugo & G", "Marília Mendonça, Hugo & Guilherme")
+spotify_songs_man$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Marï¿½ï¿½lia Mendonï¿½ï¿½a, George Henrique &", "Marília Mendonça, George Henrique & Rodrigo")
+spotify_songs_man$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Marï¿½ï¿½lia Mendo", "Marília Mendonça")
+spotify_songs_man$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Luï¿½ï¿½sa Sonza, MC Frog, Dj Gabriel do Borel, Davi K", "Luísa Sonza, MC Frog, Dj Gabriel do Borel, Davi K")
+spotify_songs_man$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Luciano, Aitch, Bï¿½", "Luciano, Aitch, BIA")
+spotify_songs_man$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Kendrick Lamar, Beyoncï¿", "Kendrick Lamar, Beyoncé")
+spotify_songs_man$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Justin Quiles, Lenny Tavï¿½ï¿½rez, BL", "Justin Quiles, Lenny Tavarez, BL")
+spotify_songs_man$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Junior H, Eden Muï¿½ï", "Junior H, Eden Muñoz")
+spotify_songs_man$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Josï¿½ï¿½ Felic", "José Feliciano")
+spotify_songs_man$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Jordan Fisher, Josh Levi, Finneas O'Connell, 4*TOWN (From Disney and Pixarï¿½ï¿½ï¿½s Turning Red), Topher Ngo, Grayson Vill", "Jordan Fisher, Josh Levi, Finneas O'Connell, 4*TOWN (From Disney and Pixar's Turning Red), Topher Ngo, Grayson Vill")
+spotify_songs_man$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Jasiel Nuï¿½ï¿½ez, Peso P", "Jasiel Nuñez, Peso P")
+spotify_songs_man$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Eden Muï¿½ï", "Eden Muñoz")
+spotify_songs_man$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Dj LK da Escï¿½ï¿½cia, Tchakabum, mc jhenny, M", "Dj LK da Escócia,Tchakabum, MC Ryan SP, mc jhenny")
+spotify_songs_man$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Bomba Estï¿½ï¿½reo, Bad B", "Bomba Estéreo, Bad Bunny")
+spotify_songs_man$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Bad Bunny, The Marï¿½ï", "Bad Bunny, The Marías")
+spotify_songs_man$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Arcangel, De La Ghetto, Justin Quiles, Lenny Tavï¿½ï¿½rez, Sech, Dalex, Dimelo Flow, Rich Music", "Arcangel, De La Ghetto, Justin Quiles, Lenny Tavárez, Sech, Dalex, Dimelo Flow, Rich Music")
+spotify_songs_man$artist.s._name <- replace(spotify_songs$artist.s._name, spotify_songs$artist.s._name == "Beyoncï¿", "Beyoncé")
 
 
-indices_with_encoding_errors <-grep("ï¿½", spotify_songs$artist.s._name)
-values_with_encoding_errors <- spotify_songs$artist.s._name[indices_with_encoding_errors]
+indices_with_encoding_errors <-grep("ï¿½", spotify_songs_man$artist.s._name)
+values_with_encoding_errors <- spotify_songs_man$artist.s._name[indices_with_encoding_errors]
 values_with_encoding_errors # alle spotify_songs$artist.s._name mit encoding errors (0 outputs verbleibend)
 
 
 ## artist_count -> belassen, keine missings und bereits numerisch
 spotify_songs$artist_count
 sum(is.na(spotify_songs$artist_count)) # missings erkennen -> 0
-barplot(table(spotify_songs$artist_count), main="Barplot artist_count", xlab="artist_count", ylab="Frequency")
+barplot(table(spotify_songs$artist_count), main="Barplot artist_count", xlab="artist_count", ylab="Frequency") # rechtsschief -> Transformation?
+hist(sqrt(spotify_songs$artist_count)) # keine Veränderung
+hist(sqrt(spotify_songs$artist_count)) # keine Veränderung
+boxcox(lm(spotify_songs$artist_count ~ 1)) 
+hist((1/spotify_songs$artist_count**2)) # linksschief
+# Transformation nicht möglich -> evtl. verwerfen
 
-# artist_count dem "cleaned dataframe" hinzufügen
+
+# artist_count dem "cleaned dataframe" hinzufügen, falls verwendet wird!
 spotify_songs_cleaned <- data.frame(artist_count = spotify_songs$artist_count)
 
 # released_day -> z. B. Datum zusammenfügen und den Wochentag daraus extrahieren 
 # ???? Ansatz unten: Released Datum aus year, month und day zusammensetzen; weekday eruieren und numerisch konvertieren
-spotify_songs_cleaned$released_date <- as.Date(paste(spotify_songs$released_year, spotify_songs$released_month, spotify_songs$released_day, sep="-"), format="%Y-%m-%d")
-spotify_songs_cleaned$released_weekday <- weekdays(spotify_songs_cleaned$released_date)
-spotify_songs_cleaned$released_weekday
+spotify_songs_man$released_date <- as.Date(paste(spotify_songs$released_year, spotify_songs$released_month, spotify_songs$released_day, sep="-"), format="%Y-%m-%d")
+spotify_songs_man$released_weekday <- weekdays(spotify_songs_man$released_date)
+spotify_songs_man$released_weekday
 
 # Entweder mittels mapping und numerischer Konvertierung 
 # day_mapping <- c("Montag" = 1, "Dienstag" = 2, "Mittwoch" = 3, "Donnerstag" = 4, "Freitag" = 5, "Samstag" = 6, "Sonntag" = 7)
@@ -129,19 +136,27 @@ spotify_songs_cleaned$released_weekday
 # sum(is.na(spotify_songs_cleaned$released_weekday)) # missings erkennen -> 0
 
 # oder mittels as.factor()
-spotify_songs_cleaned$released_weekday <- as.factor(spotify_songs_cleaned$released_weekday)
+spotify_songs_cleaned$released_weekday <- as.factor(spotify_songs_man$released_weekday)
 spotify_songs_cleaned$released_weekday
 sum(is.na(spotify_songs_cleaned$released_weekday)) # missings erkennen -> 0
 
 # plot
 barplot(table(spotify_songs_cleaned$released_weekday), main="Barplot weekday", xlab="weekday", ylab="Frequency")
-spotify_songs_cleaned$released_date <- NULL # -> zusammengesetztes release_date wieder entfernen
+#spotify_songs_cleaned$released_date <- NULL # -> zusammengesetztes release_date wieder entfernen
 
 ## released_year -> umwandeln in numerischen Wert (2023 - released_year) -> Wie lange gibt es den Song schon (year_since_release)
+# wahrscheinlich verwerfen, da keine Transformation erfolgreich ist
 spotify_songs_cleaned$years_since_release <- 2023 - spotify_songs$released_year
 sum(is.na(spotify_songs_cleaned$years_since_release)) # missings erkennen -> 0
 spotify_songs_cleaned$years_since_release
-hist(spotify_songs_cleaned$years_since_release)
+hist(spotify_songs_cleaned$years_since_release) # rechtsschief
+hist(log(spotify_songs_cleaned$years_since_release)) # keine Veränderung
+hist(sqrt(spotify_songs_cleaned$years_since_release)) # keine Veränderung
+hist(1/(spotify_songs_cleaned$years_since_release)) # leichte Veränderung 
+# Versuch mögliche Ausreisser wegzulassen:
+hist(spotify_songs$released_year[spotify_songs$released_year >= 2000])
+hist(log(spotify_songs$released_year[spotify_songs$released_year >= 2000]))
+# zeigt kein Erfolg
 
 ## released_month -> belasssen bereits numerisch und keine missings
 spotify_songs$released_month
@@ -150,6 +165,7 @@ barplot(table(spotify_songs$released_month), main="Barplot released_month", xlab
 
 # released_month faktorisieren und dem "cleaned dataframe" hinzufügen
 spotify_songs_cleaned["released_month"] <- factor(spotify_songs$released_month, levels = 1:12, labels = month.name)
+barplot(table(spotify_songs_cleaned$released_month), main="Barplot released_month", xlab="Month", ylab="Frequency")
 
 ## in_spotify_playlists -> belassen
 spotify_songs$in_spotify_playlists
@@ -160,31 +176,45 @@ hist(log(spotify_songs$in_spotify_playlists))
 qqnorm(log(spotify_songs$in_spotify_playlists))
 qqline(log(spotify_songs$in_spotify_playlists), col = "red")
 
-# in_spotify_playlists dem "cleaned dataframe" hinzufügen
-spotify_songs_cleaned["in_spotify_playlists"] <- data.frame(in_spotify_playlists = spotify_songs$in_spotify_playlists)
+# log(in_spotify_playlists) dem "cleaned dataframe" hinzufügen
+spotify_songs_cleaned["in_spotify_playlists"] <- data.frame(in_spotify_playlists = log(spotify_songs$in_spotify_playlists))
 
 # in_spotify_charts -> vorerst belassen (Recherche, was es genau ist)
 spotify_songs$in_spotify_charts
 sum(is.na(spotify_songs$in_spotify_charts)) # missings erkennen -> 0
-hist(spotify_songs$in_spotify_charts) # rechtsschief -> Transformierung mittels Log() sinnvoll?
-hist(log(spotify_songs$in_spotify_charts))
+hist(spotify_songs$in_spotify_charts) # rechtsschief -> Transformierung mittels Log() sinnvoll? -> erzeugt -Inf Werte; besser Transformation mittels sqrt()?
+hist(log(spotify_songs$in_spotify_charts)) # Transformation mittels log() erzeugt -Inf Werte
+hist(sqrt(spotify_songs$in_spotify_charts)) # rechtsschief
+hist(1/(spotify_songs$in_spotify_charts)) # rechtsschief
+
+hist(log(spotify_songs$in_spotify_charts + 0.0001))
+
+spotify_songs_man$in_spotify_charts[spotify_songs_man$in_spotify_charts == 0] <- 0.0001 
+hist(spotify_songs_man$in_spotify_charts)
 
 # in_spotify_charts dem "cleaned dataframe" hinzufügen
-spotify_songs_cleaned["in_spotify_charts"] <- data.frame(in_spotify_charts = spotify_songs$in_spotify_charts)
+spotify_songs_cleaned["in_spotify_charts"] <- data.frame(in_spotify_charts = log(spotify_songs_man$in_spotify_charts))
 
 ## in_apple_playlists -> belassen und verwenden
 spotify_songs$in_apple_playlists
 sum(is.na(spotify_songs$in_apple_playlists)) # missings erkennen -> 0
-hist(spotify_songs$in_apple_playlists) # rechtsschief -> Transformierung mittels Log() sinnvoll?
+hist(spotify_songs$in_apple_playlists) # rechtsschief -> Transformierung mittels Log() sinnvoll? -> erzeugt -Inf Werte; besser Transformation mittels sqrt()?
 hist(log(spotify_songs$in_apple_playlists))
 
+spotify_songs_man$in_apple_playlists[spotify_songs_man$in_apple_playlists == 0] <- 0.0001 
+hist(log(spotify_songs_man$in_apple_playlists))
+
 # in_apple_playlists dem "cleaned dataframe" hinzufügen
-spotify_songs_cleaned["in_apple_playlists"] <- data.frame(in_apple_playlists = spotify_songs$in_apple_playlists)
+spotify_songs_cleaned["in_apple_playlists"] <- data.frame(in_apple_playlists = log(spotify_songs_man$in_apple_playlists))
 
 ## in_apple_charts -> belassen und verwenden
 spotify_songs$in_apple_charts
 sum(is.na(spotify_songs$in_apple_charts)) # missings erkennen -> 0
 hist(spotify_songs$in_apple_charts)
+hist(log(spotify_songs$in_apple_charts))
+
+spotify_songs_man$in_apple_charts[spotify_songs_man$in_apple_charts == 0] <- 0.0001 
+hist(log(spotify_songs_man$in_apple_charts))
 
 # in_apple_charts dem "cleaned dataframe" hinzufügen
 spotify_songs_cleaned["in_apple_charts"] <- data.frame(in_apple_charts = spotify_songs$in_apple_charts)
@@ -192,15 +222,20 @@ spotify_songs_cleaned["in_apple_charts"] <- data.frame(in_apple_charts = spotify
 ## in_deezer_playlists -> numerisch konvertieren und verwenden
 sum(is.na(spotify_songs$in_deezer_playlists)) # missings erkennen -> 0
 spotify_songs$in_deezer_playlists # -> enthält Werte > 1000, welche jedoch als z. B. 1,959 erfasst wurden
-spotify_songs_cleaned["in_deezer_playlists"] <- data.frame(in_apple_charts = spotify_songs$in_deezer_playlists)
-spotify_songs_cleaned$in_deezer_playlists <- gsub(",", "", spotify_songs$in_deezer_playlists) # ersetzt "," durch ""
-spotify_songs_cleaned$in_deezer_playlists <- as.numeric(spotify_songs_cleaned$in_deezer_playlists)
-spotify_songs_cleaned$in_deezer_playlists[is.na(spotify_songs_cleaned$in_deezer_playlists)] # keine NA's mehr
+spotify_songs_man$in_deezer_playlists <- gsub(",", "", spotify_songs_man$in_deezer_playlists) # ersetzt "," durch ""
+spotify_songs_man$in_deezer_playlists <- as.numeric(spotify_songs_man$in_deezer_playlists)
+spotify_songs_man$in_deezer_playlists[is.na(spotify_songs_man$in_deezer_playlists)] # keine NA's mehr
 
-hist(spotify_songs_cleaned$in_deezer_playlists) # rechtsschief -> Transformierung mittels Log() sinnvoll?
-hist(log(spotify_songs_cleaned$in_deezer_playlists))
+hist(spotify_songs_man$in_deezer_playlists) # rechtsschief -> Transformierung mittels Log() sinnvoll?
+hist(log(spotify_songs_man$in_deezer_playlists))
 
-## in_deezer_charts -> belassen und verwenden
+spotify_songs_man$in_deezer_playlists[spotify_songs_man$in_deezer_playlists == 0] <- 0.0001 
+hist(log(spotify_songs_man$in_deezer_playlists))
+
+# log(in_deezer_playlist) dem "cleaned dataframe" hinzufügen
+spotify_songs_cleaned["in_deezer_playlists"] <- data.frame(in_deezer_charts = log(spotify_songs_man$in_deezer_charts))
+
+## in_deezer_charts -> vorerst belassen; hat aber viele 0 Werte!!
 spotify_songs$in_deezer_charts
 sum(is.na(spotify_songs$in_deezer_charts)) # missings erkennen -> 0
 hist(spotify_songs$in_deezer_charts) # rechtsschief -> Transformierung mittels Log() sinnvoll?
@@ -211,15 +246,18 @@ spotify_songs_cleaned["in_deezer_charts"] <- data.frame(in_deezer_charts = spoti
 
 ## in_shazam_charts -> numerisch konvertieren und verwenden; missings
 spotify_songs$in_shazam_charts # -> enthält Werte > 1000, welche jedoch als z. B. 1,959 erfasst wurden
-spotify_songs_cleaned["in_shazam_charts"] <- data.frame(in_shazam_charts = spotify_songs$in_shazam_charts)
-spotify_songs_cleaned$in_shazam_charts <- gsub(",", "", spotify_songs_cleaned$in_shazam_charts)
-spotify_songs_cleaned$in_shazam_charts <- as.numeric(spotify_songs_cleaned$in_shazam_charts)
-spotify_songs_cleaned$in_shazam_charts[is.na(spotify_songs_cleaned$in_shazam_charts)] # viele NA's
-sum(is.na(spotify_songs_cleaned$in_shazam_charts))  # missings erkennen -> 50
+spotify_songs_man["in_shazam_charts"] <- data.frame(in_shazam_charts = spotify_songs_man$in_shazam_charts)
+spotify_songs_man$in_shazam_charts <- gsub(",", "", spotify_songs_man$in_shazam_charts)
+spotify_songs_man$in_shazam_charts <- as.numeric(spotify_songs_man$in_shazam_charts)
+spotify_songs_man$in_shazam_charts[is.na(spotify_songs_man$in_shazam_charts)] # viele NA's
+sum(is.na(spotify_songs_man$in_shazam_charts))  # missings erkennen -> 50
 # Wie NA's handeln??? unten Variante mit median
-spotify_songs_cleaned$in_shazam_charts[is.na(spotify_songs_cleaned$in_shazam_charts)] <-round(median(spotify_songs_cleaned$in_shazam_charts, na.rm = TRUE))
-hist(spotify_songs_cleaned$in_shazam_charts) # rechtsschief -> Transformierung mittels Log() sinnvoll?
-hist(log(spotify_songs_cleaned$in_shazam_charts))
+spotify_songs_man$in_shazam_charts[is.na(spotify_songs_man$in_shazam_charts)] <-round(median(spotify_songs_man$in_shazam_charts, na.rm = TRUE))
+hist(spotify_songs_man$in_shazam_charts) # rechtsschief -> Transformierung mittels Log() sinnvoll?
+hist(log(spotify_songs_man$in_shazam_charts + 1))
+
+# in_shazam_charts dem "cleaned dataframe" hinzufügen
+spotify_songs_cleaned["in_shazam_charts"] <- data.frame(in_shazam_charts = spotify_songs_man$in_shazam_charts)
 
 ## bpm -> verwenden und belassen
 spotify_songs$bpm
@@ -236,13 +274,17 @@ spotify_songs$key # -> enthält leere Strings ""
 sum(spotify_songs$key == "")  # 95 leere Strings
 #key_value <- as.character(names(sort(table(spotify_songs$key), decreasing=TRUE)[1])) # ermittelt häfigst verwendeter Key
 # key dem "cleaned dataframe" hinzufügen
-spotify_songs_cleaned["key"] <- data.frame(key = spotify_songs$key)
-spotify_songs_cleaned$key[spotify_songs_cleaned$key == ""] <- "Keine Angabe" # -> setzt den ermittelten key für den leeren String ein
+spotify_songs_man["key"] <- data.frame(key = spotify_songs_man$key)
+spotify_songs_man$key[spotify_songs_man$key == ""] <- "Keine Angabe" # -> setzt den ermittelten key für den leeren String ein
 
-factor_column_key <- as.factor(spotify_songs_cleaned$key) # faktorisiert den key
+factor_column_key <- as.factor(spotify_songs_man$key) # faktorisiert den key
 levels(factor_column_key) # 1 - 11 : "A"  "A#" "B"  "C#" "D"  "D#" "E"  "F"  "F#" "G"  "G#" "Keine Angabe"
-spotify_songs_cleaned$key <- as.factor(spotify_songs_cleaned$key)
-barplot(table(spotify_songs_cleaned$key), main="Barplot key", xlab="Key", ylab="Frequency")
+spotify_songs_man$key <- as.factor(spotify_songs_cleaned$key)
+barplot(table(spotify_songs_man$key), main="Barplot key", xlab="Key", ylab="Frequency")
+
+# key dem "cleaned dataframe" hinzufügen
+spotify_songs_cleaned["key"] <- data.frame(key = spotify_songs_man$key)
+
 
 ## mode -> numerisch konvertieren (encoden) und verwenden
 spotify_songs$mode
@@ -254,9 +296,12 @@ sum(is.na(spotify_songs$mode))  # missings erkennen -> 0
 # barplot(table(spotify_songs_cleaned$mode), main="Barplot mode", xlab="Mode", ylab="Frequency", names.arg=c("Major", "Minor"), col=c("blue", "red"))
 
 # oder mittels as.factor() für Dummy- Codierung
-spotify_songs_cleaned["mode"] <- data.frame(mode = spotify_songs$mode)
-spotify_songs_cleaned$mode <-as.factor(spotify_songs_cleaned$mode)
-barplot(table(spotify_songs_cleaned$mode), main="Barplot mode", xlab="Mode", ylab="Frequency", names.arg=c("Major", "Minor"), col=c("blue", "red"))
+spotify_songs_man["mode"] <- data.frame(mode = spotify_songs_man$mode)
+spotify_songs_man$mode <-as.factor(spotify_songs_man$mode)
+barplot(table(spotify_songs_man$mode), main="Barplot mode", xlab="Mode", ylab="Frequency", names.arg=c("Major", "Minor"), col=c("blue", "red"))
+
+# key dem "cleaned dataframe" hinzufügen
+spotify_songs_cleaned["mode"] <- data.frame(mode = spotify_songs_man$mode)
 
 ## danceability_. -> verwenden und belassen
 spotify_songs$danceability_.
@@ -268,7 +313,9 @@ qqline(spotify_songs$danceability_., col = "red")
 # danceability_. dem "cleaned dataframe" hinzufügen
 spotify_songs_cleaned["danceability_."] <- data.frame(danceability_. = spotify_songs$danceability_.)
 
-## valence_. -> Recherche was es ist. ggf. verwenden und belassen
+## valence_. -> Recherche was es ist. ggf. verwenden und belassen -> happiness
+# low_valence: sad depressed, angry
+# high_valence: happy cheerful, euphoric
 spotify_songs$valence_.
 sum(is.na(spotify_songs$valence_.))  # missings erkennen -> 0
 hist(spotify_songs$valence_.)
@@ -292,11 +339,12 @@ spotify_songs_cleaned["energy_."] <- data.frame(energy_. = spotify_songs$energy_
 spotify_songs$acousticness_.
 sum(is.na(spotify_songs$acousticness_.))  # missings erkennen -> 0
 hist(spotify_songs$acousticness_.)
+hist(log(spotify_songs$acousticness_. + 1))
 qqnorm(spotify_songs$acousticness_.)
 qqline(spotify_songs$acousticness_., col = "red")
 
-# acousticness_. dem "cleaned dataframe" hinzufügen
-spotify_songs_cleaned["acousticness_."] <- data.frame(acousticness_. = spotify_songs$acousticness_.)
+# log(acousticness_. + 1) dem "cleaned dataframe" hinzufügen
+spotify_songs_cleaned["acousticness_."] <- data.frame(acousticness_. = log(spotify_songs$acousticness_. + 1))
 
 ## instrumentalness_.-> evtl. verwerfen, da praktisch alle Werte = 0
 spotify_songs$instrumentalness_.
@@ -311,8 +359,8 @@ hist(log(spotify_songs$liveness_.))
 qqnorm(log(spotify_songs$liveness_.))
 qqline(log(spotify_songs$liveness_.), col = "red")
 
-# liveness_. dem "cleaned dataframe" hinzufügen
-spotify_songs_cleaned["liveness_."] <- data.frame(liveness_. = spotify_songs$liveness_.)
+# log(liveness_.) dem "cleaned dataframe" hinzufügen
+spotify_songs_cleaned["liveness_."] <- data.frame(liveness_. = log(spotify_songs$liveness_.))
 
 ## speechiness_. -> verwenden und belassen
 spotify_songs$speechiness_.
@@ -322,15 +370,16 @@ hist(log(spotify_songs$speechiness_.))
 qqnorm(log(spotify_songs$speechiness_.))
 qqline(log(spotify_songs$speechiness_.), col = "red")
 
-# speechiness_. dem "cleaned dataframe" hinzufügen
-spotify_songs_cleaned["speechiness_."] <- data.frame(speechiness_. = spotify_songs$speechiness_.)
-
-# streams dem "cleanded" dataframe hinzufügen
-spotify_songs_cleaned["streams"] <- data.frame(streams = spotify_songs$streams) 
+# log(speechiness_.) dem "cleaned dataframe" hinzufügen
+spotify_songs_cleaned["speechiness_."] <- data.frame(speechiness_. = spotify_songs$log(speechiness_.))
 
 ## streams -> ZIELVARIABLE! numerisch konvertieren
-spotify_songs_cleaned$streams <- as.numeric(spotify_songs$streams)
-sum(is.na(spotify_songs_cleaned$streams)) # missings erkennen -> 1
+spotify_songs_man$streams <- as.numeric(spotify_songs$streams)
+sum(is.na(spotify_songs_man$streams)) # missings erkennen -> 1
+
+# streams dem "cleanded" dataframe hinzufügen
+spotify_songs_cleaned["streams"] <- data.frame(streams = spotify_songs_man$streams) 
+
 spotify_songs_cleaned <-spotify_songs_cleaned[-575,] # wenn Index bekannt so löschen
 sum(is.na(spotify_songs_cleaned$streams)) # missings erkennen -> 0
 hist(spotify_songs_cleaned$streams)# rechtsschief -> Transformierung?
