@@ -20,12 +20,12 @@ Branch: Bitte ein Branch pro Task alla `feat/kurzbeschreibung-task`
 |--|--|--|--|--|
 | README initialisieren | Doku | @yingrjimsch | In Arbeit | main |
 | Datenvisualisierung | Doku | annahfab | In Arbeit | feat/data-visualization |
-| Inkonsistente, Fehlerhafte, Missing Daten dokumentieren und bereinigen | Datenbereinigung | waldbsaf, vonwareb | In Arbeit |
-| Alle Werte "messbar" machen, transformieren | Datenbereinigung | waldbsaf, vonwareb | In Arbeit |
-| Encoding fixen (z.B. Trackname) | Datenbereinigung | waldbsaf, vonwareb | In Arbeit |
-| Datentypen in R auf Korrektheit prüfen | Datenbereinigung | waldbsaf, vonwareb | In Arbeit |
-| Verteilung, Symetrie, Ausreisser pro Prädiktor plotten und beschreiben | Plausibilisieren | waldbsaf, vonwareb | In Arbeit |
-| Fehlende Variablen beschreiben | Plausibilisieren | waldbsaf, vonwareb | |
+| Inkonsistente, Fehlerhafte, Missing Daten dokumentieren und bereinigen | Datenbereinigung | waldbsaf, vonwareb | In Arbeit | feat/data-cleaning-task
+| Alle Werte "messbar" machen, transformieren | Datenbereinigung | waldbsaf, vonwareb | In Arbeit | feat/data-cleaning-task
+| Encoding fixen (z.B. Trackname) | Datenbereinigung | waldbsaf, vonwareb | In Arbeit |m feat/data-cleaning-task
+| Datentypen in R auf Korrektheit prüfen | Datenbereinigung | waldbsaf, vonwareb | In Arbeit | feat/data-cleaning-task
+| Verteilung, Symetrie, Ausreisser pro Prädiktor plotten und beschreiben | Plausibilisieren | waldbsaf, vonwareb | In Arbeit | feat/data-cleaning-task
+| Fehlende Variablen beschreiben | Plausibilisieren | waldbsaf, vonwareb | waldbsaf, vonwareb | feat/data-cleaning-task
 | Lineare Regression | Vorhersagemethoden | annahfab | needless? |
 | Multivariante Regression | Vorhersagemethoden | annahfab | in Arbeit | feat/models
 | Generalisiertes Additives Modell | Vorhersagemethoden | | |
