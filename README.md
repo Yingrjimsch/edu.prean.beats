@@ -26,8 +26,8 @@ Branch: Bitte ein Branch pro Task alla `feat/kurzbeschreibung-task`
 | Datentypen in R auf Korrektheit prüfen | Datenbereinigung | waldbsaf, vonwareb | In Arbeit |
 | Verteilung, Symetrie, Ausreisser pro Prädiktor plotten und beschreiben | Plausibilisieren | waldbsaf, vonwareb | In Arbeit |
 | Fehlende Variablen beschreiben | Plausibilisieren | waldbsaf, vonwareb | |
-| Lineare Regression | Vorhersagemethoden | | |
-| Multivariante Regression | Vorhersagemethoden | | |
+| Lineare Regression | Vorhersagemethoden | annahfab | needless? |
+| Multivariante Regression | Vorhersagemethoden | annahfab | in Arbeit | feat/models
 | Generalisiertes Additives Modell | Vorhersagemethoden | | |
 | K-nearest neighbours | Vorhersagemethoden | | |
 | CART Regressionsbaum | Vorhersagemethoden | | |
