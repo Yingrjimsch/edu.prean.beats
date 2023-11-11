@@ -1,4 +1,5 @@
 
+# Change path according to your system settings
 data <- read.csv("./edu.prean.beats/Datenbereinigung/spotify-2023_cleaned.csv")
 
 # features1 focuses on the intrinsic musical qualities of the tracks. 
