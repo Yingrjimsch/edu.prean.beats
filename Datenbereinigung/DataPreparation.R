@@ -257,7 +257,7 @@ hist(log(spotify_songs_man$in_deezer_charts))
 boxcox(lm((spotify_songs_man$in_deezer_charts) ~ 1)) # optimales lambda nahe 0 -> log Transformation
 
 # log(in_deezer_charts) dem "cleaned dataframe" hinzufügen
-spotify_songs_cleaned["in_deezer_charts"] <- data.frame(in_deezer_charts = log(spotify_songs$in_deezer_charts))
+spotify_songs_cleaned["in_deezer_charts"] <- data.frame(in_deezer_charts = log(spotify_songs_man$in_deezer_charts))
 
 ## in_shazam_charts -> numerisch konvertieren und verwenden; missings
 spotify_songs$in_shazam_charts # -> enthält Werte > 1000, welche jedoch als z. B. 1,959 erfasst wurden
@@ -410,6 +410,8 @@ sum(is.na(spotify_songs_cleaned$streams)) # missings erkennen -> 0
 hist(spotify_songs_cleaned$streams)# rechtsschief -> Transformierung?
 
 str(spotify_songs_cleaned)
+
+sapply(spotify_songs_cleaned, function(x) sum(x == -Inf)) # Überprüfung, dass alle -Inf Values bereinigt sind -> keine mehr
 #### 3 Alle Werte "messbar" machen ######
 
 # integriert in 2.
@@ -474,7 +476,7 @@ create_plots <- function(dataframe, dependent_variable) {
     }
   }
 
-create_plots(spotify_songs_cleaned, "streams")
+#create_plots(spotify_songs_cleaned, "streams") -> auskommentieren, wenn Plots gewünscht!
 
 #### 1 Verteilung, Symmetrie, Ausreisser pro Prädiktor beschreiben #### 
 ## TODO
