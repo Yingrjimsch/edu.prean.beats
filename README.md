@@ -28,7 +28,7 @@ Branch: Bitte ein Branch pro Task alla `feat/kurzbeschreibung-task`
 | Lineare Regression | Vorhersagemethoden | | |
 | Multivariante Regression | Vorhersagemethoden | | |
 | Generalisiertes Additives Modell | Vorhersagemethoden | | |
-| K-nearest neighbours | Vorhersagemethoden | | |
+| K-nearest neighbours | Vorhersagemethoden | @yingrjimsch | Geplant |
 | CART Regressionsbaum | Vorhersagemethoden | | |
 | Bagged CART Regressionsbaum | Vorhersagemethoden | | |
 | Neurales Netzwerk | Vorhersagemethoden | | |
