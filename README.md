@@ -29,7 +29,7 @@ Branch: Bitte ein Branch pro Task alla `feat/kurzbeschreibung-task`
 | Lineare Regression | Vorhersagemethoden | annahfab | needless? |
 | Multivariante Regression | Vorhersagemethoden | annahfab | in Arbeit | feat/models
 | Generalisiertes Additives Modell | Vorhersagemethoden | | |
-| K-nearest neighbours | Vorhersagemethoden | | |
+| K-nearest neighbours | Vorhersagemethoden | yingrjimsch | Geplant |
 | CART Regressionsbaum | Vorhersagemethoden | | |
 | Bagged CART Regressionsbaum | Vorhersagemethoden | | |
 | Neurales Netzwerk | Vorhersagemethoden | | |
