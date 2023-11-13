@@ -142,7 +142,7 @@ barplot(table(spotify_songs_cleaned$artist_count), main="Barplot artist_count", 
 
 # released_day -> z. B. Datum zusammenfügen und den Wochentag (weekday) daraus extrahieren 
 # ???? Ansatz unten: Released Datum aus year, month und day zusammensetzen; weekday eruieren und numerisch konvertieren
-spotify_songs_man$released_date <- as.Date(paste(spotify_songs$released_year, spotify_songs$released_month, spotify_songs$released_day, sep="-"), format="%Y-%m-%d")
+spotify_songs_man$released_date <- as.Date(paste(spotify_songs_man$released_year, spotify_songs_man$released_month, spotify_songs_man$released_day, sep="-"), format="%Y-%m-%d")
 spotify_songs_man$released_weekday <- weekdays(spotify_songs_man$released_date)
 spotify_songs_man$released_weekday
 
@@ -159,7 +159,6 @@ sum(is.na(spotify_songs_cleaned$released_weekday)) # missings erkennen -> 0
 
 # plot
 barplot(table(spotify_songs_cleaned$released_weekday), main="Barplot weekday", xlab="weekday", ylab="Frequency")
-#spotify_songs_cleaned$released_date <- NULL # -> zusammengesetztes release_date wieder entfernen
 
 ## released_year -> umwandeln in numerischen Wert (2023 - released_year) -> Wie lange gibt es den Song schon (year_since_release)
 # wahrscheinlich verwerfen, da keine Transformation erfolgreich ist
@@ -563,7 +562,7 @@ summary(model_speechiness_.)
 spotify_songs_cleaned["speechiness_."] <- data.frame(speechiness_. = (spotify_songs_man$speechiness_.^(-0.3) - 1) / -0.3)
 
 ## streams -> ZIELVARIABLE! numerisch konvertieren
-spotify_songs_man$streams <- as.numeric(spotify_songs$streams)
+spotify_songs_man$streams <- as.numeric(spotify_songs_man$streams)
 sum(is.na(spotify_songs_man$streams)) # missings erkennen -> 1
 
 # streams dem "cleanded" dataframe hinzufügen
@@ -698,13 +697,28 @@ plot(model)
 
 str(spotify_songs_cleaned)
 
-spotify_songs_cleaned <- spotify_songs_cleaned[-c(124, 145, 394, 403, 426, 620),]
+spotify_songs_cleaned <- spotify_songs_cleaned[-c(124, 394, 426),]
 
 model <- lm(streams ~ ., data = spotify_songs_cleaned)
 summary(model)
 plot(model)
 
 str(spotify_songs_cleaned)
+
+spotify_songs_cleaned <- spotify_songs_cleaned[-c(59, 145, 620),]
+
+model <- lm(streams ~ ., data = spotify_songs_cleaned)
+summary(model)
+plot(model)
+
+str(spotify_songs_cleaned)
+
+spotify_songs_cleaned <- spotify_songs_cleaned[-c(31, 145, 620),]
+
+model <- lm(streams ~ ., data = spotify_songs_cleaned)
+summary(model)
+plot(model)
+
 
 drop1(object = model)
 model_backward <- update(object = model, formula = . ~. - key)
@@ -716,23 +730,21 @@ drop1(object = model_backward)
 model_backward <- update(object = model_backward, formula = . ~. - released_weekday)
 drop1(object = model_backward)
 
-model_backward <- update(object = model_backward, formula = . ~. - speechiness_.)
+model_backward <- update(object = model_backward, formula = . ~. - liveness_.)
 drop1(object = model_backward)
 
 model_backward <- update(object = model_backward, formula = . ~. - in_deezer_playlists)
 drop1(object = model_backward)
 
-model_backward <- update(object = model_backward, formula = . ~. - liveness_.)
+model_backward <- update(object = model_backward, formula = . ~. - valence_.)
 drop1(object = model_backward)
 
-model_backward <- update(object = model_backward, formula = . ~. - valence_.)
+model_backward <- update(object = model_backward, formula = . ~. - energy_.)
 drop1(object = model_backward)
 
 model_backward <- update(object = model_backward, formula = . ~. - mode)
 drop1(object = model_backward)
 
-model_backward <- update(object = model_backward, formula = . ~. - energy_.)
-drop1(object = model_backward)
 
 summary(model_backward)
 plot(model_backward)
@@ -742,15 +754,6 @@ vif(model_backward)
 1/vif(model_backward)
 
 pairs(~ in_apple_charts + in_apple_playlists + streams, upper.panel = NULL)
-
-
-# 2.
-model <- lm(streams ~ in_spotify_playlists  + years_since_release + in_spotify_charts, data = spotify_songs_cleaned)
-summary(model)
-plot(model)
-
-str(spotify_songs_cleaned)
-
 
 subset_cor_lists <- subset(spotify_songs_cleaned, select = c(in_spotify_playlists, in_apple_playlists, in_apple_charts,
                                                        in_deezer_playlists))
@@ -765,7 +768,33 @@ corr_tab_modes
 
 library(leaps)
 
-model_selection <- regsubsets(x = streams ~. -released_weekday, data = spotify_songs_cleaned)
+model_selection <- regsubsets(x = streams ~. , data = spotify_songs_cleaned)
 summary(model_selection)
 plot(model_selection)
+
+needed_months <- subset(spotify_songs_cleaned, released_month %in% c("March", "June", "October"))
+spotify_songs_cleaned$needed_months <- as.factor(spotify_songs_cleaned$released_month %in% c("March", "April", "October"))
+
+
+model <- lm(streams ~ in_spotify_playlists + in_spotify_charts + years_since_release + needed_months, data = spotify_songs_cleaned)
+summary(model)
+plot(model)
+
+
+library(kknn)
+
+set.seed(123) 
+trainIndex <- sample(1:nrow(spotify_songs_cleaned), 0.8 * nrow(spotify_songs_cleaned))
+trainData <- spotify_songs_cleaned[trainIndex, ]
+testData <- spotify_songs_cleaned[-trainIndex, ]
+
+
+k <- 5 # Beispielwert für k
+knn_modell <- kknn(streams ~ ., train = trainData, test = testData, k = k)
+
+vorhersagen <- predict(knn_modell)
+# Beispiel für Leistungsbewertung: Mittlerer quadratischer Fehler
+mse <- mean((testData$streams - vorhersagen)^2)
+mse
+
 
