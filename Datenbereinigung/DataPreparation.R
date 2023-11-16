@@ -434,7 +434,7 @@ in_shazam_chart <- in_shazam_chart[-575]
 in_shazam_chart[in_shazam_chart == 0] <- 0.0001 
 
 model_in_shazam_charts <- lm(log(streams) ~ log(in_shazam_chart))
-summary(model_in_shazam_chart)
+summary(model_in_shazam_charts)
 # plot(model_in_shazam_charts) # keine optimale Transformation möglich; beste Residualanalyse mit log Transformation
 
 # Hinzufügen von in_shazam_charts den cleaned Dataframes (einmal mit Log- Transformation und zweimal OHNE Transformation)
@@ -706,8 +706,26 @@ spotify_songs_cleaned_with_trans <- spotify_songs_cleaned_with_trans[-c(124, 394
 spotify_songs_cleaned_with_trans_optima <- spotify_songs_cleaned_with_trans_optima[-c(124, 394, 426),]
 spotify_songs_cleaned_without_trans <- spotify_songs_cleaned_without_trans[-c(124, 394, 426),]
 
+# Test mit Regressionsmodell nach Entfernen offensichtlicher Outliers
+model <- lm(streams ~ ., data = spotify_songs_cleaned_with_trans_optima)
+summary(model)
 
-# Datasets für Modellbildung
+################################################################################
+
+#             Datasets für Modellbildung
+#       1. RData Files, damit Datentypen, wie factor korrekt übernommen werden
+#       2. csv Files, falls explizit csv File benötigt wird
+
+###############################################################################
+
+# RData mit teilweise transformierten Prädiktoren (nicht alle optimal)
+save(spotify_songs_cleaned_with_trans, file = "spotify_songs_cleaned_with_trans.RData")
+# RData mit teilweise transformierten Prädiktoren (alle optimal)
+save(spotify_songs_cleaned_with_trans_optima, file = "spotify_songs_cleaned_with_trans_optima.RData")
+# Rdata mit Prädiktoren ohne Transformationen (ausser Zielvariable)
+save(spotify_songs_cleaned_without_trans, file = "spotify_songs_cleaned_without_trans.RData")
+
+
 
 # csv mit teilweise transformierten Prädiktoren (nicht alle optimal)
 write.csv(spotify_songs_cleaned_with_trans, "spotify-2023_cleaned_with_trans.csv", row.names = FALSE)
@@ -715,6 +733,5 @@ write.csv(spotify_songs_cleaned_with_trans, "spotify-2023_cleaned_with_trans.csv
 write.csv(spotify_songs_cleaned_with_trans_optima, "spotify-2023_cleaned_with_trans_optima.csv", row.names = FALSE)
 # csv mit Prädiktoren ohne Transformationen (ausser Zielvariable)
 write.csv(spotify_songs_cleaned_without_trans, "spotify-2023_cleaned_without_trans.csv", row.names = FALSE)
-
 
 
