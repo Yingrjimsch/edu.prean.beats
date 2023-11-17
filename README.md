@@ -30,8 +30,8 @@ Branch: Bitte ein Branch pro Task alla `feat/kurzbeschreibung-task`
 | Multivariante Regression | Vorhersagemethoden | annahfab | in Arbeit | feat/models
 | Generalisiertes Additives Modell | Vorhersagemethoden | | |
 | K-nearest neighbours | Vorhersagemethoden | yingrjimsch | Geplant |
-| CART Regressionsbaum | Vorhersagemethoden | | |
-| Bagged CART Regressionsbaum | Vorhersagemethoden | | |
+| CART Regressionsbaum | Vorhersagemethoden | vonwareb | in Arbeit|
+| Bagged CART Regressionsbaum | Vorhersagemethoden | vonwareb| Geplant|
 | Neurales Netzwerk | Vorhersagemethoden | | |
 | Test / Training Split | Vorhersagemethoden | | |
 | Literaturvergleich der Resultate | Doku | | |
