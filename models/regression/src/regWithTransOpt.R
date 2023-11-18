@@ -16,7 +16,7 @@ outliers <- which(cooksd > (4/length(cooksd)))
 print("------------- NUMBER OF REMOVED OUTLIERS DUE TO COOK'S DISTANCE --------------")
 print(length(outliers))
 
-png("./edu.prean.beats/models/regression/spotify_songs_cleaned_with_trans_optima_cook.png")
+png("./edu.prean.beats/models/regression/img/regWithTransOpt_Cook.png")
 plot(cooksd, pch = "*", cex = 2, main = "Cook's Distance")
 abline(h = 4/length(cooksd), col = "red")
 dev.off()
@@ -69,6 +69,6 @@ print("------------- FINAL MODEL --------------")
 print(summary(final_model))
 
 # Residual Plot
-png("./edu.prean.beats/models/regression/spotify_songs_cleaned_with_trans_optima_residuals.png")
+png("./edu.prean.beats/models/regression/img/regWithTransOpt_Residuals.png")
 plot(residuals(final_model), main = "Residuals of Final Model")
 dev.off()
