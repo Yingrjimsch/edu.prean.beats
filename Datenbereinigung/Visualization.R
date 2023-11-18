@@ -118,7 +118,7 @@ library(tidyr)
 library(ggplot2)
 
 
-spotify_songs_cleaned_with_trans_optima %>%
+spotify_songs_cleaned_without_trans %>%
   keep(is.numeric) %>%
   gather() %>%
   ggplot(aes(value)) +

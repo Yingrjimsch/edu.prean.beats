@@ -677,8 +677,8 @@ hist((spotify_songs_man$streams^(0.1) - 1) / 0.1) # keine optimale Normalverteil
 
 # ZIELVARIABLE streams in den cleaned Dataframes mittels Log transformieren (bei einem ohne Tranformation)
 spotify_songs_cleaned_with_trans$streams <- log(spotify_songs_cleaned_with_trans$streams)
-spotify_songs_cleaned_with_trans_optima$streams <- log(spotify_songs_cleaned_with_trans$streams)
-spotify_songs_cleaned_without_trans$streams <- spotify_songs_cleaned_with_trans$streams
+spotify_songs_cleaned_with_trans_optima$streams <- log(spotify_songs_cleaned_with_trans_optima$streams)
+spotify_songs_cleaned_without_trans$streams <- spotify_songs_cleaned_without_trans$streams
 
 
 #############################
