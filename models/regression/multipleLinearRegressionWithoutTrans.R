@@ -55,6 +55,7 @@ best_model_index <- which.min(bic_values)
 best_model_vars <- subset_summary$which[best_model_index, ]
 
 # Correctly filter to include only variables present in new_data
+available_vars <- names(new_data)
 best_model_vars_names <- names(best_model_vars)[best_model_vars]
 best_model_vars_names <- best_model_vars_names[best_model_vars_names %in% available_vars]
 
