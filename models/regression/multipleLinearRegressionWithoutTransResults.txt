@@ -1,0 +1,175 @@
+[1] "------------- INITIAL MODEL (ALL FEATURES) --------------"
+
+Call:
+lm(formula = streams ~ ., data = data)
+
+Residuals:
+       Min         1Q     Median         3Q        Max 
+-1.444e+09 -1.439e+08 -3.917e+07  9.490e+07  2.173e+09 
+
+Coefficients:
+                             Estimate Std. Error t value Pr(>|t|)    
+(Intercept)                 3.241e+08  9.694e+07   3.344 0.000861 ***
+listeners_cum               6.371e-01  3.809e-01   1.673 0.094769 .  
+artist_count               -2.910e+07  1.126e+07  -2.584 0.009911 ** 
+released_weekdayDonnerstag  1.600e+07  4.458e+07   0.359 0.719844    
+released_weekdayFreitag     2.050e+07  4.032e+07   0.508 0.611286    
+released_weekdayMittwoch    1.047e+08  4.827e+07   2.168 0.030390 *  
+released_weekdayMontag      4.562e+07  5.244e+07   0.870 0.384596    
+released_weekdaySamstag    -5.705e+06  7.058e+07  -0.081 0.935594    
+released_weekdaySonntag     1.134e+08  6.010e+07   1.886 0.059593 .  
+years_since_release        -3.357e+06  1.053e+06  -3.187 0.001488 ** 
+released_monthFebruary     -1.612e+07  4.630e+07  -0.348 0.727794    
+released_monthMarch         5.023e+07  4.224e+07   1.189 0.234736    
+released_monthApril         9.436e+06  4.598e+07   0.205 0.837455    
+released_monthMay           5.051e+07  3.832e+07   1.318 0.187845    
+released_monthJune          1.064e+07  4.292e+07   0.248 0.804186    
+released_monthJuly          1.500e+07  4.650e+07   0.323 0.747049    
+released_monthAugust        6.477e+07  5.115e+07   1.266 0.205725    
+released_monthSeptember     8.639e+07  4.756e+07   1.817 0.069617 .  
+released_monthOctober       3.794e+07  4.378e+07   0.867 0.386412    
+released_monthNovember      1.567e+07  4.233e+07   0.370 0.711286    
+released_monthDecember      2.626e+07  4.391e+07   0.598 0.549965    
+in_spotify_playlists        3.356e+04  3.009e+03  11.153  < 2e-16 ***
+in_spotify_charts           5.725e+06  7.458e+05   7.676 4.25e-14 ***
+in_apple_playlists          2.794e+06  1.861e+05  15.017  < 2e-16 ***
+in_apple_charts            -1.228e+05  2.434e+05  -0.505 0.614007    
+in_deezer_playlists         1.357e+04  1.563e+04   0.868 0.385587    
+in_deezer_charts           -4.255e+06  2.093e+06  -2.033 0.042305 *  
+in_shazam_charts           -5.886e+05  7.512e+04  -7.835 1.31e-14 ***
+bpm                         2.198e+04  3.400e+05   0.065 0.948480    
+keyA#                       5.429e+07  5.169e+07   1.050 0.293869    
+keyB                       -8.286e+06  4.685e+07  -0.177 0.859651    
+keyC#                      -1.960e+07  4.301e+07  -0.456 0.648662    
+keyD                       -1.082e+07  4.688e+07  -0.231 0.817471    
+keyD#                       5.257e+07  6.048e+07   0.869 0.384893    
+keyE                        3.019e+07  5.015e+07   0.602 0.547343    
+keyF                       -1.889e+07  4.564e+07  -0.414 0.679088    
+keyF#                      -4.376e+07  4.782e+07  -0.915 0.360368    
+keyG                       -6.279e+07  4.470e+07  -1.405 0.160498    
+keyG#                      -1.448e+07  4.523e+07  -0.320 0.748934    
+keyKeine Angabe            -1.271e+07  4.497e+07  -0.283 0.777591    
+modeMinor                  -4.793e+06  2.031e+07  -0.236 0.813508    
+danceability_.             -1.056e+06  7.640e+05  -1.382 0.167383    
+valence_.                   6.306e+03  4.880e+05   0.013 0.989692    
+energy_.                   -1.960e+06  6.265e+05  -3.129 0.001812 ** 
+liveness_.                  2.672e+03  6.889e+05   0.004 0.996907    
+speechiness_.              -1.061e+06  9.873e+05  -1.075 0.282644    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 283700000 on 903 degrees of freedom
+Multiple R-squared:  0.7617,    Adjusted R-squared:  0.7498 
+F-statistic: 64.13 on 45 and 903 DF,  p-value: < 2.2e-16
+
+[1] "------------- NUMBER OF REMOVED OUTLIERS DUE TO COOK'S DISTANCE --------------"
+[1] 65
+
+[1] "------------- BACKWARD MODEL --------------"
+
+Call:
+lm(formula = streams ~ artist_count + years_since_release + in_spotify_playlists + 
+    in_spotify_charts + in_apple_playlists + in_apple_charts + 
+    in_deezer_playlists + in_deezer_charts + in_shazam_charts + 
+    mode + danceability_. + energy_., data = new_data)
+
+Residuals:
+       Min         1Q     Median         3Q        Max 
+-617170231 -109086293  -24456627   87059362  655894727 
+
+Coefficients:
+                      Estimate Std. Error t value Pr(>|t|)    
+(Intercept)          284984229   37455131   7.609 7.18e-14 ***
+artist_count         -31031120    7323213  -4.237 2.50e-05 ***
+years_since_release   -5028182     708905  -7.093 2.72e-12 ***
+in_spotify_playlists     45585       2436  18.714  < 2e-16 ***
+in_spotify_charts      3998278     531364   7.525 1.32e-13 ***
+in_apple_playlists     2356301     144028  16.360  < 2e-16 ***
+in_apple_charts         417673     170120   2.455  0.01428 *  
+in_deezer_playlists     -27562      14586  -1.890  0.05915 .  
+in_deezer_charts      -2338706    1503806  -1.555  0.12026    
+in_shazam_charts       -556524      50892 -10.935  < 2e-16 ***
+modeMinor            -20342492   13068202  -1.557  0.11992    
+danceability_.         -865480     457667  -1.891  0.05895 .  
+energy_.              -1108991     397776  -2.788  0.00542 ** 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 187500000 on 871 degrees of freedom
+Multiple R-squared:  0.8451,    Adjusted R-squared:  0.8429 
+F-statistic: 395.9 on 12 and 871 DF,  p-value: < 2.2e-16
+
+[1] "------------- FORWARD MODEL --------------"
+
+Call:
+lm(formula = streams ~ in_spotify_playlists + in_apple_playlists + 
+    years_since_release + in_shazam_charts + in_spotify_charts + 
+    artist_count + energy_. + in_apple_charts + danceability_. + 
+    in_deezer_playlists + mode + in_deezer_charts, data = new_data)
+
+Residuals:
+       Min         1Q     Median         3Q        Max 
+-617170231 -109086293  -24456627   87059362  655894727 
+
+Coefficients:
+                      Estimate Std. Error t value Pr(>|t|)    
+(Intercept)          284984229   37455131   7.609 7.18e-14 ***
+in_spotify_playlists     45585       2436  18.714  < 2e-16 ***
+in_apple_playlists     2356301     144028  16.360  < 2e-16 ***
+years_since_release   -5028182     708905  -7.093 2.72e-12 ***
+in_shazam_charts       -556524      50892 -10.935  < 2e-16 ***
+in_spotify_charts      3998278     531364   7.525 1.32e-13 ***
+artist_count         -31031120    7323213  -4.237 2.50e-05 ***
+energy_.              -1108991     397776  -2.788  0.00542 ** 
+in_apple_charts         417673     170120   2.455  0.01428 *  
+danceability_.         -865480     457667  -1.891  0.05895 .  
+in_deezer_playlists     -27562      14586  -1.890  0.05915 .  
+modeMinor            -20342492   13068202  -1.557  0.11992    
+in_deezer_charts      -2338706    1503806  -1.555  0.12026    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 187500000 on 871 degrees of freedom
+Multiple R-squared:  0.8451,    Adjusted R-squared:  0.8429 
+F-statistic: 395.9 on 12 and 871 DF,  p-value: < 2.2e-16
+
+[1] "------------- SUBSET SELECTION --------------"
+[1] "BIC VALUES:"
+ [1] -1107.936 -1405.916 -1438.099 -1523.681 -1549.187 -1571.660 -1574.466
+ [8] -1577.092 -1576.897 -1575.844 -1573.588 -1570.987 -1567.874 -1564.718
+[15] -1560.813 -1556.743 -1552.543 -1548.130 -1542.745 -1537.408 -1532.131
+[22] -1526.804 -1521.069 -1515.277 -1509.284 -1503.251 -1497.079 -1490.603
+[29] -1484.186 -1477.696 -1471.140 -1464.686 -1458.179 -1451.578 -1444.982
+[36] -1438.344 -1431.698 -1425.079 -1418.433 -1411.723 -1404.989 -1398.240
+[43] -1391.466 -1384.683 -1377.899
+[1] "BEST MODEL VARIABLES:"
+[1] "artist_count"         "years_since_release"  "in_spotify_playlists"
+[4] "in_spotify_charts"    "in_apple_playlists"   "in_shazam_charts"    
+[7] "energy_."            
+
+
+[1] "------------- FINAL MODEL --------------"
+
+Call:
+lm(formula = best_model_formula, data = new_data)
+
+Residuals:
+       Min         1Q     Median         3Q        Max 
+-697959007 -110634565  -31652961   85293847  669132022 
+
+Coefficients:
+                      Estimate Std. Error t value Pr(>|t|)    
+(Intercept)          245098333   27696976   8.849  < 2e-16 ***
+artist_count         -36281925    7216418  -5.028 6.02e-07 ***
+years_since_release   -4514981     705245  -6.402 2.50e-10 ***
+in_spotify_playlists     42502       1546  27.488  < 2e-16 ***
+in_spotify_charts      4171255     428779   9.728  < 2e-16 ***
+in_apple_playlists     2418300     123232  19.624  < 2e-16 ***
+in_shazam_charts       -555700      49923 -11.131  < 2e-16 ***
+energy_.              -1191434     393483  -3.028  0.00253 ** 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 189100000 on 876 degrees of freedom
+Multiple R-squared:  0.8415,    Adjusted R-squared:  0.8402 
+F-statistic: 664.4 on 7 and 876 DF,  p-value: < 2.2e-16
