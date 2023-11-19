@@ -20,18 +20,18 @@ Branch: Bitte ein Branch pro Task alla `feat/kurzbeschreibung-task`
 |--|--|--|--|--|
 | README initialisieren | Doku | @yingrjimsch | In Arbeit | main |
 | Datenvisualisierung | Doku | annahfab | In Arbeit | feat/data-visualization |
-| Inkonsistente, Fehlerhafte, Missing Daten dokumentieren und bereinigen | Datenbereinigung | waldbsaf, vonwareb | In Arbeit | feat/data-cleaning-task
-| Alle Werte "messbar" machen, transformieren | Datenbereinigung | waldbsaf, vonwareb | In Arbeit | feat/data-cleaning-task
-| Encoding fixen (z.B. Trackname) | Datenbereinigung | waldbsaf, vonwareb | In Arbeit |m feat/data-cleaning-task
-| Datentypen in R auf Korrektheit prüfen | Datenbereinigung | waldbsaf, vonwareb | In Arbeit | feat/data-cleaning-task
-| Verteilung, Symetrie, Ausreisser pro Prädiktor plotten und beschreiben | Plausibilisieren | waldbsaf, vonwareb | In Arbeit | feat/data-cleaning-task
-| Fehlende Variablen beschreiben | Plausibilisieren | waldbsaf, vonwareb | waldbsaf, vonwareb | feat/data-cleaning-task
+| Inkonsistente, Fehlerhafte, Missing Daten dokumentieren und bereinigen | Datenbereinigung | waldbsaf, vonwareb | Testbereit | feat/data-cleaning-task
+| Alle Werte "messbar" machen, transformieren | Datenbereinigung | waldbsaf, vonwareb | Testbereit | feat/data-cleaning-task
+| Encoding fixen (z.B. Trackname) | Datenbereinigung | waldbsaf, vonwareb | Testbereit |m feat/data-cleaning-task
+| Datentypen in R auf Korrektheit prüfen | Datenbereinigung | waldbsaf, vonwareb | Testbereit | feat/data-cleaning-task
+| Verteilung, Symetrie, Ausreisser pro Prädiktor plotten und beschreiben | Plausibilisieren | waldbsaf, vonwareb | Testbereit | feat/data-cleaning-task
+| Fehlende Variablen beschreiben | Plausibilisieren | waldbsaf, vonwareb | Testbereit | feat/data-cleaning-task
 | Lineare Regression | Vorhersagemethoden | annahfab | needless? |
 | Multivariante Regression | Vorhersagemethoden | annahfab | in Arbeit | feat/models
 | Generalisiertes Additives Modell | Vorhersagemethoden | | |
 | K-nearest neighbours | Vorhersagemethoden | yingrjimsch | Geplant |
 | CART Regressionsbaum | Vorhersagemethoden | vonwareb | in Arbeit| feat/regression-tree-task
-| Bagged CART Regressionsbaum | Vorhersagemethoden | vonwareb| Geplant|
+| Bagged CART Regressionsbaum | Vorhersagemethoden | vonwareb| in Arbeit|
 | Neurales Netzwerk | Vorhersagemethoden | | |
 | Test / Training Split | Vorhersagemethoden | | |
 | Literaturvergleich der Resultate | Doku | | |
