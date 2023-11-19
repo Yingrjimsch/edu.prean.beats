@@ -129,7 +129,7 @@ generateBaggedRegressionTree <- function(dataframe, splitfactor, target_var, met
 ###################################################################################################################
 
 RMSEs <- c() # Vektor um alle RMSE's der Modelle abzulegen
-ctrl <- trainControl(method = "cv",  number = 50) 
+ctrl <- trainControl(method = "cv",  number = 40) 
 
 ####################################################################################################################
 
@@ -138,7 +138,7 @@ ctrl <- trainControl(method = "cv",  number = 50)
 
 ####################################################################################################################
 
-result_with_trans_with_scaling <- generateBaggedRegressionTree(spotify_songs_cleaned_with_trans, 0.8, "streams", "treebag", ctrl, "random", scaling = TRUE, isTargetTransformed = TRUE )
+result_with_trans_with_scaling <- generateBaggedRegressionTree(spotify_songs_cleaned_with_trans, 0.8, "streams", "treebag", ctrl, "grid", scaling = TRUE, isTargetTransformed = TRUE )
 
 print(paste("MSE (with transformation with & with scaling): ", result_with_trans_with_scaling$mse))
 print(paste("RMSE (with transformation with & with scaling): ", result_with_trans_with_scaling$rmse))
@@ -154,7 +154,7 @@ RMSEs["spotify_songs_cleaned_with_trans_with_scaling"] <- result_with_trans_with
 
 ####################################################################################################################
 
-result_with_trans_without_scaling <- generateBaggedRegressionTree(spotify_songs_cleaned_with_trans, 0.8, "streams", "treebag", ctrl, "random", scaling = FALSE, isTargetTransformed = TRUE )
+result_with_trans_without_scaling <- generateBaggedRegressionTree(spotify_songs_cleaned_with_trans, 0.8, "streams", "treebag", ctrl, "grid", scaling = FALSE, isTargetTransformed = TRUE )
 
 print(paste("MSE (with transformation without & without scaling): ", result_with_trans_without_scaling$mse))
 print(paste("RMSE (with transformation without & without scaling): ", result_with_trans_without_scaling$rmse))
@@ -171,7 +171,7 @@ RMSEs["spotify_songs_cleaned_with_trans_without_scaling"] <- result_with_trans_w
 
 ####################################################################################################################
 
-result_with_trans_optima_with_scaling <- generateBaggedRegressionTree(spotify_songs_cleaned_with_trans_optima, 0.8, "streams", "treebag", ctrl, "random", scaling = TRUE, isTargetTransformed = TRUE )
+result_with_trans_optima_with_scaling <- generateBaggedRegressionTree(spotify_songs_cleaned_with_trans_optima, 0.8, "streams", "treebag", ctrl, "grid", scaling = TRUE, isTargetTransformed = TRUE )
 
 print(paste("MSE (with transformation with & with scaling): ", result_with_trans_optima_with_scaling$mse))
 print(paste("RMSE (with transformation with & with scaling): ", result_with_trans_optima_with_scaling$rmse))
@@ -188,7 +188,7 @@ RMSEs["spotify_songs_cleaned_with_trans_optima_with_scaling"] <- result_with_tra
 
 ####################################################################################################################
 
-result_with_trans_optima_without_scaling <- generateBaggedRegressionTree(spotify_songs_cleaned_with_trans_optima, 0.8, "streams", "treebag", ctrl, "random", scaling = FALSE, isTargetTransformed = TRUE )
+result_with_trans_optima_without_scaling <- generateBaggedRegressionTree(spotify_songs_cleaned_with_trans_optima, 0.8, "streams", "treebag", ctrl, "grid", scaling = FALSE, isTargetTransformed = TRUE )
 
 print(paste("MSE (with transformation without & without scaling): ", result_with_trans_optima_without_scaling$mse))
 print(paste("RMSE (with transformation without & without scaling): ", result_with_trans_optima_without_scaling$rmse))
@@ -205,7 +205,7 @@ RMSEs["spotify_songs_cleaned_with_trans_optima_without_scaling"] <- result_with_
 
 ####################################################################################################################
 
-result_without_trans_with_scaling <- generateBaggedRegressionTree(spotify_songs_cleaned_without_trans, 0.8, "streams", "treebag", ctrl, "random", scaling = TRUE, isTargetTransformed = FALSE )
+result_without_trans_with_scaling <- generateBaggedRegressionTree(spotify_songs_cleaned_without_trans, 0.8, "streams", "treebag", ctrl, "grid", scaling = TRUE, isTargetTransformed = FALSE )
 
 print(paste("MSE (with transformation with & with scaling): ", result_without_trans_with_scaling$mse))
 print(paste("RMSE (with transformation with & with scaling): ", result_without_trans_with_scaling$rmse))
@@ -222,7 +222,7 @@ RMSEs["spotify_songs_cleaned_without_trans_with_scaling"] <- result_without_tran
 
 ####################################################################################################################
 
-result_without_trans_without_scaling <- generateBaggedRegressionTree(spotify_songs_cleaned_without_trans, 0.8, "streams", "treebag", ctrl, "random", scaling = FALSE, isTargetTransformed = FALSE )
+result_without_trans_without_scaling <- generateBaggedRegressionTree(spotify_songs_cleaned_without_trans, 0.8, "streams", "treebag", ctrl, "grid", scaling = FALSE, isTargetTransformed = FALSE )
 
 print(paste("MSE (with transformation with & without scaling): ", result_without_trans_without_scaling$mse))
 print(paste("RMSE (with transformation with & without scaling): ", result_without_trans_without_scaling$rmse))
