@@ -71,18 +71,26 @@ bagging <- function(dataframe, target_var,  ctrl, method, search) {
   )
 }
 
-plottingQualityMass <- function(rmseVector, value) {
+plottingQualityMass <- function(qualityVector, value, savePath) {
   # Umwandeln der Liste in einen Dataframe
-  rmseDf <- data.frame(Model = names(RMSEs), RMSE = unlist(RMSEs))
+  qualityDf <- data.frame(Model = names(qualityVector), value = qualityVector)
   
-  ggplot(rmseDf, aes(x = Model, y = RMSE, fill = Model)) +
+  # Erstellen des Plots
+  plot <- ggplot(qualityDf, aes(x = Model, y = value, fill = Model)) +
     geom_bar(stat = "identity") +
     theme_minimal() +
-    labs(title = "Vergleich der RMSE-Werte verschiedener Modelle",
+    labs(title = paste("Vergleich der", value, "-Werte verschiedener Modelle"),
          x = "Modell",
          y = value)
+  
+  # Speichern des Plots als PNG
+  ggsave(filename = paste0("Bagged_RegressionTree/quality_comparison_", value, ".png"),
+         plot = plot,
+         device = "png",
+         width = 10,
+         height = 6,
+         units = "in")
 }
-
 
 
 
@@ -90,7 +98,20 @@ plottingQualityMass <- function(rmseVector, value) {
 
 
 generateBaggedRegressionTree <- function(dataframe, splitfactor, target_var, method, ctrl, search, scaling = TRUE, isTargetTransformed = TRUE) {
-    if(scaling){
+  
+  folder_name <- "Bagged_RegressionTree"
+  
+  if (!dir.exists(folder_name)) {
+    
+    dir.create(folder_name)
+    
+  }
+  
+  file_name <- deparse(substitute(dataframe))
+  
+  path_name <-paste0(folder_name, "/", file_name )
+  
+  if(scaling){
       dataframe <- scalingNumericalPredictors(dataframe = dataframe, target_var = target_var) 
     }
     splittedData <- splittingDataframe(dataframe = dataframe, splitfactor = splitfactor )
@@ -98,9 +119,13 @@ generateBaggedRegressionTree <- function(dataframe, splitfactor, target_var, met
     testData <- splittedData$testData
     
     bagged_tree <- bagging(trainData, target_var,  ctrl, method, search)
+    print(bagged_tree)
     
     # Plot der entscheidensten Prädiktoren
-    plot(varImp(bagged_tree), 20)
+    
+    full_filename <- paste0(path_name, "_important_vars.png")
+    png(file = full_filename, width = 800, height = 600)
+    plot(varImp(bagged_tree), 20, main = paste0(file_name, "_important_vars"))
     
     pred <- predict(bagged_tree, newdata = testData)
     actual <- testData[[target_var]]
@@ -111,7 +136,7 @@ generateBaggedRegressionTree <- function(dataframe, splitfactor, target_var, met
       actual <- backtrans$actual
     }
     
-    # Berechnung des RMSE
+    # Berechnung des MAE, MSE, RMSE
     mse <- mean((pred - actual)^2)
     rmse <- sqrt(mse)
     
@@ -128,7 +153,9 @@ generateBaggedRegressionTree <- function(dataframe, splitfactor, target_var, met
 
 ###################################################################################################################
 
+MSEs <- c() # Vektor um alle MSE's der Modelle abzulegen
 RMSEs <- c() # Vektor um alle RMSE's der Modelle abzulegen
+
 ctrl <- trainControl(method = "cv",  number = 40) 
 
 ####################################################################################################################
@@ -143,9 +170,8 @@ result_with_trans_with_scaling <- generateBaggedRegressionTree(spotify_songs_cle
 print(paste("MSE (with transformation with & with scaling): ", result_with_trans_with_scaling$mse))
 print(paste("RMSE (with transformation with & with scaling): ", result_with_trans_with_scaling$rmse))
 
-
+MSEs["spotify_songs_cleaned_with_trans_with_scaling"] <- result_with_trans_with_scaling$mse
 RMSEs["spotify_songs_cleaned_with_trans_with_scaling"] <- result_with_trans_with_scaling$rmse
-
 
 ####################################################################################################################
 
@@ -159,10 +185,8 @@ result_with_trans_without_scaling <- generateBaggedRegressionTree(spotify_songs_
 print(paste("MSE (with transformation without & without scaling): ", result_with_trans_without_scaling$mse))
 print(paste("RMSE (with transformation without & without scaling): ", result_with_trans_without_scaling$rmse))
 
-
+MSEs["spotify_songs_cleaned_with_trans_without_scaling"] <- result_with_trans_without_scaling$mse
 RMSEs["spotify_songs_cleaned_with_trans_without_scaling"] <- result_with_trans_without_scaling$rmse
-
-
 
 ####################################################################################################################
 
@@ -176,9 +200,8 @@ result_with_trans_optima_with_scaling <- generateBaggedRegressionTree(spotify_so
 print(paste("MSE (with transformation with & with scaling): ", result_with_trans_optima_with_scaling$mse))
 print(paste("RMSE (with transformation with & with scaling): ", result_with_trans_optima_with_scaling$rmse))
 
-
+MSEs["spotify_songs_cleaned_with_trans_optima_with_scaling"] <- result_with_trans_optima_with_scaling$mse
 RMSEs["spotify_songs_cleaned_with_trans_optima_with_scaling"] <- result_with_trans_optima_with_scaling$rmse
-
 
 
 ####################################################################################################################
@@ -193,10 +216,8 @@ result_with_trans_optima_without_scaling <- generateBaggedRegressionTree(spotify
 print(paste("MSE (with transformation without & without scaling): ", result_with_trans_optima_without_scaling$mse))
 print(paste("RMSE (with transformation without & without scaling): ", result_with_trans_optima_without_scaling$rmse))
 
-
+MSEs["spotify_songs_cleaned_with_trans_optima_without_scaling"] <- result_with_trans_optima_without_scaling$mse
 RMSEs["spotify_songs_cleaned_with_trans_optima_without_scaling"] <- result_with_trans_optima_without_scaling$rmse
-
-
 
 ####################################################################################################################
 
@@ -210,10 +231,8 @@ result_without_trans_with_scaling <- generateBaggedRegressionTree(spotify_songs_
 print(paste("MSE (with transformation with & with scaling): ", result_without_trans_with_scaling$mse))
 print(paste("RMSE (with transformation with & with scaling): ", result_without_trans_with_scaling$rmse))
 
-
+MSEs["spotify_songs_cleaned_without_trans_with_scaling"] <- result_without_trans_with_scaling$mse
 RMSEs["spotify_songs_cleaned_without_trans_with_scaling"] <- result_without_trans_with_scaling$rmse
-
-
 
 ####################################################################################################################
 
@@ -227,10 +246,10 @@ result_without_trans_without_scaling <- generateBaggedRegressionTree(spotify_son
 print(paste("MSE (with transformation with & without scaling): ", result_without_trans_without_scaling$mse))
 print(paste("RMSE (with transformation with & without scaling): ", result_without_trans_without_scaling$rmse))
 
-
+MSEs["spotify_songs_cleaned_without_trans_without_scaling"] <- result_without_trans_without_scaling$mse
 RMSEs["spotify_songs_cleaned_without_trans_without_scaling"] <- result_without_trans_without_scaling$rmse
 
-
+plottingQualityMass(MSEs, "MSE")
 plottingQualityMass(RMSEs, "RMSE")
 
 
