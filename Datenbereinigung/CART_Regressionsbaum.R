@@ -131,17 +131,27 @@ backtransformation <- function(pred, actual){
   
 }
 
-plottingQualityMass <- function(rmseVector, value) {
+plottingQualityMass <- function(rmseVector, value, savePath) {
   # Umwandeln der Liste in einen Dataframe
   qualityDf <- data.frame(Model = names(rmseVector), value = rmseVector)
   
-  ggplot(qualityDf, aes(x = Model, y = value, fill = Model)) +
+  # Erstellen des Plots
+  plot <- ggplot(qualityDf, aes(x = Model, y = value, fill = Model)) +
     geom_bar(stat = "identity") +
     theme_minimal() +
     labs(title = paste("Vergleich der", value, "-Werte verschiedener Modelle"),
          x = "Modell",
          y = value)
+  
+  # Speichern des Plots als PNG
+  ggsave(filename = paste0("RegressionTree/quality_comparison_", value, ".png"),
+         plot = plot,
+         device = "png",
+         width = 10,
+         height = 6,
+         units = "in")
 }
+
 
 
 ################################ Main Funktion ################################
@@ -149,6 +159,18 @@ plottingQualityMass <- function(rmseVector, value) {
 
 # Erstellen von Plots je nach Prediktor (numerisch oder kategoriell) und speichern als png
 generateOptimalRegressionTree <- function(dataframe, splitfactor, target_var, scaling = TRUE, isTargetTransformed = TRUE, minSplitSequence, maxDepthSequence) {
+  folder_name <- "RegressionTree"
+  
+  if (!dir.exists(folder_name)) {
+    
+    dir.create(folder_name)
+    
+  }
+  
+  file_name <- deparse(substitute(dataframe))
+  
+  path_name <-paste0(folder_name, "/", file_name )
+  
   if(scaling){
     dataframe <- scalingNumericalPredictors(dataframe = dataframe, target_var = target_var) 
   }
@@ -169,6 +191,8 @@ generateOptimalRegressionTree <- function(dataframe, splitfactor, target_var, sc
   print(base_tree)
 
   print("####################### Plot Base Tree ###################")
+  full_filename <- paste0(path_name, "_base_tree.png")
+  png(file = full_filename, width = 800, height = 600)
   rpart.plot(base_tree)
 
   print("####################### cp Table Base Tree ###################")
@@ -176,6 +200,8 @@ generateOptimalRegressionTree <- function(dataframe, splitfactor, target_var, sc
 
 
   print("####################### Plot cp Base Tree ###################")
+  full_filename <- paste0(path_name, "_cptable_base_tree.pdf")
+  pdf(file = full_filename, width = 800, height = 600)
   plotcp(base_tree)
 
 
@@ -193,6 +219,8 @@ generateOptimalRegressionTree <- function(dataframe, splitfactor, target_var, sc
   print(full_tree$cptable)
 
   print("####################### Plot cp Full Tree ###################")
+  full_filename <- paste0(path_name, "_cptable_full_tree.pdf")
+  pdf(file = full_filename, width = 800, height = 600)
   plotcp(full_tree)
 
 
@@ -225,6 +253,8 @@ generateOptimalRegressionTree <- function(dataframe, splitfactor, target_var, sc
   print(optimal_tree)
 
   print("####################### Plot Optimal Tree ###################")
+  full_filename <- paste0(path_name, "_optimal_tree.png")
+  png(file = full_filename, width = 800, height = 600)
   rpart.plot(optimal_tree)
 
   pred <- predict(optimal_tree, newdata = testData)
@@ -238,6 +268,8 @@ generateOptimalRegressionTree <- function(dataframe, splitfactor, target_var, sc
   # Berechnung des RMSE
   mse <- mean((pred - actual)^2)
   rmse <- sqrt(mse)
+  
+  dev.off()
 
   return(list(optimal_tree = optimal_tree, minSplit = best_minSplit, maxdepth = best_maxdepth, cp = best_cp,  mse = mse, rmse = rmse))
 }
