@@ -139,6 +139,7 @@ plottingQualityMass <- function(qualityVector, value, savePath) {
   plot <- ggplot(qualityDf, aes(x = Model, y = value, fill = Model)) +
     geom_bar(stat = "identity") +
     theme_minimal() +
+    theme(axis.text.x = element_blank()) +
     labs(title = paste("Vergleich der", value, "-Werte verschiedener Modelle"),
          x = "Modell",
          y = value)
@@ -202,7 +203,8 @@ generateOptimalRegressionTree <- function(dataframe, splitfactor, target_var, sc
   print("####################### Plot cp Base Tree ###################")
   full_filename <- paste0(path_name, "_cptable_base_tree.png")
   png(file = full_filename, width = 800, height = 600)
-  plotcp(base_tree, main = paste0(file_name,  "_cptable_base_tree"))
+  plotcp(base_tree, main = "")
+  title(main = paste0(file_name, "_cptable_base_tree"), line = -1) 
 
 
   full_tree <- rpart(
@@ -221,7 +223,8 @@ generateOptimalRegressionTree <- function(dataframe, splitfactor, target_var, sc
   print("####################### Plot cp Full Tree ###################")
   full_filename <- paste0(path_name, "_cptable_full_tree.png")
   png(file = full_filename, width = 800, height = 600)
-  plotcp(full_tree, main = paste0(file_name, "_cptable_full_tree"))
+  plotcp(full_tree, main = "")
+  title(main = paste0(file_name, "_cptable_full_tree"), line = -1) 
 
 
   results <- generateTreesForGridSearch(trainData, minSplitSequence, maxDepthSequence)
@@ -405,7 +408,7 @@ print(paste("MSE (without transformation & without scaling): ", result_without_t
 print(paste("RMSE (without transformation &  without scaling): ", result_without_trans_without_scaling$rmse))
 
 MSEs["spotify_songs_cleaned_without_trans_without_scaling"] <- result_without_trans_without_scaling$mse
-RMSEs["spotify_songs_cleaned_without_trans_without_scaling"] <- result_without_trans_without_scaling$rmse
+RMSEs["spotify_songs_cleaned_without_trans_scaling"] <- result_without_trans_without_scaling$rmse
 
 
 plottingQualityMass(MSEs, "MSE")
