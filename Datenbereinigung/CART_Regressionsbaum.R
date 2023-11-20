@@ -131,9 +131,9 @@ backtransformation <- function(pred, actual){
   
 }
 
-plottingQualityMass <- function(rmseVector, value, savePath) {
+plottingQualityMass <- function(qualityVector, value, savePath) {
   # Umwandeln der Liste in einen Dataframe
-  qualityDf <- data.frame(Model = names(rmseVector), value = rmseVector)
+  qualityDf <- data.frame(Model = names(qualityVector), value = qualityVector)
   
   # Erstellen des Plots
   plot <- ggplot(qualityDf, aes(x = Model, y = value, fill = Model)) +
@@ -193,16 +193,16 @@ generateOptimalRegressionTree <- function(dataframe, splitfactor, target_var, sc
   print("####################### Plot Base Tree ###################")
   full_filename <- paste0(path_name, "_base_tree.png")
   png(file = full_filename, width = 800, height = 600)
-  rpart.plot(base_tree)
+  rpart.plot(base_tree, main = paste0(file_name, "_base_tree"))
 
   print("####################### cp Table Base Tree ###################")
   print(base_tree$cptable)
 
 
   print("####################### Plot cp Base Tree ###################")
-  full_filename <- paste0(path_name, "_cptable_base_tree.pdf")
-  pdf(file = full_filename, width = 800, height = 600)
-  plotcp(base_tree)
+  full_filename <- paste0(path_name, "_cptable_base_tree.png")
+  png(file = full_filename, width = 800, height = 600)
+  plotcp(base_tree, main = paste0(file_name,  "_cptable_base_tree"))
 
 
   full_tree <- rpart(
@@ -219,9 +219,9 @@ generateOptimalRegressionTree <- function(dataframe, splitfactor, target_var, sc
   print(full_tree$cptable)
 
   print("####################### Plot cp Full Tree ###################")
-  full_filename <- paste0(path_name, "_cptable_full_tree.pdf")
-  pdf(file = full_filename, width = 800, height = 600)
-  plotcp(full_tree)
+  full_filename <- paste0(path_name, "_cptable_full_tree.png")
+  png(file = full_filename, width = 800, height = 600)
+  plotcp(full_tree, main = paste0(file_name, "_cptable_full_tree"))
 
 
   results <- generateTreesForGridSearch(trainData, minSplitSequence, maxDepthSequence)
@@ -255,7 +255,7 @@ generateOptimalRegressionTree <- function(dataframe, splitfactor, target_var, sc
   print("####################### Plot Optimal Tree ###################")
   full_filename <- paste0(path_name, "_optimal_tree.png")
   png(file = full_filename, width = 800, height = 600)
-  rpart.plot(optimal_tree)
+  rpart.plot(optimal_tree, main = paste0(file_name, "_optimal_tree"))
 
   pred <- predict(optimal_tree, newdata = testData)
   actual <- testData[[target_var]]
