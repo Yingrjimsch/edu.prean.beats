@@ -132,12 +132,14 @@ backtransformation <- function(pred, actual){
 }
 
 plottingQualityMass <- function(qualityVector, value, savePath) {
+  color <- brewer.pal(6, "PRGn")
   # Umwandeln der Liste in einen Dataframe
   qualityDf <- data.frame(Model = names(qualityVector), value = qualityVector)
   
   # Erstellen des Plots
   plot <- ggplot(qualityDf, aes(x = Model, y = value, fill = Model)) +
     geom_bar(stat = "identity") +
+    scale_fill_manual(values = color) +
     theme_minimal() +
     theme(axis.text.x = element_blank()) +
     labs(title = paste("Vergleich der", value, "-Werte verschiedener Modelle"),
