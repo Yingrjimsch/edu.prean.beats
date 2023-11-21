@@ -17,6 +17,7 @@ library("ipred")
 library("caret")       
 library("Metrics")
 library("ggplot2")
+library("RColorBrewer")
 
 
 ######################### Einlesen der RData Dateien ##########################
@@ -72,13 +73,16 @@ bagging <- function(dataframe, target_var,  ctrl, method, search) {
 }
 
 plottingQualityMass <- function(qualityVector, value, savePath) {
+  color <- brewer.pal(6, "PRGn")
   # Umwandeln der Liste in einen Dataframe
   qualityDf <- data.frame(Model = names(qualityVector), value = qualityVector)
   
   # Erstellen des Plots
   plot <- ggplot(qualityDf, aes(x = Model, y = value, fill = Model)) +
     geom_bar(stat = "identity") +
+    scale_fill_manual(values = color) +
     theme_minimal() +
+    theme(axis.text.x = element_blank()) +
     labs(title = paste("Vergleich der", value, "-Werte verschiedener Modelle"),
          x = "Modell",
          y = value)
@@ -125,7 +129,7 @@ generateBaggedRegressionTree <- function(dataframe, splitfactor, target_var, met
     
     full_filename <- paste0(path_name, "_important_vars.png")
     png(file = full_filename, width = 800, height = 600)
-    plot(varImp(bagged_tree), 20, main = paste0(file_name, "_important_vars"))
+    plot(varImp(bagged_tree), 20, main = paste0(file_name, "_important_vars.png"))
     
     pred <- predict(bagged_tree, newdata = testData)
     actual <- testData[[target_var]]
@@ -156,7 +160,7 @@ generateBaggedRegressionTree <- function(dataframe, splitfactor, target_var, met
 MSEs <- c() # Vektor um alle MSE's der Modelle abzulegen
 RMSEs <- c() # Vektor um alle RMSE's der Modelle abzulegen
 
-ctrl <- trainControl(method = "cv",  number = 40) 
+ctrl <- trainControl(method = "cv",  number = 15) 
 
 ####################################################################################################################
 
