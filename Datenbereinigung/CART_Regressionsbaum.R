@@ -36,7 +36,6 @@ str(spotify_songs_cleaned_without_trans)
 
 
 # Standardisieren der numerischen Werte im Dataframe
-
 scalingNumericalPredictors <- function(dataframe, target_var) {
   dataframe_scaled <- dataframe
   
@@ -55,7 +54,6 @@ scalingNumericalPredictors <- function(dataframe, target_var) {
 
 
 # Aufteilung der Daten in Trainings- und Testdatensatz
-
 splittingDataframe <- function(dataframe, splitfactor) {
   set.seed(123) # Setzt einen Seed für reproduzierbare Ergebnisse
   index <- sample(1:nrow(dataframe), size = floor(splitfactor * nrow(dataframe)))
@@ -75,18 +73,17 @@ generateHyperGrid <- function(minSplitSequence, maxDepthSequence) {
 
 
 # Erstellen einen Grids von Trees für späteren Grid Search
-# total number of combinations
 
 generateTreesForGridSearch <- function(trainData, minSplitSequence, maxDepthSequence) {
   trees <- list()
   hyper_grid <- generateHyperGrid(minSplitSequence, maxDepthSequence)
   for (i in 1:nrow(hyper_grid)) {
     
-    # get minsplit, maxdepth values at row i
+  
     minsplit <- hyper_grid$minsplit[i]
     maxdepth <- hyper_grid$maxdepth[i]
     
-    # train a model and store in the list
+    # trainieren des Models 
     trees[[i]] <- rpart(
       formula = streams ~ .,
       data    = trainData,
@@ -97,18 +94,19 @@ generateTreesForGridSearch <- function(trainData, minSplitSequence, maxDepthSequ
   return(list(hyper_grid = hyper_grid, trees = trees)) 
 }
 
-# function to get optimal cp
+# besten cp erhalten
 get_cp <- function(x) {
   min    <- which.min(x$cptable[, "xerror"])
   cp <- x$cptable[min, "CP"] 
 }
 
-# function to get minimum error
+# minimaler Fehler erhalten
 get_min_error <- function(x) {
   min    <- which.min(x$cptable[, "xerror"])
   xerror <- x$cptable[min, "xerror"] 
 }
 
+# aus allen verwndeten Bäumen die n- besten extrahieren
 getTopNTrees <- function(hyper_grid, trees) {
   hyper_grid %>%
     mutate(
@@ -119,7 +117,7 @@ getTopNTrees <- function(hyper_grid, trees) {
     top_n(-5, wt = error)
 }
 
-
+# Rücktransformation der mittels Logarithmus transformierten Vorhersagen und akteulle Werte
 backtransformation <- function(pred, actual){
   
   log_pred <- pred 
@@ -131,29 +129,30 @@ backtransformation <- function(pred, actual){
   
 }
 
-plottingQualityMass <- function(qualityVector, value, savePath) {
-  color <- brewer.pal(6, "PRGn")
-  # Umwandeln der Liste in einen Dataframe
-  qualityDf <- data.frame(Model = names(qualityVector), value = qualityVector)
-  
-  # Erstellen des Plots
-  plot <- ggplot(qualityDf, aes(x = Model, y = value, fill = Model)) +
-    geom_bar(stat = "identity") +
-    scale_fill_manual(values = color) +
-    theme_minimal() +
-    theme(axis.text.x = element_blank()) +
-    labs(title = paste("Vergleich der", value, "-Werte verschiedener Modelle"),
-         x = "Modell",
-         y = value)
-  
-  # Speichern des Plots als PNG
-  ggsave(filename = paste0("RegressionTree/quality_comparison_", value, ".png"),
-         plot = plot,
-         device = "png",
-         width = 10,
-         height = 6,
-         units = "in")
-}
+# Erstellen von Plots der Gütemasse (auskommentiert, da Werte zu hoch und dadurch deren Unterschiede in einem Diagramm kaum ersichtlich sind)
+# plottingQualityMass <- function(qualityVector, value, savePath) {
+#   color <- brewer.pal(6, "PRGn")
+#   # Umwandeln der Liste in einen Dataframe
+#   qualityDf <- data.frame(Model = names(qualityVector), value = qualityVector)
+#   
+#   # Erstellen des Plots
+#   plot <- ggplot(qualityDf, aes(x = Model, y = value, fill = Model)) +
+#     geom_bar(stat = "identity") +
+#     scale_fill_manual(values = color) +
+#     theme_minimal() +
+#     theme(axis.text.x = element_blank()) +
+#     labs(title = paste("Vergleich der", value, "-Werte verschiedener Modelle"),
+#          x = "Modell",
+#          y = value)
+#   
+#   # Speichern des Plots als PNG
+#   ggsave(filename = paste0("RegressionTree/quality_comparison_", value, ".png"),
+#          plot = plot,
+#          device = "png",
+#          width = 10,
+#          height = 6,
+#          units = "in")
+# }
 
 
 
@@ -217,7 +216,7 @@ generateOptimalRegressionTree <- function(dataframe, splitfactor, target_var, sc
   )
 
   print("#######################  Full Tree ###########################")
-  print(full_tree)
+  #print(full_tree)
 
   print("####################### cp Table Full Tree ###################")
   print(full_tree$cptable)
@@ -270,13 +269,14 @@ generateOptimalRegressionTree <- function(dataframe, splitfactor, target_var, sc
     pred <- backtrans$pred
     actual <- backtrans$actual
   }
-  # Berechnung des RMSE
+  # Berechnung des MAE, MSE und RMSE
+  mae <- mean(abs(pred - actual))
   mse <- mean((pred - actual)^2)
   rmse <- sqrt(mse)
   
   dev.off()
 
-  return(list(optimal_tree = optimal_tree, minSplit = best_minSplit, maxdepth = best_maxdepth, cp = best_cp,  mse = mse, rmse = rmse))
+  return(list(optimal_tree = optimal_tree, minSplit = best_minSplit, maxdepth = best_maxdepth, cp = best_cp, mae = mae, mse = mse, rmse = rmse))
 }
 
 ###################################################################################################################
@@ -286,8 +286,8 @@ generateOptimalRegressionTree <- function(dataframe, splitfactor, target_var, sc
 
 ###################################################################################################################
 
-RMSEs <- c() # Vektor um alle RMSE's der Modelle abzulegen
-MSEs <-c()
+#RMSEs <- c() # Vektor um alle RMSE's der Modelle abzulegen
+#MSEs <-c()
 
 ####################################################################################################################
 
@@ -302,11 +302,12 @@ result_with_trans_with_scaling <- generateOptimalRegressionTree(spotify_songs_cl
 print(paste("cp (with transformation & with scaling): ", result_with_trans_with_scaling$cp))
 print(paste("minsplit (with transformation & with scaling): ", result_with_trans_with_scaling$minSplit))
 print(paste("maxdepth (with transformation & with scaling): ", result_with_trans_with_scaling$maxdepth))
+print(paste("MAE (with transformation with & scaling): ", result_with_trans_with_scaling$mae))
 print(paste("MSE (with transformation with & scaling): ", result_with_trans_with_scaling$mse))
 print(paste("RMSE (with transformation with & scaling): ", result_with_trans_with_scaling$rmse))
 
-MSEs["spotify_songs_cleaned_with_trans_with_scaling"] <- result_with_trans_with_scaling$mse
-RMSEs["spotify_songs_cleaned_with_trans_with_scaling"] <- result_with_trans_with_scaling$rmse
+# MSEs["spotify_songs_cleaned_with_trans_with_scaling"] <- result_with_trans_with_scaling$mse
+# RMSEs["spotify_songs_cleaned_with_trans_with_scaling"] <- result_with_trans_with_scaling$rmse
 
 ####################################################################################################################
 
@@ -321,11 +322,12 @@ result_with_trans_without_scaling <- generateOptimalRegressionTree(spotify_songs
 print(paste("cp (with transformation & without scaling): ", result_with_trans_without_scaling$cp))
 print(paste("minsplit (with transformation & without scaling): ", result_with_trans_without_scaling$minSplit))
 print(paste("maxdepth (with transformation & without scaling): ", result_with_trans_without_scaling$maxdepth))
+print(paste("MAE (with transformation & without scaling): ", result_with_trans_without_scaling$mae))
 print(paste("MSE (with transformation & without scaling): ", result_with_trans_without_scaling$mse))
 print(paste("RMSE (with transformation & without scaling): ", result_with_trans_without_scaling$rmse))
 
-MSEs["spotify_songs_cleaned_with_trans_without_scaling"] <- result_with_trans_without_scaling$mse
-RMSEs["spotify_songs_cleaned_with_trans_without_scaling"] <- result_with_trans_without_scaling$rmse
+# MSEs["spotify_songs_cleaned_with_trans_without_scaling"] <- result_with_trans_without_scaling$mse
+# RMSEs["spotify_songs_cleaned_with_trans_without_scaling"] <- result_with_trans_without_scaling$rmse
 
 ####################################################################################################################
 
@@ -341,11 +343,12 @@ result_with_trans_optima_with_scaling <- generateOptimalRegressionTree(spotify_s
 print(paste("cp (with transformation & with scaling): ", result_with_trans_optima_with_scaling$cp))
 print(paste("minsplit (with transformation & with scaling): ", result_with_trans_optima_with_scaling$minSplit))
 print(paste("maxdepth (with transformation & with scaling): ", result_with_trans_optima_with_scaling$maxdepth))
+print(paste("MAE (with transformation & with scaling): ", result_with_trans_optima_with_scaling$mae))
 print(paste("MSE (with transformation & with scaling): ", result_with_trans_optima_with_scaling$mse))
 print(paste("RMSE (with transformation & with scaling): ", result_with_trans_optima_with_scaling$rmse))
 
-MSEs["spotify_songs_cleaned_with_trans_optima_with_scaling"] <- result_with_trans_optima_with_scaling$mse
-RMSEs["spotify_songs_cleaned_with_trans_optima_with_scaling"] <- result_with_trans_optima_with_scaling$rmse
+# MSEs["spotify_songs_cleaned_with_trans_optima_with_scaling"] <- result_with_trans_optima_with_scaling$mse
+# RMSEs["spotify_songs_cleaned_with_trans_optima_with_scaling"] <- result_with_trans_optima_with_scaling$rmse
 
 ####################################################################################################################
 
@@ -357,16 +360,16 @@ RMSEs["spotify_songs_cleaned_with_trans_optima_with_scaling"] <- result_with_tra
 
 result_with_trans_optima_without_scaling <- generateOptimalRegressionTree(spotify_songs_cleaned_with_trans_optima, 0.80, "streams", scaling = FALSE, isTargetTransformed = TRUE, minSplitSequence = seq(20, 100, 10), maxDepthSequence = seq(4, 10, 1))
 
-result_with_trans_optima_without_scaling
 
 print(paste("cp (with transformation & without scaling): ", result_with_trans_optima_without_scaling$cp))
 print(paste("minsplit (with transformation &  without scaling): ", result_with_trans_optima_without_scaling$minSplit))
 print(paste("maxdepth (with transformation & without scaling): ", result_with_trans_optima_without_scaling$maxdepth))
+print(paste("MAE (with transformation & without scaling): ", result_with_trans_optima_without_scaling$mae))
 print(paste("MSE (with transformation & without scaling): ", result_with_trans_optima_without_scaling$mse))
 print(paste("RMSE (with transformation &  without scaling): ", result_with_trans_optima_without_scaling$rmse))
 
-MSEs["spotify_songs_cleaned_with_trans_optima_without_scaling"] <- result_with_trans_optima_without_scaling$mse
-RMSEs["spotify_songs_cleaned_with_trans_optima_without_scaling"] <- result_with_trans_optima_without_scaling$rmse
+# MSEs["spotify_songs_cleaned_with_trans_optima_without_scaling"] <- result_with_trans_optima_without_scaling$mse
+# RMSEs["spotify_songs_cleaned_with_trans_optima_without_scaling"] <- result_with_trans_optima_without_scaling$rmse
 
 
 ####################################################################################################################
@@ -379,19 +382,17 @@ RMSEs["spotify_songs_cleaned_with_trans_optima_without_scaling"] <- result_with_
 
 result_without_trans_with_scaling <- generateOptimalRegressionTree(spotify_songs_cleaned_without_trans, 0.80, "streams", scaling = TRUE, isTargetTransformed = FALSE, minSplitSequence = seq(20, 100, 10), maxDepthSequence = seq(4, 10, 1))
 
-result_without_trans_with_scaling
 
 print(paste("cp (without transformation & with scaling): ", result_without_trans_with_scaling$cp))
 print(paste("minsplit (without transformation &  with scaling): ", result_without_trans_with_scaling$minSplit))
 print(paste("maxdepth (without transformation & with scaling): ", result_without_trans_with_scaling$maxdepth))
+print(paste("MAE (without transformation & with scaling): ", result_without_trans_with_scaling$mae))
 print(paste("MSE (without transformation & with scaling): ", result_without_trans_with_scaling$mse))
 print(paste("RMSE (without transformation &  with scaling): ", result_without_trans_with_scaling$rmse))
 
 
-MSEs["spotify_songs_cleaned_without_trans_with_scaling"] <- result_without_trans_with_scaling$mse
-RMSEs["spotify_songs_cleaned_without_trans_with_scaling"] <- result_without_trans_with_scaling$rmse
-
-
+# MSEs["spotify_songs_cleaned_without_trans_with_scaling"] <- result_without_trans_with_scaling$mse
+# RMSEs["spotify_songs_cleaned_without_trans_with_scaling"] <- result_without_trans_with_scaling$rmse
 
 ####################################################################################################################
 
@@ -406,15 +407,16 @@ result_without_trans_without_scaling <- generateOptimalRegressionTree(spotify_so
 print(paste("cp (without transformation & without scaling): ", result_without_trans_without_scaling$cp))
 print(paste("minsplit (without transformation &  without scaling): ", result_without_trans_without_scaling$minSplit))
 print(paste("maxdepth (without transformation & without scaling): ", result_without_trans_without_scaling$maxdepth))
+print(paste("MAE (without transformation & without scaling): ", result_without_trans_without_scaling$mae))
 print(paste("MSE (without transformation & without scaling): ", result_without_trans_without_scaling$mse))
 print(paste("RMSE (without transformation &  without scaling): ", result_without_trans_without_scaling$rmse))
 
-MSEs["spotify_songs_cleaned_without_trans_without_scaling"] <- result_without_trans_without_scaling$mse
-RMSEs["spotify_songs_cleaned_without_trans_scaling"] <- result_without_trans_without_scaling$rmse
+# MSEs["spotify_songs_cleaned_without_trans_without_scaling"] <- result_without_trans_without_scaling$mse
+# RMSEs["spotify_songs_cleaned_without_trans_scaling"] <- result_without_trans_without_scaling$rmse
 
 
-plottingQualityMass(MSEs, "MSE")
+# plottingQualityMass(MSEs, "MSE")
 
-plottingQualityMass(RMSEs, "RMSE")
+# plottingQualityMass(RMSEs, "RMSE")
 
 
