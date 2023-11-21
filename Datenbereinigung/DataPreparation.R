@@ -229,7 +229,7 @@ years_since_release <- (years_since_release^(0.2) -1) / 0.2
 
 model_years_since_release <- lm(log(streams) ~ years_since_release)
 summary(model_years_since_release)
-plot(model_years_since_release) # Normalplot sieht soweit gut aus; keine optimale Transformation möglich
+# plot(model_years_since_release) # Normalplot sieht soweit gut aus; keine optimale Transformation möglich
 
 # Hinzufügen von years_since_release den cleaned Dataframes (einmal Boxcox mit Lambda 0.2 und zweimal ohne Transformation)
 spotify_songs_cleaned_with_trans["years_since_release_boxcox"] <- (spotify_songs_man$years_since_release^(0.2) -1) / 0.2
@@ -566,9 +566,9 @@ summary(model_energy_.)
 # plot(model_energy_.) # beste Residualanalyse mit BoxCox Transformation mit Lambda 1.5
 
 # Hinzufügen von energy_. den cleaned Dataframes (einmal mit BoxCox Transformation und Lambda 1.5 und zweimal OHNE Transformation)
-spotify_songs_cleaned_with_trans["energy_."] <- spotify_songs$energy_.
+spotify_songs_cleaned_with_trans["energy_."] <- spotify_songs_man$energy_.
 spotify_songs_cleaned_with_trans_optima["energy_._boxcox"] <- (spotify_songs_man$energy_.^(1.5) - 1 )/1.5
-spotify_songs_cleaned_without_trans["energy_."] <- spotify_songs$energy_.
+spotify_songs_cleaned_without_trans["energy_."] <- spotify_songs_man$energy_.
 
 ### Prädiktor acousticness_. ### 
 # verwenden, bereits numerisch
@@ -596,7 +596,7 @@ summary(model_acousticness_.)
 # Hinzufügen von acousticness_. den beiden cleaned Dataframes (einmal MIT BoxCox Transformation mit Lambda 0.4 und einmal OHNE Transformation)
 spotify_songs_cleaned_with_trans["acousticness_._boxcox"] <- (spotify_songs_man$acousticness_.^0.4 - 1) / 0.4
 spotify_songs_cleaned_with_trans_optima["acousticness_."] <- spotify_songs_man$acousticness_.
-spotify_songs_cleaned_with_trans["acousticness_."] <- spotify_songs_man$acousticness_.
+spotify_songs_cleaned_without_trans["acousticness_."] <- spotify_songs_man$acousticness_.
 
 ### Prädiktor instrumentalness_. ###
 # verwerfen, da praktisch alle Werte = 0
