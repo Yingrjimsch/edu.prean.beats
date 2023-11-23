@@ -733,5 +733,3 @@ write.csv(spotify_songs_cleaned_with_trans, "spotify-2023_cleaned_with_trans.csv
 write.csv(spotify_songs_cleaned_with_trans_optima, "spotify-2023_cleaned_with_trans_optima.csv", row.names = FALSE)
 # csv mit Prädiktoren ohne Transformationen (ausser Zielvariable)
 write.csv(spotify_songs_cleaned_without_trans, "spotify-2023_cleaned_without_trans.csv", row.names = FALSE)
-
-
