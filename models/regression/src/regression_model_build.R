@@ -1,8 +1,8 @@
-
+#install.packages("leaps") Install if package not installed
 library(leaps)
 
-BASE_DIR <- "./edu.prean.beats/models/regression/"
-DIR_DATA_CLEANING <- "./edu.prean.beats/Datenbereinigung/"
+BASE_DIR <- "./models/regression/"
+DIR_DATA_CLEANING <- "./data/"
 SEPARATOR <- "-------------------------------------------------------"
 
 datasets = list(

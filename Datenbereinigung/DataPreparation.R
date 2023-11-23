@@ -16,7 +16,7 @@
 library(MASS)
 
 # Lesen des Rohdatensatzes (csv von kaggle)
-spotify_songs <- read.csv("spotify-2023.csv", encoding="latin1")
+spotify_songs <- read.csv("./data/spotify-2023.csv", encoding="latin1")
 
 # Kopie des Rohdatensatzes zwecks möglichen Manipulationen am Datensatz
 spotify_songs_man <- spotify_songs 
@@ -138,7 +138,7 @@ values_with_encoding_errors # alle spotify_songs$artist.s._name mit encoding err
 
 ### Prädiktor artist_name ###
 # ersetzen mit: streams/artist/Monat (zuerst muss encoding gefixt werden) mittels Web-Scraping
-listeners <- read.csv("cumulative_listeners.csv") # von spotify extrahierte Daten (nicht im ursprünglichen Datensatz enthalten)
+listeners <- read.csv("./data/cumulative_listeners.csv") # von spotify extrahierte Daten (nicht im ursprünglichen Datensatz enthalten)
 spotify_songs_man$listeners_cum <- listeners$cl # Streams pro Monat pro Interpret
 
 sum(is.na(spotify_songs_man$listeners_cum)) # missings erkennen -> 0
@@ -719,17 +719,17 @@ summary(model)
 ###############################################################################
 
 # RData mit teilweise transformierten Prädiktoren (nicht alle optimal)
-save(spotify_songs_cleaned_with_trans, file = "spotify_songs_cleaned_with_trans.RData")
+save(spotify_songs_cleaned_with_trans, file = "./data/spotify_songs_cleaned_with_trans.RData")
 # RData mit teilweise transformierten Prädiktoren (alle optimal)
-save(spotify_songs_cleaned_with_trans_optima, file = "spotify_songs_cleaned_with_trans_optima.RData")
+save(spotify_songs_cleaned_with_trans_optima, file = "./data/spotify_songs_cleaned_with_trans_optima.RData")
 # Rdata mit Prädiktoren ohne Transformationen (ausser Zielvariable)
-save(spotify_songs_cleaned_without_trans, file = "spotify_songs_cleaned_without_trans.RData")
+save(spotify_songs_cleaned_without_trans, file = "./data/spotify_songs_cleaned_without_trans.RData")
 
 
 
 # csv mit teilweise transformierten Prädiktoren (nicht alle optimal)
-write.csv(spotify_songs_cleaned_with_trans, "spotify-2023_cleaned_with_trans.csv", row.names = FALSE)
+write.csv(spotify_songs_cleaned_with_trans, "./data/spotify-2023_cleaned_with_trans.csv", row.names = FALSE)
 # csv mit teilweise transformierten Prädiktoren (alle optimal)
-write.csv(spotify_songs_cleaned_with_trans_optima, "spotify-2023_cleaned_with_trans_optima.csv", row.names = FALSE)
+write.csv(spotify_songs_cleaned_with_trans_optima, "./data/spotify-2023_cleaned_with_trans_optima.csv", row.names = FALSE)
 # csv mit Prädiktoren ohne Transformationen (ausser Zielvariable)
-write.csv(spotify_songs_cleaned_without_trans, "spotify-2023_cleaned_without_trans.csv", row.names = FALSE)
+write.csv(spotify_songs_cleaned_without_trans, "./data/spotify-2023_cleaned_without_trans.csv", row.names = FALSE)

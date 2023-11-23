@@ -15,9 +15,9 @@ library("RColorBrewer")
 ##########################################################################
 
 
-load("spotify_songs_cleaned_with_trans.RData")
-load("spotify_songs_cleaned_with_trans_optima.RData")
-load("spotify_songs_cleaned_without_trans.RData")
+load("./data/spotify_songs_cleaned_with_trans.RData")
+load("./data/spotify_songs_cleaned_with_trans_optima.RData")
+load("./data/spotify_songs_cleaned_without_trans.RData")
 
 str(spotify_songs_cleaned_with_trans)
 str(spotify_songs_cleaned_with_trans_optima)
@@ -39,7 +39,7 @@ color <- brewer.pal(11, "PRGn")
 create_plots <- function(dataframe, dependent_variable) {
   num_predictors <- ncol(dataframe)
   
-  folder_name <- deparse(substitute(dataframe))
+  folder_name <- paste0("./Datenbereinigung/visualization/", deparse(substitute(dataframe)))
   
   if (!dir.exists(folder_name)) {
     
