@@ -22,9 +22,9 @@ library("RColorBrewer")
 
 ######################### Einlesen der RData Dateien ##########################
 
-load("./data/spotify_songs_cleaned_with_trans.RData")
-load("./data/spotify_songs_cleaned_with_trans_optima.RData")
-load("./data/spotify_songs_cleaned_without_trans.RData")
+load("../../data/spotify_songs_cleaned_with_trans.RData")
+load("../../data/spotify_songs_cleaned_with_trans_optima.RData")
+load("../../data/spotify_songs_cleaned_without_trans.RData")
 
 
 # Kontrolle, ob Einlesen geklappt mittels anzeigen der Struktur der einzelnen Dataframes
@@ -89,30 +89,45 @@ bagging <- function(dataframe, target_var,  ctrl, method, search) {
   )
 }
 
-# Erstellen von Plots der Gütemasse (auskommentiert, da Werte zu hoch und dadurch deren Unterschiede in einem Diagramm kaum ersichtlich sind)
-# plottingQualityMass <- function(qualityVector, value, savePath) {
-#   color <- brewer.pal(6, "PRGn")
-#   # Umwandeln der Liste in einen Dataframe
-#   qualityDf <- data.frame(Model = names(qualityVector), value = qualityVector)
-#   
-#   # Erstellen des Plots
-#   plot <- ggplot(qualityDf, aes(x = Model, y = value, fill = Model)) +
-#     geom_bar(stat = "identity") +
-#     scale_fill_manual(values = color) +
-#     theme_minimal() +
-#     theme(axis.text.x = element_blank()) +
-#     labs(title = paste("Vergleich der", value, "-Werte verschiedener Modelle"),
-#          x = "Modell",
-#          y = value)
-#   
-#   # Speichern des Plots als PNG
-#   ggsave(filename = paste0("Bagged_RegressionTree/quality_comparison_", value, ".png"),
-#          plot = plot,
-#          device = "png",
-#          width = 10,
-#          height = 6,
-#          units = "in")
-# }
+# Plot observed vs predicted values
+observed_vs_predicted <- function(path_name, actual, pred) {
+  full_filename <- paste0(path_name, "_observed_vs_predicted.png")
+  png(file = full_filename, width = 800, height = 600)
+  plot <- ggplot(data = NULL, aes(x = actual, y = pred)) +
+    geom_text(label="★", color="orange", size=3) +  # Fügt die Punkte hinzu
+    geom_abline(intercept = 0, slope = 1, linetype = "dashed", color = "blue") + # Fügt eine y=x Linie hinzu
+    labs(x = "Observed", y = "Predicted", title = "Observed vs Predicted Plot") +
+    theme_minimal()
+  print(plot)
+  # Schließen der PNG-Aufzeichnung
+  dev.off()
+}
+
+#Erstellen von Plots der Gütemasse (auskommentiert, da Werte zu hoch und dadurch deren Unterschiede in einem Diagramm kaum ersichtlich sind)
+plottingQualityMass <- function(qualityVector, value, savePath) {
+  color <- brewer.pal(6, "PRGn")
+  # Umwandeln der Liste in einen Dataframe
+  qualityDf <- data.frame(Model = names(qualityVector), value = qualityVector)
+  
+  # Erstellen des Plots
+  plot <- ggplot(qualityDf, aes(x = Model, y = value, fill = Model)) +
+    geom_bar(stat = "identity", width = 0.7) +
+    scale_fill_manual(values = color) +
+    theme_minimal() +
+    theme(axis.text.x = element_blank()) +
+    labs(title = paste("Vergleich der", value, "-Werte verschiedener Modelle"),
+         x = "Modell",
+         y = value)
+  
+  # Speichern des Plots als PNG
+  ggsave(filename = paste0("img/quality_comparison_", value, ".png"),
+         plot = plot,
+         device = "png",
+         width = 10,
+         height = 6,
+         units = "in")
+}
+
 
 
 
@@ -121,7 +136,7 @@ bagging <- function(dataframe, target_var,  ctrl, method, search) {
 
 generateBaggedRegressionTree <- function(dataframe, splitfactor, target_var, method, ctrl, search, scaling = TRUE, isTargetTransformed = TRUE) {
   set.seed(123)
-  folder_name <- "./models/baggedRegressionTree/img"
+  folder_name <- "./img"
   
   if (!dir.exists(folder_name)) {
     
@@ -148,8 +163,11 @@ generateBaggedRegressionTree <- function(dataframe, splitfactor, target_var, met
     png(file = full_filename, width = 800, height = 600)
     plot(varImp(bagged_tree), 20, main = paste0(file_name, "_important_vars.png"))
     
+    dev.off()
+    
     pred <- predict(bagged_tree, newdata = testData)
     actual <- testData[[target_var]]
+    observed_vs_predicted(path_name, actual, pred)
 
     
     # falls Dataset mit log transformierter Zielvariable verwendet wird
@@ -179,8 +197,8 @@ generateBaggedRegressionTree <- function(dataframe, splitfactor, target_var, met
 
 ###################################################################################################################
 
-# MSEs <- c() # Vektor um alle MSE's der Modelle abzulegen
-# RMSEs <- c() # Vektor um alle RMSE's der Modelle abzulegen
+MSEs <- c() # Vektor um alle MSE's der Modelle abzulegen
+RMSEs <- c() # Vektor um alle RMSE's der Modelle abzulegen
 
 # Steuerung des Trainingsprozesses mit crossvalidation (cv) und einer Anzahl von k-folds (k = 15)
 ctrl <- trainControl(method = "cv",  number = 15) 
@@ -198,8 +216,8 @@ print(paste("MAE (with transformation with & with scaling): ", result_with_trans
 print(paste("MSE (with transformation with & with scaling): ", result_with_trans_with_scaling$mse))
 print(paste("RMSE (with transformation with & with scaling): ", result_with_trans_with_scaling$rmse))
 
-# MSEs["spotify_songs_cleaned_with_trans_with_scaling"] <- result_with_trans_with_scaling$mse
-# RMSEs["spotify_songs_cleaned_with_trans_with_scaling"] <- result_with_trans_with_scaling$rmse
+MSEs["spotify_songs_cleaned_with_trans_with_scaling"] <- result_with_trans_with_scaling$mse
+RMSEs["spotify_songs_cleaned_with_trans_with_scaling"] <- result_with_trans_with_scaling$rmse
 
 ####################################################################################################################
 
@@ -214,8 +232,8 @@ print(paste("MAE (with transformation without & without scaling): ", result_with
 print(paste("MSE (with transformation without & without scaling): ", result_with_trans_without_scaling$mse))
 print(paste("RMSE (with transformation without & without scaling): ", result_with_trans_without_scaling$rmse))
 
-# MSEs["spotify_songs_cleaned_with_trans_without_scaling"] <- result_with_trans_without_scaling$mse
-# RMSEs["spotify_songs_cleaned_with_trans_without_scaling"] <- result_with_trans_without_scaling$rmse
+MSEs["spotify_songs_cleaned_with_trans_without_scaling"] <- result_with_trans_without_scaling$mse
+RMSEs["spotify_songs_cleaned_with_trans_without_scaling"] <- result_with_trans_without_scaling$rmse
 
 ####################################################################################################################
 
@@ -230,8 +248,8 @@ print(paste("MAE (with transformation with & with scaling): ", result_with_trans
 print(paste("MSE (with transformation with & with scaling): ", result_with_trans_optima_with_scaling$mse))
 print(paste("RMSE (with transformation with & with scaling): ", result_with_trans_optima_with_scaling$rmse))
 
-# MSEs["spotify_songs_cleaned_with_trans_optima_with_scaling"] <- result_with_trans_optima_with_scaling$mse
-# RMSEs["spotify_songs_cleaned_with_trans_optima_with_scaling"] <- result_with_trans_optima_with_scaling$rmse
+MSEs["spotify_songs_cleaned_with_trans_optima_with_scaling"] <- result_with_trans_optima_with_scaling$mse
+RMSEs["spotify_songs_cleaned_with_trans_optima_with_scaling"] <- result_with_trans_optima_with_scaling$rmse
 
 
 ####################################################################################################################
@@ -247,8 +265,8 @@ print(paste("MAE (with transformation without & without scaling): ", result_with
 print(paste("MSE (with transformation without & without scaling): ", result_with_trans_optima_without_scaling$mse))
 print(paste("RMSE (with transformation without & without scaling): ", result_with_trans_optima_without_scaling$rmse))
 
-# MSEs["spotify_songs_cleaned_with_trans_optima_without_scaling"] <- result_with_trans_optima_without_scaling$mse
-# RMSEs["spotify_songs_cleaned_with_trans_optima_without_scaling"] <- result_with_trans_optima_without_scaling$rmse
+MSEs["spotify_songs_cleaned_with_trans_optima_without_scaling"] <- result_with_trans_optima_without_scaling$mse
+RMSEs["spotify_songs_cleaned_with_trans_optima_without_scaling"] <- result_with_trans_optima_without_scaling$rmse
 
 ####################################################################################################################
 
@@ -263,8 +281,8 @@ print(paste("MAE (without transformation with & with scaling): ", result_without
 print(paste("MSE (without transformation with & with scaling): ", result_without_trans_with_scaling$mse))
 print(paste("RMSE (without transformation with & with scaling): ", result_without_trans_with_scaling$rmse))
 
-# MSEs["spotify_songs_cleaned_without_trans_with_scaling"] <- result_without_trans_with_scaling$mse
-# RMSEs["spotify_songs_cleaned_without_trans_with_scaling"] <- result_without_trans_with_scaling$rmse
+MSEs["spotify_songs_cleaned_without_trans_with_scaling"] <- result_without_trans_with_scaling$mse
+RMSEs["spotify_songs_cleaned_without_trans_with_scaling"] <- result_without_trans_with_scaling$rmse
 
 ####################################################################################################################
 
@@ -279,11 +297,11 @@ print(paste("MAE (without transformation with & without scaling): ", result_with
 print(paste("MSE (without transformation with & without scaling): ", result_without_trans_without_scaling$mse))
 print(paste("RMSE (without transformation with & without scaling): ", result_without_trans_without_scaling$rmse))
 
-# MSEs["spotify_songs_cleaned_without_trans_without_scaling"] <- result_without_trans_without_scaling$mse
-# RMSEs["spotify_songs_cleaned_without_trans_without_scaling"] <- result_without_trans_without_scaling$rmse
+MSEs["spotify_songs_cleaned_without_trans_without_scaling"] <- result_without_trans_without_scaling$mse
+RMSEs["spotify_songs_cleaned_without_trans_without_scaling"] <- result_without_trans_without_scaling$rmse
 
-# plottingQualityMass(MSEs, "MSE")
-# plottingQualityMass(RMSEs, "RMSE")
+plottingQualityMass(MSEs, "MSE")
+plottingQualityMass(RMSEs, "RMSE")
 
 
 
