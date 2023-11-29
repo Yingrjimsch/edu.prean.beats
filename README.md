@@ -35,6 +35,8 @@ Branch: Bitte ein Branch pro Task alla `feat/kurzbeschreibung-task`
 | Neurales Netzwerk | Vorhersagemethoden | | |
 | Test / Training Split | Vorhersagemethoden | | |
 | Literaturvergleich der Resultate | Doku | | |
+| Korrekturen gemäss Rückmeldung Semestearbeit Teil 2 | Korrekturen | vonwareb | | fix/corrections-according-review-part-2
+| Erstellung Shiny- App | Data Product | | |
 
 ## Contributers
 Rebekka von Wartburg
