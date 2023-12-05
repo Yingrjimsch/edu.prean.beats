@@ -20,9 +20,9 @@ library("Metrics")
 
 ######################### Einlesen der RData Dateien ##########################
 
-load("./data/spotify_songs_cleaned_with_trans.RData")
-load("./data/spotify_songs_cleaned_with_trans_optima.RData")
-load("./data/spotify_songs_cleaned_without_trans.RData")
+load("../../data/spotify_songs_cleaned_with_trans.RData")
+load("../../data/spotify_songs_cleaned_with_trans_optima.RData")
+load("../../data/spotify_songs_cleaned_without_trans.RData")
 
 
 # Kontrolle, ob Einlesen geklappt mittels anzeigen der Struktur der einzelnen Dataframes
@@ -162,7 +162,7 @@ backtransformation <- function(pred, actual){
 # Erstellen von Plots je nach Prediktor (numerisch oder kategoriell) und speichern als png
 generateOptimalRegressionTree <- function(dataframe, splitfactor, target_var, scaling = TRUE, isTargetTransformed = TRUE, minSplitSequence, maxDepthSequence) {
   set.seed(123)
-  folder_name <- "./models/regressionTree/img"
+  folder_name <- "./img"
   
   if (!dir.exists(folder_name)) {
     
@@ -300,6 +300,9 @@ generateOptimalRegressionTree <- function(dataframe, splitfactor, target_var, sc
 
 result_with_trans_with_scaling <- generateOptimalRegressionTree(spotify_songs_cleaned_with_trans, 0.80, "streams", scaling = TRUE, isTargetTransformed = TRUE, minSplitSequence = seq(20, 100, 10), maxDepthSequence = seq(4, 15, 1))
 
+# Model für spätere Verwendung im Dataproduct
+CART_regression_model_with_trans <- result_with_trans_with_scaling$optimal_tree
+saveRDS(CART_regression_model_with_trans, "../../data/RDataModels/regressionTree/CART_regression_model_with_trans.rds")
 
 print(paste("cp (with transformation & with scaling): ", result_with_trans_with_scaling$cp))
 print(paste("minsplit (with transformation & with scaling): ", result_with_trans_with_scaling$minSplit))
