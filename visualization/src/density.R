@@ -1,6 +1,6 @@
 library(ggplot2)
 
-spotify_data <- read.csv("../../spotify-2023.csv", stringsAsFactors = FALSE)
+spotify_data <- read.csv("./edu.prean.beats/Datenbereinigung/spotify-2023.csv", stringsAsFactors = FALSE)
 
 spotify_data$streams <- as.numeric(gsub("[^0-9]", "", spotify_data$streams))
 
@@ -17,6 +17,7 @@ spotify_data$streams_log <- log1p(spotify_data$streams)
 
 p <- ggplot(spotify_data, aes(x = streams_log)) +
     geom_density(fill = "steelblue", alpha = 0.7) +
+    xlim(0, 30) +
     theme_minimal() +
     theme(
       panel.grid.major = element_blank(),
@@ -30,7 +31,7 @@ p <- ggplot(spotify_data, aes(x = streams_log)) +
       y = "Density"
     )
 
-ggsave("../plots/density_plot_streams_log.png", plot = p, width = 10, height = 6, dpi = 300)
+ggsave("./edu.prean.beats/visualization/plots/density_plot_streams_log.png", plot = p, width = 10, height = 6, dpi = 300)
 
 # Log Transformation
 # number of streams = e**(log-transformed-value) - 1
