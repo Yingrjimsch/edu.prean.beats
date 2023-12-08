@@ -1,0 +1,13 @@
+Bagged CART 
+
+759 samples
+ 21 predictor
+
+No pre-processing
+Resampling: Cross-Validated (15 fold) 
+Summary of sample sizes: 709, 708, 710, 708, 707, 709, ... 
+Resampling results:
+
+  RMSE       Rsquared   MAE      
+  0.5011335  0.7799965  0.3910045
+

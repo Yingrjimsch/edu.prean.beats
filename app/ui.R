@@ -13,6 +13,7 @@ ui <- navbarPage(
             }
             .navbar-brand, .navbar-nav li a {
                 line-height: 70px;
+                font-size: 20px;
             }
         "))
   ),
@@ -37,27 +38,34 @@ ui <- navbarPage(
            hr()),
   tabPanel(title = "Modelleistungen",
            h4(strong("Güte der einzelnen Modelle")),
-           selectInput("datensatzAuswahl", "Wählen Sie einen Datensatz:", 
+           selectInput("datensatzAuswahl1", "Wählen Sie einen Datensatz:", 
                        choices = c("spotify_songs_cleaned_with_trans", "spotify_songs_cleaned_with_trans_optima", "spotify_songs_cleaned_without_trans")),
+           
            selectInput("modellAuswahl", "Wählen Sie ein Modell:", 
                        choices = c("Multivariate Regression", "k-Nearest Neighbors", "Regressionsbaum", "Bagged-Regressionsbaum")),
            uiOutput("modellGueteOptionen"),
            mainPanel(
-             uiOutput("modellGueteErgebnis")
+             uiOutput("modellGueteErgebnis"),
+             #imageOutput("observedPredicted"),
+             uiOutput("summaryOutput"),
+             #imageOutput("plotTree"),
+             uiOutput("results")
+             
            ),
            
            hr()
   ),
   tabPanel(title = "Modellanwendung",
            h4(strong("Modellvorhersage anhand neuer Beobachtung")),
+           selectInput("datensatzAuswahl2", "Wählen Sie einen Datensatz:", 
+                       choices = c("spotify_songs_cleaned_with_trans", "spotify_songs_cleaned_with_trans_optima", "spotify_songs_cleaned_without_trans")),
+           selectInput("modellBestimmung", "Wählen Sie ein Modell:", 
+                       choices = c("Multivariate Regression", "k-Nearest Neighbors", "Regressionsbaum", "Bagged-Regressionsbaum")),
            p("Für jeden Prädiktor kann der Wert aus der neuen Beobachtung eingetragen
                     werden und danach mittels em(Vorhersage machen)
                     die Vorhersage für die neue Beobachtung berechnet werden."),
+           uiOutput("vorhersageBereich"),
            uiOutput("dynamischeInputs"),
-           mainPanel(
-             textOutput("Ergebnis der Prediction")
-             
-           ),
            hr()
   )
   ,
