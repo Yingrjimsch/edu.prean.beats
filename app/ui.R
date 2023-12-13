@@ -18,38 +18,40 @@ ui <- navbarPage(
         "))
   ),
   tabPanel(title = "Home", 
-           p(style="text-align: center;",
-             strong("Semesterarbeit Modul Predictive Analytics HS23")),
-           imageOutput("titelbild"),
-           hr(),
+           h4(style="text-align: center;",
+              strong("Semesterarbeit Modul Predictive Analytics HS23")),
+           br(),
+           uiOutput("titelbild"),
+           br(),
            p(style="text-align: center;","Annaheim, Fabian C. | Nobel, Gabriel | von Wartburg Rebekka | Waldburger, Safiyya")
   ),
   tabPanel(title = "Bedienungsanleitung",
-           h4(strong("Beschreibung...")),
+           h4(strong("Beschreibung der App")),
            p(style="text-align: justify; font-size = 25px",
-             "Lorem ipsum dolor sit amet, consetetur sadipscing elitr,
-                        sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat,
-                        sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.
-                        Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
-                        Lorem ipsum dolor sit amet,
-                        consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat,
-                        sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.
-                        Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet."),
+             "Beschreibung der App: Navigation (wo ist was zu finden);Datenbeschreibung; Modelleistungen (was wurde gemessen);
+             Modellanwendung (was kann die App); über uns Kontaktangaben"),
+           hr()),
+  tabPanel(title = "Datenbeschreibung",
+           h4(strong("Datenbschreibung")),
+           p(style="text-align: justify; font-size = 25px",
+             "Beschreibung aller zur Verfügung stehender Prädiktoren...."),
            hr()),
   tabPanel(title = "Modelleistungen",
-           h4(strong("Güte der einzelnen Modelle")),
+           h4(strong("Ergebnisse zur Leistung der einzelnen Modelle")),
            selectInput("datensatzAuswahl1", "Wählen Sie einen Datensatz:", 
                        choices = c("spotify_songs_cleaned_with_trans", "spotify_songs_cleaned_with_trans_optima", "spotify_songs_cleaned_without_trans")),
            
            selectInput("modellAuswahl", "Wählen Sie ein Modell:", 
-                       choices = c("Multivariate Regression", "k-Nearest Neighbors", "Regressionsbaum", "Bagged-Regressionsbaum")),
+                       choices = c("Multiple lineare Regression", "k-Nearest Neighbors", "Regressionsbaum", "Bagged-Regressionsbaum")),
            uiOutput("modellGueteOptionen"),
+           uiOutput("modellGueteErgebnis"),
+           br(),br(),
            mainPanel(
-             uiOutput("modellGueteErgebnis"),
-             #imageOutput("observedPredicted"),
-             uiOutput("summaryOutput"),
-             #imageOutput("plotTree"),
-             uiOutput("results")
+             uiOutput("dynamischeModellGuete")
+             # imageOutput("observedPredicted"),
+             # uiOutput("summaryOutput"),
+             # imageOutput("plotTree"),
+             # uiOutput("results")
              
            ),
            
@@ -60,7 +62,7 @@ ui <- navbarPage(
            selectInput("datensatzAuswahl2", "Wählen Sie einen Datensatz:", 
                        choices = c("spotify_songs_cleaned_with_trans", "spotify_songs_cleaned_with_trans_optima", "spotify_songs_cleaned_without_trans")),
            selectInput("modellBestimmung", "Wählen Sie ein Modell:", 
-                       choices = c("Multivariate Regression", "k-Nearest Neighbors", "Regressionsbaum", "Bagged-Regressionsbaum")),
+                       choices = c("Multiple lineare Regression", "k-Nearest Neighbors", "Regressionsbaum", "Bagged-Regressionsbaum")),
            p("Für jeden Prädiktor kann der Wert aus der neuen Beobachtung eingetragen
                     werden und danach mittels em(Vorhersage machen)
                     die Vorhersage für die neue Beobachtung berechnet werden."),
@@ -70,5 +72,10 @@ ui <- navbarPage(
   )
   ,
   tabPanel(title = "Über uns",
-           "Annaheim, Fabian C. | Nobel, Gabriel | von Wartburg Rebekka | Waldburger, Safiyya")
+           h4(strong("Das Team von \"Von Beats zur Beliebtheit\"")),
+           tableOutput("team"),
+           #p(style="text-align: center;","Annaheim, Fabian C. | Nobel, Gabriel | von Wartburg Rebekka | Waldburger, Safiyya"),
+           uiOutput("teambild")
+           )
+  
 )
