@@ -9,5 +9,5 @@ Summary of sample sizes: 709, 708, 710, 708, 707, 709, ...
 Resampling results:
 
   RMSE       Rsquared   MAE      
-  0.5011335  0.7799965  0.3910045
+  247866055  0.8071545  167470197
 

@@ -1,40 +1,53 @@
+# verwendete Bibliotheken
 library("shiny")
 library("rpart")
 library("rpart.plot")
 
-
+# Laden der Datensätze
 load("../data/spotify_songs_cleaned_with_trans.RData")
 load("../data/spotify_songs_cleaned_with_trans_optima.RData")
 load("../data/spotify_songs_cleaned_without_trans.RData")
 
 
-#lm_model <- readRDS("../data/RDataModels/regressionTree/lm_model.rds")
-#knn_model <- readRDS("../data/RDataModels/regressionTree/knn_model.rds")
+# Laden der Modelle
+#lm_model <- readRDS("../data/RDataModels/regression/lm_model.rds")
+#lm_model_trans <- readRDS("../data/RDataModels/regression/lm_model_trans.rds")
+knn_model <- readRDS("../data/RDataModels/knn/knn_model.rds")
+knn_model_trans <- readRDS("../data/RDataModels/knn/knn_model_trans.rds")
 rt_model <- readRDS("../data/RDataModels/regressionTree/rt_model.rds")
+rt_model_trans <- readRDS("../data/RDataModels/regressionTree/rt_model_trans.rds")
 bagged_rt_model <- readRDS("../data/RDataModels/baggedRegressionTree/bagged_rt_model.rds")
+bagged_rt_model_trans <- readRDS("../data/RDataModels/baggedRegressionTree/bagged_rt_model_trans.rds")
 
-#lm_model_results <- readRDS("../data/RDataModels/regressionTree/lm_model_results.rds")
-#knn_model_results <- readRDS("../data/RDataModels/regressionTree/knn_model_results.rds")
+# Laden der Results
+#lm_model_results <- readRDS("../data/RDataModels/regression/lm_model_results.rds")
+#lm_model_trans_results <- readRDS("../data/RDataModels/regression/lm_model_trans_results.rds")
+knn_model_results <- readRDS("../data/RDataModels/knn/knn_model_results.rds")
+knn_model_trans_results <- readRDS("../data/RDataModels/knn/knn_model_trans_results.rds")
 rt_model_results <- readRDS("../data/RDataModels/regressionTree/rt_model_results.rds")
+rt_model_trans_results <- readRDS("../data/RDataModels/regressionTree/rt_model_trans_results.rds")
 bagged_rt_model_results <- readRDS("../data/RDataModels/baggedRegressionTree/bagged_rt_model_results.rds")
+bagged_rt_model_trans_results <- readRDS("../data/RDataModels/baggedRegressionTree/bagged_rt_model_trans_results.rds")
 
 # server
 server <- function(input, output, session) {
-  
+  # Auflistung aller verwendeter Modelle, welche für die spätere Vorhersage benötigt werden
   modelleListe <- list(
     #"Multiple lineare Regression" = lm_model,
-    #"k-Nearest Neighbors" = knn_model,
-    "Regressionsbaum" = rt_model,
-    "Bagged-Regressionsbaum" = bagged_rt_model
+    "k-Nearest Neighbors" = knn_model_trans,
+    "Regressionsbaum" = rt_model_trans,
+    "Bagged-Regressionsbaum" = bagged_rt_model_trans
   )
   
+  # Auflistung aller verwendeter Modelle, welche für die spätere Vorhersage benötigt werden
   resultsList <- list(
     #"Multiple lineare Regression" = lm_model_results,
-    #"k-Nearest Neighbors" = knn_model_results,
+    "k-Nearest Neighbors" = knn_model_results,
     "Regressionsbaum" = rt_model_results,
     "Bagged-Regressionsbaum" = bagged_rt_model_results
   )
   
+  #Auswahl des Datensatzes
   reactiveData <- reactive({
     aktiverTab <- ifelse(input$datensatzAuswahl2 != "", input$datensatzAuswahl2, input$datensatzAuswahl1)
     switch(aktiverTab,
@@ -43,17 +56,15 @@ server <- function(input, output, session) {
            "spotify_songs_cleaned_without_trans" = spotify_songs_cleaned_without_trans)
   })
   
+  ########## Panel Home #########
   output$titelbild <- renderUI({
     imgPath <- "titelbild.png"
     shiny::tags$img(src = imgPath, alt = "Titelbild", width = "100%", height = "auto")
    })
-  output$teambild <- renderUI({
-    imgPath <- "teambild.png"
-    shiny::tags$img(src = imgPath, alt = "Teambild", width = "50%", height = "auto")
-  })
   
   
-  # Wählen des Modells und der Gütemasse
+  ########## Panel Modellleistung #########
+  # Auswahl der Gueteoption
   output$modellGueteOptionen <- renderUI({
     if(input$modellAuswahl == "Multiple lineare Regression") {
       selectInput("gueteOptionen", "Wählen Sie die Modellgüte-Parameter:", 
@@ -79,79 +90,26 @@ server <- function(input, output, session) {
                  "<hr><strong>Ausgewählte Modellgüte-Parameter:</strong><span style='margin-left: 25px;'>", paste(input$gueteOptionen, collapse = ", ")))
   })
   
-  # output$observedPredicted <- renderImage({
-  #   if ("Predicted vs Observed" %in% input$gueteOptionen) {
-  #     imgPath <- switch(input$modellAuswahl,
-  #                       "Multiple lineare Regression" = "www/rt__observed_vs_predicted.png",
-  #                       "k-Nearest Neighbors" = "www/rt__observed_vs_predicted.png",
-  #                       "Regressionsbaum" = "www/rt__observed_vs_predicted.png",
-  #                       "Bagged-Regressionsbaum" = "www/bagged_rt__observed_vs_predicted.png",
-  #                       NULL)
-  #     cat("Ausgewählter Plot: ", imgPath, "\n")
-  #     list(src = imgPath,width = "100%", height = "100%")
-  #   }
-  # }, deleteFile = FALSE)
-  # 
-  #   
-  # output$results <- renderUI({
-  #   if( "Results" %in% input$gueteOptionen){
-  #     results <- resultsList[[input$modellAuswahl]]
-  #     #cat("Results: ", results$rmse)
-  #     statHtml <- paste("<hr> MAE: ", results$mae, "<hr>", "MSE: ", results$mse, "<hr>" , "RMSE: ", results$rmse, collapse = "<hr>")
-  #       HTML(statHtml)
-  #   }
-  # })
-  # 
-  # output$summaryOutput <- renderUI({
-  #   
-  #   if (is.null(input$gueteOptionen) || "Summary" %in% input$gueteOptionen){
-  #     statFile <- switch(input$modellAuswahl,
-  #                        #"Multiple lineare Regression" = "../data/RDataModels/regression/lm_model_summary.txt",
-  #                        #"k-Nearest Neighbors" = "../data/RDataModels/knn/knn_model_summary.txt",
-  #                        "Regressionsbaum" = "../data/RDataModels/regressionTree/rt_model_summary.txt",
-  #                        "Bagged-Regressionsbaum" = "../data/RDataModels/BaggedRegressionTree/bagged_rt_model_summary.txt",
-  #                        NULL)
-  #     cat("Ausgewählte summary-Datei: ", statFile, "\n")
-  #     
-  #     if (!is.null(statFile) && file.exists(statFile)) {
-  #       statText <- readLines(statFile)
-  #       statHtml <- paste(statText, collapse = "<br>")
-  #       HTML(statHtml)
-  #     }
-  #   }
-  # })
-  # 
-  # output$plotTree <- renderImage({
-  #   if ("Regressionsbaum" %in% input$modellAuswahl && "Tree" %in% input$gueteOptionen) {
-  #     imgPath <- "www/spotify_songs_cleaned_with_trans_optimal_tree.png"
-  #     if (!is.null(imgPath) && file.exists(imgPath)) {
-  #       cat(imgPath)
-  #       list(src = imgPath, contentType = 'image/png', alt = "Tree")
-  #     } else {
-  #       warning("Bild nicht gefunden: ", imgPath)
-  #       return(NULL)
-  #     }
-  #   }
-  # }, deleteFile = FALSE)
-  
+  # Anzeige der verschiedenen Guetemasse
   output$dynamischeModellGuete <- renderUI({
     if (!is.null(input$gueteOptionen)) {
+      # Anzeige Summary
       if(input$gueteOptionen == "Summary") {
         # Rendern von Text
         statFile <- switch(input$modellAuswahl,
                            #"Multiple lineare Regression" = "www/lm_model_summary.txt",
-                           #"k-Nearest Neighbors" = "../data/RDataModels/knn/knn_model_summary.txt",
+                           "k-Nearest Neighbors" = "www/knn_model_summary.txt",
                            "Regressionsbaum" = "www/rt_model_summary.txt",
                            "Bagged-Regressionsbaum" = "www/bagged_rt_model_summary.txt",
                            NULL)
         cat("Ausgewählte Summary-Datei: ", statFile, "\n")
         if (!is.null(statFile) && file.exists(statFile)) {
-          # Laden und Anzeigen der Statistiken
           statText <- readLines(statFile)
           statHtml <- paste(statText, collapse = "<br>")
           HTML(statHtml)
         }
-      } else if(input$gueteOptionen == "Predicted vs Observed") {
+      } # Anzeige Predicted vs Observed
+      else if(input$gueteOptionen == "Predicted vs Observed") {
         imgPath <- switch(input$modellAuswahl,
                           #"Multiple lineare Regression" = "www/lm__observed_vs_predicted.png",
                           #"k-Nearest Neighbors" = "www/knn__observed_vs_predicted.png",
@@ -170,19 +128,20 @@ server <- function(input, output, session) {
             return(shiny::tags$p("Bild nicht gefunden."))
           }
         } 
-      } else if(input$gueteOptionen == "Results") {
+      } # Anzeige der Results
+       else if(input$gueteOptionen == "Results") {
         # Rendern von Text
         results <- resultsList[[input$modellAuswahl]]
         #cat("Results: ", results$rmse)
         statHtml <- paste("<hr> MAE: ", results$mae, "<hr>", "MSE: ", results$mse, "<hr>" , "RMSE: ", results$rmse, collapse = "<hr>")
         HTML(statHtml)
-      } else if("Regressionsbaum" %in% input$modellAuswahl && "Tree" %in% input$gueteOptionen) {
+      } # Anzeige des Trees beim Regressionsbaumes
+      else if("Regressionsbaum" %in% input$modellAuswahl && "Tree" %in% input$gueteOptionen) {
         imgPath <- "spotify_songs_cleaned_with_trans_optimal_tree.png"
         
         cat("Ausgewählte Datei: ", imgPath, "\n")
         
         if (!is.null(imgPath)) {
-          # Überprüfen Sie die Datei mit dem vollständigen Pfad
           completePath <- paste0(getwd(), '/www/', imgPath)
           if (file.exists(completePath)) {
             shiny::tags$img(src = imgPath, alt = "Regressionsbaum", width = "100%", height = "auto")
@@ -192,14 +151,15 @@ server <- function(input, output, session) {
           }
         } 
       }
-      
       else {
         HTML("<p>Bitte wählen Sie eine Option.</p>")
       }
     }
   })
   
-
+  
+########## Panel Modellanwendung #########
+# Anzeige der Prädiktoren des ausgewählten Datensatzes
   output$dynamischeInputs <- renderUI({
     data <- reactiveData()
     data <- data[-which(names(data) == "streams")] 
@@ -247,7 +207,7 @@ server <- function(input, output, session) {
     #cat("data: ", data, "\n")
     eingabenWerte <- sapply(names(data)[-length(names(data))], function(x) input[[x]])
     eingabenNamen <- names(data)[-length(names(data))]
-    #cat("EingabeNamen: ", eingabenNamen, "\n")
+    cat("EingabeNamen: ", eingabenNamen, "\n")
     eingabenDF <- setNames(as.data.frame(t(eingabenWerte), stringsAsFactors = FALSE), eingabenNamen)
     
     # Datentypen aus den Trainingsdaten ableiten und konvertieren
@@ -301,9 +261,8 @@ server <- function(input, output, session) {
     }
     
     eingaben <- reaktiveEingaben()
-    #print(paste("Eingaben: ", eingaben))
+    print(paste("Eingaben: ", eingaben))
     
-    # Überprüfen, ob alle Eingaben vorhanden sind
     if (length(eingaben) == 0) {
       return("Keine Eingaben vorhanden")
     }
@@ -322,6 +281,7 @@ server <- function(input, output, session) {
     
   })
   
+  ########## Panel Über uns #########
   teamData <- reactive({
     data.frame(
       Name = c("Annaheim, Fabian C.", "Nobel Gabriel", "von Wartburg Rebekka", "Waldburger Safiyya"),
@@ -332,6 +292,10 @@ server <- function(input, output, session) {
   # Tabelle rendern
   output$team <- renderTable({
     teamData()
+  })
+  output$teambild <- renderUI({
+    imgPath <- "teambild.png"
+    shiny::tags$img(src = imgPath, alt = "Teambild", width = "50%", height = "auto")
   })
   
   

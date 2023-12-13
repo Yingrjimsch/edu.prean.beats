@@ -22,9 +22,9 @@ library("RColorBrewer")
 
 ######################### Einlesen der RData Dateien ##########################
 
-load("../data/spotify_songs_cleaned_with_trans.RData")
-load("../data/spotify_songs_cleaned_with_trans_optima.RData")
-load("../data/spotify_songs_cleaned_without_trans.RData")
+load("../../data/spotify_songs_cleaned_with_trans.RData")
+load("../../data/spotify_songs_cleaned_with_trans_optima.RData")
+load("../../data/spotify_songs_cleaned_without_trans.RData")
 
 
 # Kontrolle, ob Einlesen geklappt mittels anzeigen der Struktur der einzelnen Dataframes
@@ -121,7 +121,7 @@ bagging <- function(dataframe, target_var,  ctrl, method, search) {
 
 generateBaggedRegressionTree <- function(dataframe, splitfactor, target_var, method, ctrl, search, scaling = TRUE, isTargetTransformed = TRUE) {
   set.seed(123)
-  folder_name <- "../models/baggedRegressionTree/img"
+  folder_name <- "../../models/baggedRegressionTree/img"
   
   if (!dir.exists(folder_name)) {
     
@@ -194,11 +194,6 @@ ctrl <- trainControl(method = "cv",  number = 15)
 
 result_with_trans_with_scaling <- generateBaggedRegressionTree(spotify_songs_cleaned_with_trans, 0.8, "streams", "treebag", ctrl, "grid", scaling = TRUE, isTargetTransformed = TRUE )
 
-bagged_rt_model <- result_with_trans_with_scaling$bagged_tree
-writeLines(capture.output(bagged_rt_model), "../data/RDataModels/baggedRegressionTree/bagged_rt_model_summary.txt")
-saveRDS(bagged_rt_model, "../data/RDataModels/baggedRegressionTree/bagged_rt_model.rds")
-saveRDS(result_with_trans_with_scaling, "../data/RDataModels/baggedRegressionTree/bagged_rt_model_results.rds")
-
 print(paste("MAE (with transformation with & with scaling): ", result_with_trans_with_scaling$mae))
 print(paste("MSE (with transformation with & with scaling): ", result_with_trans_with_scaling$mse))
 print(paste("RMSE (with transformation with & with scaling): ", result_with_trans_with_scaling$rmse))
@@ -230,6 +225,11 @@ print(paste("RMSE (with transformation without & without scaling): ", result_wit
 ####################################################################################################################
 
 result_with_trans_optima_with_scaling <- generateBaggedRegressionTree(spotify_songs_cleaned_with_trans_optima, 0.8, "streams", "treebag", ctrl, "grid", scaling = TRUE, isTargetTransformed = TRUE )
+
+bagged_rt_model_trans <- result_with_trans_optima_with_scaling$bagged_tree
+writeLines(capture.output(bagged_rt_model_trans), "../../data/RDataModels/baggedRegressionTree/bagged_rt_model_trans_summary.txt")
+saveRDS(bagged_rt_model_trans, "../../data/RDataModels/baggedRegressionTree/bagged_rt_model_trans.rds")
+saveRDS(result_with_trans_optima_with_scaling, "../../data/RDataModels/baggedRegressionTree/bagged_rt_model_trans_results.rds")
 
 print(paste("MAE (with transformation with & with scaling): ", result_with_trans_optima_with_scaling$mae))
 print(paste("MSE (with transformation with & with scaling): ", result_with_trans_optima_with_scaling$mse))
@@ -263,6 +263,13 @@ print(paste("RMSE (with transformation without & without scaling): ", result_wit
 ####################################################################################################################
 
 result_without_trans_with_scaling <- generateBaggedRegressionTree(spotify_songs_cleaned_without_trans, 0.8, "streams", "treebag", ctrl, "grid", scaling = TRUE, isTargetTransformed = FALSE )
+
+
+bagged_rt_model <- result_without_trans_with_scaling$bagged_tree
+writeLines(capture.output(bagged_rt_model), "../../data/RDataModels/baggedRegressionTree/bagged_rt_model_summary.txt")
+saveRDS(bagged_rt_model, "../../data/RDataModels/baggedRegressionTree/bagged_rt_model.rds")
+saveRDS(result_without_trans_with_scaling, "../../data/RDataModels/baggedRegressionTree/bagged_rt_model_results.rds")
+
 
 print(paste("MAE (without transformation with & with scaling): ", result_without_trans_with_scaling$mae))
 print(paste("MSE (without transformation with & with scaling): ", result_without_trans_with_scaling$mse))

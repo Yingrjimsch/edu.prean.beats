@@ -1,0 +1,9 @@
+
+Call:
+kknn::train.kknn(formula = .outcome ~ ., data = dat, kmax = param$kmax,     distance = param$distance, kernel = as.character(param$kernel))
+
+Type of response variable: continuous
+minimal mean absolute error: 199960490
+Minimal mean squared error: 9.785226e+16
+Best kernel: optimal
+Best k: 10

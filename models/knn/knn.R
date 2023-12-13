@@ -7,9 +7,9 @@ library(class)
 library(Metrics)
 library(kknn)
 library(caret)
-load("./data/spotify_songs_cleaned_without_trans.RData")
-load("./data/spotify_songs_cleaned_with_trans.RData")
-load("./data/spotify_songs_cleaned_with_trans_optima.RData")
+load("../../data/spotify_songs_cleaned_without_trans.RData")
+load("../../data/spotify_songs_cleaned_with_trans.RData")
+load("../../data/spotify_songs_cleaned_with_trans_optima.RData")
 
 str(spotify_songs_cleaned_without_trans)
 
@@ -47,6 +47,7 @@ exec_knn <- function(data) {
   best_k <- knn_model$bestTune$kmax
   cat("Best k value:", best_k, "\n")
   
+    
   # Perform KNN
   knn_predictions <- predict(kknn(streams ~ ., train_data, test_data, k = best_k))
   
@@ -57,8 +58,24 @@ exec_knn <- function(data) {
   cat("Mean Squared Error:", mse, "\n")
   cat("Root Mean Sbsolute Error:", rmse, "\n")
   cat("Mean Absolute Error:", mae, "\n")
+  
+  return(list(knn_model = knn_model, mae = mae, mse = mse, rmse = rmse))
 }
 
-exec_knn(spotify_songs_cleaned_without_trans)
-exec_knn(spotify_songs_cleaned_with_trans)
-exec_knn(spotify_songs_cleaned_with_trans_optima)
+results_without_trans <- exec_knn(spotify_songs_cleaned_without_trans)
+# Model für spätere Verwendung im Dataproduct
+knn_model <- results_without_trans$knn_model
+writeLines(capture.output(summary(knn_model)), "../../data/RDataModels/knn/knn_model_summary.txt")
+saveRDS(knn_model, "../../data/RDataModels/knn/knn_model.rds")
+saveRDS(results_without_trans, "../../data/RDataModels/knn/knn_model_results.rds")
+
+
+results_with_trans <- exec_knn(spotify_songs_cleaned_with_trans)
+
+results_with_trans_optima <- exec_knn(spotify_songs_cleaned_with_trans_optima)
+# Model für spätere Verwendung im Dataproduct
+knn_model_trans <- results_with_trans_optima$knn_model
+writeLines(capture.output(summary(knn_model_trans)), "../../data/RDataModels/knn/knn_model_trans_summary.txt")
+saveRDS(knn_model_trans, "../../data/RDataModels/knn/knn_model_trans.rds")
+saveRDS(results_with_trans_optima, "../../data/RDataModels/knn/knn_model_trans_results.rds")
+

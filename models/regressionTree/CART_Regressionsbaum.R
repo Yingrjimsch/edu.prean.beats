@@ -20,9 +20,9 @@ library("Metrics")
 
 ######################### Einlesen der RData Dateien ##########################
 
-load("../data/spotify_songs_cleaned_with_trans.RData")
-load("../data/spotify_songs_cleaned_with_trans_optima.RData")
-load("../data/spotify_songs_cleaned_without_trans.RData")
+load("../../data/spotify_songs_cleaned_with_trans.RData")
+load("../../data/spotify_songs_cleaned_with_trans_optima.RData")
+load("../../data/spotify_songs_cleaned_without_trans.RData")
 
 
 # Kontrolle, ob Einlesen geklappt mittels anzeigen der Struktur der einzelnen Dataframes
@@ -300,11 +300,6 @@ generateOptimalRegressionTree <- function(dataframe, splitfactor, target_var, sc
 
 result_with_trans_with_scaling <- generateOptimalRegressionTree(spotify_songs_cleaned_with_trans, 0.80, "streams", scaling = TRUE, isTargetTransformed = TRUE, minSplitSequence = seq(20, 100, 10), maxDepthSequence = seq(4, 15, 1))
 
-# Model für spätere Verwendung im Dataproduct
-rt_model <- result_with_trans_with_scaling$optimal_tree
-writeLines(capture.output(summary(rt_model)), "../data/RDataModels/regressionTree/rt_model_summary.txt")
-saveRDS(rt_model, "../data/RDataModels/regressionTree/rt_model.rds")
-saveRDS(result_with_trans_with_scaling, "../data/RDataModels/regressionTree/rt_model_results.rds")
 
 
 print(paste("cp (with transformation & with scaling): ", result_with_trans_with_scaling$cp))
@@ -347,6 +342,11 @@ print(paste("RMSE (with transformation & without scaling): ", result_with_trans_
 
 result_with_trans_optima_with_scaling <- generateOptimalRegressionTree(spotify_songs_cleaned_with_trans_optima, 0.80, "streams", scaling = TRUE, isTargetTransformed = TRUE, minSplitSequence = seq(20, 100, 10), maxDepthSequence = seq(4, 15, 1))
 
+# Model für spätere Verwendung im Dataproduct
+rt_model_trans <- result_with_trans_optima_with_scaling$optimal_tree
+writeLines(capture.output(summary(rt_model_trans)), "../../data/RDataModels/regressionTree/rt_model_trans_summary.txt")
+saveRDS(rt_model_trans, "../../data/RDataModels/regressionTree/rt_model_trans.rds")
+saveRDS(result_with_trans_optima_with_scaling, "../../data/RDataModels/regressionTree/rt_model_trans_results.rds")
 
 print(paste("cp (with transformation & with scaling): ", result_with_trans_optima_with_scaling$cp))
 print(paste("minsplit (with transformation & with scaling): ", result_with_trans_optima_with_scaling$minSplit))
@@ -390,6 +390,11 @@ print(paste("RMSE (with transformation &  without scaling): ", result_with_trans
 
 result_without_trans_with_scaling <- generateOptimalRegressionTree(spotify_songs_cleaned_without_trans, 0.80, "streams", scaling = TRUE, isTargetTransformed = FALSE, minSplitSequence = seq(20, 100, 10), maxDepthSequence = seq(4, 15, 1))
 
+# Model für spätere Verwendung im Dataproduct
+rt_model <- result_without_trans_with_scaling$optimal_tree
+writeLines(capture.output(summary(rt_model)), "../../data/RDataModels/regressionTree/rt_model_summary.txt")
+saveRDS(rt_model, "../../data/RDataModels/regressionTree/rt_model.rds")
+saveRDS(result_without_trans_with_scaling, "../../data/RDataModels/regressionTree/rt_model_results.rds")
 
 print(paste("cp (without transformation & with scaling): ", result_without_trans_with_scaling$cp))
 print(paste("minsplit (without transformation &  with scaling): ", result_without_trans_with_scaling$minSplit))
