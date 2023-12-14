@@ -1,0 +1,23 @@
+Call:
+lm(formula = best_model_formula, data = new_data)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-1.24182 -0.28190  0.02928  0.32016  1.16827 
+
+Coefficients:
+                           Estimate Std. Error t value Pr(>|t|)    
+(Intercept)               1.493e+01  1.361e-01 109.682  < 2e-16 ***
+listeners_cum            -3.025e-09  6.527e-10  -4.634 4.26e-06 ***
+artist_count             -1.073e-01  1.980e-02  -5.419 8.22e-08 ***
+in_spotify_playlists_log  6.091e-01  1.837e-02  33.158  < 2e-16 ***
+in_spotify_charts         6.931e-03  1.283e-03   5.400 9.09e-08 ***
+in_apple_playlists        8.613e-04  2.861e-04   3.010   0.0027 ** 
+in_apple_charts           2.484e-03  4.485e-04   5.539 4.30e-08 ***
+in_shazam_charts         -1.335e-03  1.434e-04  -9.309  < 2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.4541 on 711 degrees of freedom
+Multiple R-squared:  0.8036,	Adjusted R-squared:  0.8017 
+F-statistic: 415.6 on 7 and 711 DF,  p-value: < 2.2e-16

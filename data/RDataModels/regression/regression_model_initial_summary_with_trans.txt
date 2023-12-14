@@ -1,0 +1,68 @@
+Call:
+lm(formula = streams ~ ., data = train_data)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-1.99488 -0.32789  0.03175  0.35358  1.73418 
+
+Coefficients:
+                             Estimate Std. Error t value Pr(>|t|)    
+(Intercept)                 1.470e+01  3.677e-01  39.978  < 2e-16 ***
+listeners_cum_sqrt         -2.003e-05  1.022e-05  -1.959 0.050522 .  
+artist_count2              -8.405e-02  4.994e-02  -1.683 0.092815 .  
+artist_count3              -2.156e-01  7.678e-02  -2.808 0.005128 ** 
+artist_count4              -3.195e-01  1.567e-01  -2.039 0.041843 *  
+artist_count5              -1.799e-01  2.583e-01  -0.697 0.486342    
+artist_count6               7.448e-01  5.754e-01   1.295 0.195881    
+artist_count7               1.829e-01  4.052e-01   0.451 0.651891    
+artist_count8              -2.464e-01  4.084e-01  -0.603 0.546505    
+released_weekdayDonnerstag -3.992e-03  9.710e-02  -0.041 0.967221    
+released_weekdayFreitag     2.114e-02  8.593e-02   0.246 0.805741    
+released_weekdayMittwoch    1.501e-01  1.057e-01   1.420 0.155999    
+released_weekdayMontag      1.111e-01  1.138e-01   0.976 0.329208    
+released_weekdaySamstag     1.224e-01  1.465e-01   0.836 0.403712    
+released_weekdaySonntag     7.347e-03  1.329e-01   0.055 0.955917    
+released_monthFebruary      1.141e-01  1.018e-01   1.121 0.262661    
+released_monthMarch         2.006e-01  9.178e-02   2.185 0.029185 *  
+released_monthApril         2.037e-01  9.959e-02   2.045 0.041223 *  
+released_monthMay           1.116e-01  8.415e-02   1.327 0.185015    
+released_monthJune          2.186e-02  9.549e-02   0.229 0.818987    
+released_monthJuly          6.927e-02  1.036e-01   0.668 0.504083    
+released_monthAugust        3.803e-01  1.134e-01   3.354 0.000839 ***
+released_monthSeptember     3.767e-01  1.032e-01   3.651 0.000280 ***
+released_monthOctober       2.624e-01  9.720e-02   2.700 0.007109 ** 
+released_monthNovember      1.677e-01  9.118e-02   1.839 0.066364 .  
+released_monthDecember      2.253e-01  9.553e-02   2.358 0.018645 *  
+in_spotify_playlists_log    6.293e-01  3.419e-02  18.404  < 2e-16 ***
+in_spotify_charts           1.426e-03  1.493e-03   0.955 0.339889    
+in_apple_playlists_boxcox   7.057e-03  9.483e-03   0.744 0.457019    
+in_apple_charts_boxcox      2.473e-02  6.316e-03   3.915 9.93e-05 ***
+in_deezer_playlists_boxcox  3.568e-03  1.097e-02   0.325 0.745026    
+in_deezer_charts           -4.392e-03  4.638e-03  -0.947 0.343983    
+in_shazam_charts_log        1.926e-03  4.202e-03   0.458 0.646788    
+bpm_sqrt                    1.657e-02  1.674e-02   0.990 0.322584    
+keyA#                      -2.071e-02  1.155e-01  -0.179 0.857728    
+keyB                       -1.075e-02  1.036e-01  -0.104 0.917344    
+keyC#                      -7.651e-02  9.552e-02  -0.801 0.423402    
+keyD                       -5.367e-02  1.049e-01  -0.512 0.608932    
+keyD#                      -8.204e-02  1.318e-01  -0.622 0.533907    
+keyE                        5.318e-02  1.107e-01   0.481 0.630949    
+keyF                       -4.932e-02  1.045e-01  -0.472 0.637213    
+keyF#                       6.097e-02  1.080e-01   0.565 0.572429    
+keyG                       -1.080e-01  1.020e-01  -1.059 0.289951    
+keyG#                      -7.616e-02  1.012e-01  -0.752 0.452055    
+keyKeine Angabe            -3.239e-02  1.004e-01  -0.323 0.746979    
+modeMinor                  -1.591e-02  4.472e-02  -0.356 0.722101    
+danceability_._boxcox       2.131e-04  2.195e-04   0.971 0.331968    
+valence_.                   1.366e-03  1.089e-03   1.255 0.210066    
+energy_.                   -3.512e-03  1.706e-03  -2.058 0.039913 *  
+acousticness_._boxcox       3.624e-02  1.457e-02   2.487 0.013117 *  
+acousticness_.             -6.652e-03  2.457e-03  -2.708 0.006938 ** 
+liveness_._log             -3.701e-02  3.364e-02  -1.100 0.271676    
+speechiness_._boxcox       -1.711e-01  5.651e-02  -3.028 0.002554 ** 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.5534 on 706 degrees of freedom
+Multiple R-squared:  0.7483,	Adjusted R-squared:  0.7298 
+F-statistic: 40.37 on 52 and 706 DF,  p-value: < 2.2e-16
