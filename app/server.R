@@ -2,10 +2,11 @@
 library("shiny")
 library("rpart")
 library("rpart.plot")
+library("MASS")
 
 # Laden der Datensätze
 #load("../data/spotify_songs_cleaned_with_trans.RData")
-load("../data/spotify_songs_cleaned_with_trans_optima.RData")
+#load("../data/spotify_songs_cleaned_with_trans_optima.RData")
 load("../data/spotify_songs_cleaned_without_trans.RData")
 
 
@@ -31,15 +32,23 @@ bagged_rt_model_trans_results <- readRDS("../data/RDataModels/baggedRegressionTr
 
 # server
 server <- function(input, output, session) {
-  # Auflistung aller verwendeter Modelle, welche für die spätere Vorhersage benötigt werden
+  # Auflistung aller Modell ohne Transformationen
   modelleListe <- list(
+    "Multiple lineare Regression" = lm_model,
+    "k-Nearest Neighbors" = knn_model,
+    "Regressionsbaum" = rt_model,
+    "Bagged-Regressionsbaum" = bagged_rt_model
+  )
+  
+  # Auflistung aller Modell mit Transformationen
+  modelleListeTrans <- list(
     "Multiple lineare Regression" = lm_model_trans,
     "k-Nearest Neighbors" = knn_model_trans,
     "Regressionsbaum" = rt_model_trans,
     "Bagged-Regressionsbaum" = bagged_rt_model_trans
   )
   
-  # Auflistung aller verwendeter Modelle, welche für die spätere Vorhersage benötigt werden
+  # Auflistung aller verwendeter Resulsets ohne Transformationen
   resultsList <- list(
     "Multiple lineare Regression" = lm_model_results,
     "k-Nearest Neighbors" = knn_model_results,
@@ -47,14 +56,59 @@ server <- function(input, output, session) {
     "Bagged-Regressionsbaum" = bagged_rt_model_results
   )
   
-  #Auswahl des Datensatzes
-  reactiveData <- reactive({
-    aktiverTab <- ifelse(input$datensatzAuswahl2 != "", input$datensatzAuswahl2, input$datensatzAuswahl1)
-    switch(aktiverTab,
-           #"spotify_songs_cleaned_with_trans" = spotify_songs_cleaned_with_trans,
-           "Daten mit Transformationen" = spotify_songs_cleaned_with_trans_optima,
-           "Daten ohne Transformationen" = spotify_songs_cleaned_without_trans)
+  # Auflistung aller verwendeter Resulsets mit Transformationen
+  resultsListTrans <- list(
+    "Multiple lineare Regression" = lm_model_trans_results,
+    "k-Nearest Neighbors" = knn_model_trans_results,
+    "Regressionsbaum" = rt_model_trans_results,
+    "Bagged-Regressionsbaum" = bagged_rt_model_trans_results
+  )
+  
+  # Auflistung aller Summary-Dateien ohne Transformationen
+  summaryList <- list(
+    "Multiple lineare Regression" = "www/lm_model_summary.txt",
+    "k-Nearest Neighbors" = "www/knn_model_summary.txt",
+    "Regressionsbaum" = "www/rt_model_summary.txt",
+    "Bagged-Regressionsbaum" = "www/bagged_rt_model_summary.txt"
+  )
+  
+  # Auflistung aller Summary-Dateien mit Transformationen
+  summaryListTrans <- list(
+    "Multiple lineare Regression" = "www/lm_model_trans_summary.txt",
+    "k-Nearest Neighbors" = "www/knn_model_trans_summary.txt",
+    "Regressionsbaum" = "www/rt_model_trans_summary.txt",
+    "Bagged-Regressionsbaum" = "www/bagged_rt_model_trans_summary.txt"
+  )
+  
+  #### TODO: kann erst verwendet werden nach merge und Erstellung aller Observed vs Predicted Plots
+  
+  # # Auflistung aller Observed vs Predicted Plots-Dateien ohne Transformationen
+  # observedVsPredictedList <- list(
+  #   "Multiple lineare Regression" = "www/lm_observed_vs_predicted.png",
+  #   "k-Nearest Neighbors" = "www/knn_observed_vs_predicted.png",
+  #   "Regressionsbaum" = "rt_observed_vs_predicted.png",
+  #   "Bagged-Regressionsbaum" = "bagged_rt_observed_vs_predicted.png"
+  # )
+  # 
+  # # Auflistung aller Observed vs Predicted Plots-Dateien mit Transformationen
+  # observedVsPredictedListTrans <- list(
+  #   "Multiple lineare Regression" = "www/lm_trans_observed_vs_predicted.png",
+  #   "k-Nearest Neighbors" = "www/knn_trans_observed_vs_predicted.png",
+  #   "Regressionsbaum" = "rt_trans_observed_vs_predicted.png",
+  #   "Bagged-Regressionsbaum" = "bagged_rt_trans_observed_vs_predicted.png"
+  # )
+  
+  # Plot des optimalen Regressionsbaums ohne Transformationen
+  tree <- "optimalTree_without_trans.png"
+  
+  # Plot des optimalen Regressionsbaums mit Transformationen
+  treeTrans <- "optimalTree_with_trans.png"
+  
+  # Auswahl des Datensatzes
+  selectedDataOption <- reactive({
+    input$datensatzAuswahl 
   })
+  
   
   ########## Panel Home #########
   output$titelbild <- renderUI({
@@ -93,15 +147,16 @@ server <- function(input, output, session) {
   # Anzeige der verschiedenen Guetemasse
   output$dynamischeModellGuete <- renderUI({
     if (!is.null(input$gueteOptionen)) {
-      # Anzeige Summary
       if(input$gueteOptionen == "Summary") {
-        # Rendern von Text
-        statFile <- switch(input$modellAuswahl,
-                           "Multiple lineare Regression" = "www/lm_model_summary.txt",
-                           "k-Nearest Neighbors" = "www/knn_model_summary.txt",
-                           "Regressionsbaum" = "www/rt_model_summary.txt",
-                           "Bagged-Regressionsbaum" = "www/bagged_rt_model_summary.txt",
-                           NULL)
+        # Auswahl der entsprechenden Summary-Liste
+        summaryFileList <- if(selectedDataOption() == "Daten mit Transformationen") {
+          summaryListTrans
+        } else {
+          summaryList
+        }
+        
+        # Rendern von Text je nach ausgewählter Modellgüte
+        statFile <- summaryFileList[[input$modellAuswahl]]
         cat("Ausgewählte Summary-Datei: ", statFile, "\n")
         if (!is.null(statFile) && file.exists(statFile)) {
           statText <- readLines(statFile)
@@ -113,8 +168,8 @@ server <- function(input, output, session) {
         imgPath <- switch(input$modellAuswahl,
                           #"Multiple lineare Regression" = "www/lm__observed_vs_predicted.png",
                           #"k-Nearest Neighbors" = "www/knn__observed_vs_predicted.png",
-                          "Regressionsbaum" = "rt__observed_vs_predicted.png",
-                          "Bagged-Regressionsbaum" = "bagged_rt__observed_vs_predicted.png",
+                          "Regressionsbaum" = "rt_observed_vs_predicted.png",
+                          "Bagged-Regressionsbaum" = "bagged_rt_observed_vs_predicted.png",
                           NULL)
         cat("Ausgewählte Datei: ", imgPath, "\n")
         
@@ -131,20 +186,29 @@ server <- function(input, output, session) {
       } # Anzeige der Results
        else if(input$gueteOptionen == "Results") {
         # Rendern von Text
+         resultsList <- if(selectedDataOption() == "Daten mit Transformationen") {
+           resultsListTrans
+         } else {
+           resultsList
+         }
         results <- resultsList[[input$modellAuswahl]]
         #cat("Results: ", results$rmse)
         statHtml <- paste("<hr> MAE: ", results$mae, "<hr>", "MSE: ", results$mse, "<hr>" , "RMSE: ", results$rmse, collapse = "<hr>")
         HTML(statHtml)
-      } # Anzeige des Trees beim Regressionsbaumes
+      } # Anzeige des Tree Plots beim Regressionsbaumes
       else if("Regressionsbaum" %in% input$modellAuswahl && "Tree" %in% input$gueteOptionen) {
-        imgPath <- "spotify_songs_cleaned_with_trans_optimal_tree.png"
+        pathRegressionsbaum <- if(selectedDataOption() == "Daten mit Transformationen") {
+          treeTrans
+        } else {
+          tree
+        }
         
-        cat("Ausgewählte Datei: ", imgPath, "\n")
+        cat("Ausgewählte Datei: ", pathRegressionsbaum, "\n")
         
-        if (!is.null(imgPath)) {
-          completePath <- paste0(getwd(), '/www/', imgPath)
+        if (!is.null(pathRegressionsbaum)) {
+          completePath <- paste0(getwd(), '/www/', pathRegressionsbaum)
           if (file.exists(completePath)) {
-            shiny::tags$img(src = imgPath, alt = "Regressionsbaum", width = "100%", height = "auto")
+            shiny::tags$img(src = pathRegressionsbaum, alt = "Regressionsbaum", width = "100%", height = "auto")
           } else {
             warning("Bild nicht gefunden: ", completePath)
             return(shiny::tags$p("Bild nicht gefunden."))
@@ -157,130 +221,198 @@ server <- function(input, output, session) {
     }
   })
   
+  ########## Panel Modellanwednung #########
   
-########## Panel Modellanwendung #########
-# Anzeige der Prädiktoren des ausgewählten Datensatzes
+  # Daten ohne Transformationen als Standard
+  data <- reactive({
+    return(spotify_songs_cleaned_without_trans)
+  })
+  
+  # dynamischen UI-Prädiktoren- Elemente
   output$dynamischeInputs <- renderUI({
-    data <- reactiveData()
-    data <- data[-which(names(data) == "streams")] 
-    
-    # Listen für numerische und faktorisierte Eingaben
-    faktorisierteInputs <- list()
-    numerischeInputsLinks <- list()
-    numerischeInputsRechts <- list()
-    
-    numerischeVars <- names(data)[sapply(data, is.numeric)]
-    halbeLänge <- ceiling(length(numerischeVars) / 2)
-    
-    for(var in names(data)) {
-      if(is.factor(data[[var]])) {
-        faktorisierteInputs[[var]] <- selectInput(inputId = var, 
-                                                  label = paste(var),
-                                                  choices = levels(data[[var]]))
-      } else if(is.numeric(data[[var]])) {
-        if(which(var == numerischeVars) <= halbeLänge) {
-          numerischeInputsLinks[[var]] <- sliderInput(inputId = var, 
-                                                      label = paste(var),
-                                                      min = min(data[[var]], na.rm = TRUE), 
-                                                      max = max(data[[var]], na.rm = TRUE), 
-                                                      value = mean(data[[var]], na.rm = TRUE))
-        } else {
-          numerischeInputsRechts[[var]] <- sliderInput(inputId = var, 
-                                                       label = paste(var),
-                                                       min = min(data[[var]], na.rm = TRUE), 
-                                                       max = max(data[[var]], na.rm = TRUE), 
-                                                       value = mean(data[[var]], na.rm = TRUE))
+      data <- data()
+      data <- data[-which(names(data) == "streams")]
+
+      # Listen für numerische und faktorisierte Eingaben
+      faktorisierteInputs <- list()
+      numerischeInputsLinks <- list()
+      numerischeInputsRechts <- list()
+
+      numerischeVars <- names(data)[sapply(data, is.numeric)]
+      halbeLänge <- ceiling(length(numerischeVars) / 2)
+
+      for(var in names(data)) {
+        if(is.factor(data[[var]])) {
+          faktorisierteInputs[[var]] <- selectInput(inputId = var,
+                                                    label = paste(var),
+                                                    choices = levels(data[[var]]))
+        } else if(is.numeric(data[[var]])) {
+          if(which(var == numerischeVars) <= halbeLänge) {
+            numerischeInputsLinks[[var]] <- sliderInput(inputId = var,
+                                                        label = paste(var),
+                                                        min = min(data[[var]], na.rm = TRUE),
+                                                        max = max(data[[var]], na.rm = TRUE),
+                                                        value = mean(data[[var]], na.rm = TRUE))
+          } else {
+            numerischeInputsRechts[[var]] <- sliderInput(inputId = var,
+                                                         label = paste(var),
+                                                         min = min(data[[var]], na.rm = TRUE),
+                                                         max = max(data[[var]], na.rm = TRUE),
+                                                         value = mean(data[[var]], na.rm = TRUE))
+          }
         }
       }
-    }
-    
-    # Erstellen von drei Spalten
-    fluidRow(
-      column(4, do.call(tagList, numerischeInputsLinks)),
-      column(4, do.call(tagList, numerischeInputsRechts)),
-      column(4, do.call(tagList, faktorisierteInputs))
-    )
+
+      # Erstellen von drei Spalten
+      fluidRow(
+        column(4, do.call(tagList, numerischeInputsLinks)),
+        column(4, do.call(tagList, numerischeInputsRechts)),
+        column(4, do.call(tagList, faktorisierteInputs))
+      )
   })
   
+  # Verarbeitung der Eingaben und zur Vorhersage
   reaktiveEingaben <- reactive({
-    data <- reactiveData()
-    #cat("data: ", data, "\n")
-    eingabenWerte <- sapply(names(data)[-length(names(data))], function(x) input[[x]])
-    eingabenNamen <- names(data)[-length(names(data))]
-    cat("EingabeNamen: ", eingabenNamen, "\n")
-    eingabenDF <- setNames(as.data.frame(t(eingabenWerte), stringsAsFactors = FALSE), eingabenNamen)
-    
-    # Datentypen aus den Trainingsdaten ableiten und konvertieren
-    for (spalte in names(eingabenDF)) {
-      typ <- class(data[[spalte]])
-      if (typ == "numeric") {
-        eingabenDF[[spalte]] <- as.numeric(eingabenDF[[spalte]])
-      } else if (typ == "integer"){
-        eingabenDF[[spalte]] <- as.integer(eingabenDF[[spalte]])
-      } else if (typ == "factor") {
-        eingabenDF[[spalte]] <- factor(eingabenDF[[spalte]], levels = levels(data[[spalte]]))
+      #cat("data: ", data, "\n")
+      data <- data()
+      eingabenWerte <- sapply(names(data)[-length(names(data))], function(x) input[[x]])
+      eingabenNamen <- names(data)[-length(names(data))]
+      cat("EingabeNamen: ", eingabenNamen, "\n")
+      eingabenDF <- setNames(as.data.frame(t(eingabenWerte), stringsAsFactors = FALSE), eingabenNamen)
+
+      # Datentypen aus den Trainingsdaten ableiten und konvertieren
+      for (spalte in names(eingabenDF)) {
+        typ <- class(data[[spalte]])
+        if (typ == "numeric") {
+          eingabenDF[[spalte]] <- as.numeric(eingabenDF[[spalte]])
+        } else if (typ == "integer"){
+          eingabenDF[[spalte]] <- as.integer(eingabenDF[[spalte]])
+        } else if (typ == "factor") {
+          eingabenDF[[spalte]] <- factor(eingabenDF[[spalte]], levels = levels(data[[spalte]]))
+        }
       }
+
+      return(eingabenDF)
+    })
+
+    # Neuer Bereich für Vorhersagebutton und Output-Element
+    output$vorhersageBereich <- renderUI({
+      fluidRow(
+        column(4,
+               actionButton("vorhersageButton", "Vorhersage ohne Transformation"),
+               uiOutput("vorhersageOutputUI")
+        ),
+        column(4,
+               actionButton("transformationButton", "Vorhersage mit Transformierten"))
+      )
+  })
+  
+    # Vorhersage ohne transformierte Prädiktoren
+    vorhersageErgebnis <- eventReactive(input$vorhersageButton, {
+      cat("Vorhersagebutton wurde gedrückt\n")
+      
+      ausgewaehltesModell <- modelleListe[[input$modellBestimmung]]
+      cat("Ausgewähltes Modell: ", input$modellBestimmung, "\n")
+      
+      if(is.null(ausgewaehltesModell)){
+        return("Kein Modell vorhanden")
+      }
+      
+      eingaben <- reaktiveEingaben()
+      print(paste("Eingaben: ", eingaben))
+      
+      if (length(eingaben) == 0) {
+        return("Keine Eingaben vorhanden")
+      }
+      
+      tryCatch({
+        vorhersage <- predict(ausgewaehltesModell, eingaben)
+        vorhersageString <- paste(vorhersage, collapse = " ")
+        cat("Vorhersage: ", vorhersageString, "\n")
+        
+        return(as.character(vorhersageString))
+      }, error = function(e) {
+        cat("Fehler bei der Vorhersage: ", e$message, "\n")
+        return(e$message)
+      })
+    })
+  
+    # Vorhersage mit transformierten Prädiktoren
+    vorhersageErgebnisTrans <- eventReactive(input$transformationButton, {
+      cat("Vorhersagebutton mit Transformationen wurde gedrückt\n")
+      
+      ausgewaehltesModellTrans <- modelleListeTrans[[input$modellBestimmung]]
+      cat("Ausgewähltes Modell mit Transformationen: ", input$modellBestimmung, "\n")
+      
+      if(is.null(ausgewaehltesModellTrans)){
+        return("Kein Modell mit Transformationen vorhanden")
+      }
+      
+      eingaben <- reaktiveEingaben()
+      print(paste("Eingaben vor Transformation: ", eingaben))
+      
+      if (length(eingaben) == 0) {
+        return("Keine Eingaben vorhanden")
+      }
+      
+      eingabenTransformiert <- transformiereEingaben(eingaben)
+      
+      tryCatch({
+        vorhersage <- predict(ausgewaehltesModellTrans, eingabenTransformiert)
+        vorhersageString <- paste(exp(vorhersage), collapse = " ")
+        cat("Vorhersage mit Transformationen: ", vorhersageString, "\n")
+        
+        return(as.character(vorhersageString))
+      }, error = function(e) {
+        cat("Fehler bei der Vorhersage mit Transformationen: ", e$message, "\n")
+        return(e$message)
+      })
+    })
+  
+    transformiereEingaben <- function(eingaben) {
+      logPrädiktoren <- c("in_spotify_playlists", "bpm")
+      boxcoxPrädiktor <- "energy_."
+      
+      # Log- Transformation und Prädiktorname anpassen
+      for(prädiktor in logPrädiktoren) {
+        if(any(eingaben[[prädiktor]] <= 0)) {
+          stop("Eingabewerte für Logarithmus müssen positiv sein.")
+        }
+        eingaben[[paste0(prädiktor, "_log")]] <- log(eingaben[[prädiktor]])
+        eingaben[[prädiktor]] <- NULL 
+      }
+      
+      # Box-Cox-Transformation (Lambda 1.5) und Prädiktorname anpassen
+      lambda <- 1.5
+      eingaben[[paste0(boxcoxPrädiktor, "_boxcox")]] <- ifelse(lambda == 0, 
+                                                               log(eingaben[[boxcoxPrädiktor]]),
+                                                               (eingaben[[boxcoxPrädiktor]]^lambda - 1) / lambda)
+      eingaben[[boxcoxPrädiktor]] <- NULL
+      
+      return(eingaben)
+    }
+  
+  output$vorhersageOutputUI <- renderUI({
+    lokaleVorhersage <- NULL
+    
+    # Überprüfen, welcher Button gedrückt wurde (Vorhersage mit / ohne Transformation)
+    if(input$vorhersageButton > 0) {
+      lokaleVorhersage <- vorhersageErgebnis()
+      cat("Vorhersage; ", lokaleVorhersage)
+    } else if(input$transformationButton > 0) {
+      lokaleVorhersage <- vorhersageErgebnisTrans()
     }
     
-    return(eingabenDF)
-  })
-  
-  # Neuer Bereich für Vorhersagebutton und Output-Element
-  output$vorhersageBereich <- renderUI({
-    fluidRow(
-      column(4, 
-             actionButton("vorhersageButton", "Vorhersage ohne Transformation"),
-             uiOutput("vorhersageOutputUI")
-      ),
-      column(4,
-             actionButton("transformationButton", "Vorhersage mit Transformierten"))
-    )
-  })
-  
-  # Ausgabe des Vorhersageergebnisses
-  output$vorhersageOutputUI <- renderUI({
-    vorhersage <- vorhersageErgebnis()
-    if (!is.null(vorhersage)) {
+    # Anzeigen der Vorhersage, wenn sie vorhanden ist
+    if (!is.null(lokaleVorhersage)) {
       wellPanel(
         h3("Vorhersageergebnis:"),
-        p(vorhersage, style = "font-weight: bold;"),
+        p(lokaleVorhersage, style = "font-weight: bold;"),
         br()
       )
     }
   })
   
-  vorhersageErgebnis <- eventReactive(input$vorhersageButton, {
-    cat("Vorhersagebutton wurde gedrückt\n")
-    
-    ausgewaehltesModell <- modelleListe[[input$modellBestimmung]]
-    # Modellname für Testzwecke ausgeben
-    cat("Ausgewähltes Modell: ", input$modellBestimmung, "\n")
-    
-    # Überprüfen, ob ein Modell ausgewählt wurde
-    if(is.null(ausgewaehltesModell)){
-      return("Kein Modell vorhanden")
-    }
-    
-    eingaben <- reaktiveEingaben()
-    print(paste("Eingaben: ", eingaben))
-    
-    if (length(eingaben) == 0) {
-      return("Keine Eingaben vorhanden")
-    }
-    
-    # Vorhersage durchführen
-    tryCatch({
-      vorhersage <- predict(ausgewaehltesModell, eingaben)
-      vorhersageString <- paste(exp(vorhersage), collapse = " ")
-      cat("Vorhersage: ", vorhersageString, "\n")
-      
-      return(as.character(vorhersageString))
-    }, error = function(e) {
-      cat("Fehler bei der Vorhersage: ", e$message, "\n")
-      return(e$message)
-    })
-    
-  })
   
   ########## Panel Über uns #########
   teamData <- reactive({

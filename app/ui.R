@@ -38,8 +38,7 @@ ui <- navbarPage(
            hr()),
   tabPanel(title = "Modelleistungen",
            h4(strong("Ergebnisse zur Leistung der einzelnen Modelle")),
-           selectInput("datensatzAuswahl1", "Wählen Sie einen Datensatz:", 
-                       #choices = c("spotify_songs_cleaned_with_trans", "spotify_songs_cleaned_with_trans_optima", "spotify_songs_cleaned_without_trans")),
+           selectInput("datensatzAuswahl", "Wählen Sie einen Datensatz:", 
                        choices = c("Daten mit Transformationen", "Daten ohne Transformationen")),
            selectInput("modellAuswahl", "Wählen Sie ein Modell:", 
                        choices = c("Multiple lineare Regression", "k-Nearest Neighbors", "Regressionsbaum", "Bagged-Regressionsbaum")),
@@ -48,20 +47,12 @@ ui <- navbarPage(
            br(),br(),
            mainPanel(
              uiOutput("dynamischeModellGuete")
-             # imageOutput("observedPredicted"),
-             # uiOutput("summaryOutput"),
-             # imageOutput("plotTree"),
-             # uiOutput("results")
-             
            ),
            
            hr()
   ),
   tabPanel(title = "Modellanwendung",
            h4(strong("Modellvorhersage anhand neuer Beobachtung")),
-           selectInput("datensatzAuswahl2", "Wählen Sie einen Datensatz:", 
-                       #choices = c("spotify_songs_cleaned_with_trans", "spotify_songs_cleaned_with_trans_optima", "spotify_songs_cleaned_without_trans")),
-                       choices = c("Daten mit Transformationen", "Daten ohne Transformationen")),
            selectInput("modellBestimmung", "Wählen Sie ein Modell:", 
                        choices = c("Multiple lineare Regression", "k-Nearest Neighbors", "Regressionsbaum", "Bagged-Regressionsbaum")),
            p("Für jeden Prädiktor kann der Wert aus der neuen Beobachtung eingetragen
@@ -75,7 +66,6 @@ ui <- navbarPage(
   tabPanel(title = "Über uns",
            h4(strong("Das Team von \"Von Beats zur Beliebtheit\"")),
            tableOutput("team"),
-           #p(style="text-align: center;","Annaheim, Fabian C. | Nobel, Gabriel | von Wartburg Rebekka | Waldburger, Safiyya"),
            uiOutput("teambild")
            )
   
