@@ -4,14 +4,14 @@ library("rpart")
 library("rpart.plot")
 
 # Laden der Datensätze
-load("../data/spotify_songs_cleaned_with_trans.RData")
+#load("../data/spotify_songs_cleaned_with_trans.RData")
 load("../data/spotify_songs_cleaned_with_trans_optima.RData")
 load("../data/spotify_songs_cleaned_without_trans.RData")
 
 
 # Laden der Modelle
-#lm_model <- readRDS("../data/RDataModels/regression/lm_model.rds")
-#lm_model_trans <- readRDS("../data/RDataModels/regression/lm_model_trans.rds")
+lm_model <- readRDS("../data/RDataModels/regression/lm_model.rds")
+lm_model_trans <- readRDS("../data/RDataModels/regression/lm_model_trans.rds")
 knn_model <- readRDS("../data/RDataModels/knn/knn_model.rds")
 knn_model_trans <- readRDS("../data/RDataModels/knn/knn_model_trans.rds")
 rt_model <- readRDS("../data/RDataModels/regressionTree/rt_model.rds")
@@ -20,8 +20,8 @@ bagged_rt_model <- readRDS("../data/RDataModels/baggedRegressionTree/bagged_rt_m
 bagged_rt_model_trans <- readRDS("../data/RDataModels/baggedRegressionTree/bagged_rt_model_trans.rds")
 
 # Laden der Results
-#lm_model_results <- readRDS("../data/RDataModels/regression/lm_model_results.rds")
-#lm_model_trans_results <- readRDS("../data/RDataModels/regression/lm_model_trans_results.rds")
+lm_model_results <- readRDS("../data/RDataModels/regression/lm_model_results.rds")
+lm_model_trans_results <- readRDS("../data/RDataModels/regression/lm_model_trans_results.rds")
 knn_model_results <- readRDS("../data/RDataModels/knn/knn_model_results.rds")
 knn_model_trans_results <- readRDS("../data/RDataModels/knn/knn_model_trans_results.rds")
 rt_model_results <- readRDS("../data/RDataModels/regressionTree/rt_model_results.rds")
@@ -33,7 +33,7 @@ bagged_rt_model_trans_results <- readRDS("../data/RDataModels/baggedRegressionTr
 server <- function(input, output, session) {
   # Auflistung aller verwendeter Modelle, welche für die spätere Vorhersage benötigt werden
   modelleListe <- list(
-    #"Multiple lineare Regression" = lm_model,
+    "Multiple lineare Regression" = lm_model_trans,
     "k-Nearest Neighbors" = knn_model_trans,
     "Regressionsbaum" = rt_model_trans,
     "Bagged-Regressionsbaum" = bagged_rt_model_trans
@@ -41,7 +41,7 @@ server <- function(input, output, session) {
   
   # Auflistung aller verwendeter Modelle, welche für die spätere Vorhersage benötigt werden
   resultsList <- list(
-    #"Multiple lineare Regression" = lm_model_results,
+    "Multiple lineare Regression" = lm_model_results,
     "k-Nearest Neighbors" = knn_model_results,
     "Regressionsbaum" = rt_model_results,
     "Bagged-Regressionsbaum" = bagged_rt_model_results
@@ -51,9 +51,9 @@ server <- function(input, output, session) {
   reactiveData <- reactive({
     aktiverTab <- ifelse(input$datensatzAuswahl2 != "", input$datensatzAuswahl2, input$datensatzAuswahl1)
     switch(aktiverTab,
-           "spotify_songs_cleaned_with_trans" = spotify_songs_cleaned_with_trans,
-           "spotify_songs_cleaned_with_trans_optima" = spotify_songs_cleaned_with_trans_optima,
-           "spotify_songs_cleaned_without_trans" = spotify_songs_cleaned_without_trans)
+           #"spotify_songs_cleaned_with_trans" = spotify_songs_cleaned_with_trans,
+           "Daten mit Transformationen" = spotify_songs_cleaned_with_trans_optima,
+           "Daten ohne Transformationen" = spotify_songs_cleaned_without_trans)
   })
   
   ########## Panel Home #########
@@ -97,7 +97,7 @@ server <- function(input, output, session) {
       if(input$gueteOptionen == "Summary") {
         # Rendern von Text
         statFile <- switch(input$modellAuswahl,
-                           #"Multiple lineare Regression" = "www/lm_model_summary.txt",
+                           "Multiple lineare Regression" = "www/lm_model_summary.txt",
                            "k-Nearest Neighbors" = "www/knn_model_summary.txt",
                            "Regressionsbaum" = "www/rt_model_summary.txt",
                            "Bagged-Regressionsbaum" = "www/bagged_rt_model_summary.txt",
@@ -228,11 +228,12 @@ server <- function(input, output, session) {
   # Neuer Bereich für Vorhersagebutton und Output-Element
   output$vorhersageBereich <- renderUI({
     fluidRow(
-      column(12, 
-             actionButton("vorhersageButton", "Vorhersage machen"),
-             hr(),
+      column(4, 
+             actionButton("vorhersageButton", "Vorhersage ohne Transformation"),
              uiOutput("vorhersageOutputUI")
-      )
+      ),
+      column(4,
+             actionButton("transformationButton", "Vorhersage mit Transformierten"))
     )
   })
   
@@ -241,9 +242,9 @@ server <- function(input, output, session) {
     vorhersage <- vorhersageErgebnis()
     if (!is.null(vorhersage)) {
       wellPanel(
-        h5("Vorhersageergebnis:"),
+        h3("Vorhersageergebnis:"),
         p(vorhersage, style = "font-weight: bold;"),
-        hr()
+        br()
       )
     }
   })

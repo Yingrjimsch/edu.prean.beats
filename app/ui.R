@@ -39,8 +39,8 @@ ui <- navbarPage(
   tabPanel(title = "Modelleistungen",
            h4(strong("Ergebnisse zur Leistung der einzelnen Modelle")),
            selectInput("datensatzAuswahl1", "Wählen Sie einen Datensatz:", 
-                       choices = c("spotify_songs_cleaned_with_trans", "spotify_songs_cleaned_with_trans_optima", "spotify_songs_cleaned_without_trans")),
-           
+                       #choices = c("spotify_songs_cleaned_with_trans", "spotify_songs_cleaned_with_trans_optima", "spotify_songs_cleaned_without_trans")),
+                       choices = c("Daten mit Transformationen", "Daten ohne Transformationen")),
            selectInput("modellAuswahl", "Wählen Sie ein Modell:", 
                        choices = c("Multiple lineare Regression", "k-Nearest Neighbors", "Regressionsbaum", "Bagged-Regressionsbaum")),
            uiOutput("modellGueteOptionen"),
@@ -60,14 +60,15 @@ ui <- navbarPage(
   tabPanel(title = "Modellanwendung",
            h4(strong("Modellvorhersage anhand neuer Beobachtung")),
            selectInput("datensatzAuswahl2", "Wählen Sie einen Datensatz:", 
-                       choices = c("spotify_songs_cleaned_with_trans", "spotify_songs_cleaned_with_trans_optima", "spotify_songs_cleaned_without_trans")),
+                       #choices = c("spotify_songs_cleaned_with_trans", "spotify_songs_cleaned_with_trans_optima", "spotify_songs_cleaned_without_trans")),
+                       choices = c("Daten mit Transformationen", "Daten ohne Transformationen")),
            selectInput("modellBestimmung", "Wählen Sie ein Modell:", 
                        choices = c("Multiple lineare Regression", "k-Nearest Neighbors", "Regressionsbaum", "Bagged-Regressionsbaum")),
            p("Für jeden Prädiktor kann der Wert aus der neuen Beobachtung eingetragen
-                    werden und danach mittels em(Vorhersage machen)
-                    die Vorhersage für die neue Beobachtung berechnet werden."),
+                    werden und danach mittels", strong("Vorhersage ohne Transformationen"),
+                    "die Vorhersage für die neue Beobachtung berechnet werden."),
            uiOutput("vorhersageBereich"),
-           uiOutput("dynamischeInputs"),
+           mainPanel(uiOutput("dynamischeInputs")),
            hr()
   )
   ,
