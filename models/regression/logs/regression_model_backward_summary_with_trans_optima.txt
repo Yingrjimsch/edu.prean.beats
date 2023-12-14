@@ -1,0 +1,29 @@
+Call:
+lm(formula = streams ~ listeners_cum + artist_count + in_spotify_playlists_log + 
+    in_spotify_charts + in_apple_playlists + in_apple_charts + 
+    in_deezer_playlists + in_shazam_charts + liveness_. + speechiness_., 
+    data = new_data)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-1.21018 -0.28834  0.02205  0.31155  1.13678 
+
+Coefficients:
+                           Estimate Std. Error t value Pr(>|t|)    
+(Intercept)               1.492e+01  1.456e-01 102.510  < 2e-16 ***
+listeners_cum            -3.205e-09  6.515e-10  -4.920 1.08e-06 ***
+artist_count             -1.038e-01  1.979e-02  -5.247 2.05e-07 ***
+in_spotify_playlists_log  6.222e-01  1.938e-02  32.105  < 2e-16 ***
+in_spotify_charts         6.863e-03  1.277e-03   5.374 1.05e-07 ***
+in_apple_playlists        9.095e-04  2.885e-04   3.152  0.00169 ** 
+in_apple_charts           2.445e-03  4.479e-04   5.459 6.64e-08 ***
+in_deezer_playlists      -3.815e-05  1.870e-05  -2.040  0.04170 *  
+in_shazam_charts         -1.348e-03  1.427e-04  -9.447  < 2e-16 ***
+liveness_.               -1.991e-03  1.265e-03  -1.575  0.11580    
+speechiness_.            -4.104e-03  1.734e-03  -2.367  0.01820 *  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.4513 on 708 degrees of freedom
+Multiple R-squared:  0.8068,	Adjusted R-squared:  0.8041 
+F-statistic: 295.7 on 10 and 708 DF,  p-value: < 2.2e-16

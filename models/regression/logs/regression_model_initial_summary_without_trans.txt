@@ -1,0 +1,61 @@
+Call:
+lm(formula = streams ~ ., data = train_data)
+
+Residuals:
+       Min         1Q     Median         3Q        Max 
+-1.389e+09 -1.452e+08 -3.213e+07  9.128e+07  2.192e+09 
+
+Coefficients:
+                             Estimate Std. Error t value Pr(>|t|)    
+(Intercept)                 3.195e+08  1.061e+08   3.010 0.002702 ** 
+listeners_cum               9.360e-01  4.326e-01   2.164 0.030806 *  
+artist_count               -3.210e+07  1.218e+07  -2.636 0.008571 ** 
+released_weekdayDonnerstag  6.819e+07  4.986e+07   1.368 0.171835    
+released_weekdayFreitag     7.729e+07  4.443e+07   1.740 0.082355 .  
+released_weekdayMittwoch    1.314e+08  5.420e+07   2.425 0.015577 *  
+released_weekdayMontag      1.075e+08  5.693e+07   1.888 0.059379 .  
+released_weekdaySamstag     2.472e+06  7.433e+07   0.033 0.973484    
+released_weekdaySonntag     1.483e+08  6.742e+07   2.199 0.028201 *  
+years_since_release        -3.740e+06  1.113e+06  -3.361 0.000819 ***
+released_monthFebruary     -2.426e+07  5.195e+07  -0.467 0.640683    
+released_monthMarch         4.655e+07  4.712e+07   0.988 0.323572    
+released_monthApril        -1.211e+07  5.111e+07  -0.237 0.812827    
+released_monthMay           1.622e+07  4.261e+07   0.381 0.703558    
+released_monthJune          5.440e+06  4.840e+07   0.112 0.910528    
+released_monthJuly         -1.915e+07  5.295e+07  -0.362 0.717728    
+released_monthAugust        4.010e+07  5.766e+07   0.695 0.487039    
+released_monthSeptember     1.007e+08  5.291e+07   1.904 0.057341 .  
+released_monthOctober      -9.715e+05  4.976e+07  -0.020 0.984428    
+released_monthNovember     -1.483e+07  4.642e+07  -0.319 0.749527    
+released_monthDecember      4.104e+06  4.840e+07   0.085 0.932457    
+in_spotify_playlists        3.497e+04  3.522e+03   9.928  < 2e-16 ***
+in_spotify_charts           5.858e+06  8.259e+05   7.092 3.19e-12 ***
+in_apple_playlists          2.783e+06  2.070e+05  13.443  < 2e-16 ***
+in_apple_charts            -1.621e+04  2.740e+05  -0.059 0.952838    
+in_deezer_playlists        -2.506e+02  1.839e+04  -0.014 0.989130    
+in_deezer_charts           -4.653e+06  2.430e+06  -1.915 0.055904 .  
+in_shazam_charts           -5.807e+05  8.346e+04  -6.958 7.83e-12 ***
+bpm                         9.924e+04  3.772e+05   0.263 0.792549    
+keyA#                       3.437e+07  5.845e+07   0.588 0.556723    
+keyB                        1.883e+06  5.234e+07   0.036 0.971314    
+keyC#                      -1.495e+07  4.793e+07  -0.312 0.755244    
+keyD                       -1.251e+07  5.316e+07  -0.235 0.814047    
+keyD#                       5.790e+07  6.693e+07   0.865 0.387310    
+keyE                        6.052e+07  5.567e+07   1.087 0.277369    
+keyF                       -3.696e+07  5.287e+07  -0.699 0.484714    
+keyF#                      -3.027e+06  5.440e+07  -0.056 0.955640    
+keyG                       -6.040e+07  5.136e+07  -1.176 0.239975    
+keyG#                      -7.754e+06  5.109e+07  -0.152 0.879412    
+keyKeine Angabe            -1.790e+07  5.046e+07  -0.355 0.722877    
+modeMinor                  -1.514e+07  2.258e+07  -0.671 0.502741    
+danceability_.             -1.312e+06  8.533e+05  -1.538 0.124460    
+valence_.                   4.766e+04  5.437e+05   0.088 0.930172    
+energy_.                   -2.200e+06  6.933e+05  -3.173 0.001571 ** 
+liveness_.                 -5.770e+05  7.724e+05  -0.747 0.455290    
+speechiness_.              -1.219e+06  1.092e+06  -1.116 0.264735    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 280400000 on 713 degrees of freedom
+Multiple R-squared:  0.7737,	Adjusted R-squared:  0.7595 
+F-statistic: 54.18 on 45 and 713 DF,  p-value: < 2.2e-16
