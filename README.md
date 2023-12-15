@@ -36,7 +36,9 @@ Branch: Bitte ein Branch pro Task alla `feat/kurzbeschreibung-task`
 | Test / Training Split | Vorhersagemethoden | | |
 | Literaturvergleich der Resultate | Doku | | |
 | Korrekturen gemäss Rückmeldung Semestearbeit Teil 2 | Korrekturen | vonwareb | | fix/corrections-according-review-part-2
-| Erstellung Shiny- App | Data Product | | |
+| Erstellung Shiny- App | Data Product | vonwareb | | feat/spotify-songs-app
+| Abstract | Doku | waldbsaf | | 
+| Schlussteil | Doku | waldbsaf | | 
 
 ## Contributers
 Rebekka von Wartburg
