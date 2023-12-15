@@ -22,9 +22,9 @@ library("RColorBrewer")
 
 ######################### Einlesen der RData Dateien ##########################
 
-load("../../data/spotify_songs_cleaned_with_trans.RData")
-load("../../data/spotify_songs_cleaned_with_trans_optima.RData")
-load("../../data/spotify_songs_cleaned_without_trans.RData")
+load("../data/spotify_songs_cleaned_with_trans.RData")
+load("../data/spotify_songs_cleaned_with_trans_optima.RData")
+load("../data/spotify_songs_cleaned_without_trans.RData")
 
 
 # Kontrolle, ob Einlesen geklappt mittels anzeigen der Struktur der einzelnen Dataframes
@@ -133,7 +133,7 @@ backtransformation <- function(pred, actual){
 
 # Plot observed vs predicted values
 observed_vs_predicted <- function(path_name, actual, pred) {
-  full_filename <- paste0(path_name, "_observed_vs_predicted.png")
+  full_filename <- paste0(path_name, "_rt_observed_vs_predicted.png")
   png(file = full_filename, width = 800, height = 600)
   plot <- ggplot(data = NULL, aes(x = actual, y = pred)) +
     geom_text(label="★", color="orange", size=3) +  # Fügt die Punkte hinzu
@@ -178,7 +178,7 @@ plottingQualityMass <- function(qualityVector, value, savePath) {
 # Erstellen von Plots je nach Prediktor (numerisch oder kategoriell) und speichern als png
 generateOptimalRegressionTree <- function(dataframe, splitfactor, target_var, scaling = TRUE, isTargetTransformed = TRUE, minSplitSequence, maxDepthSequence) {
   set.seed(123)
-  folder_name <- "./img"
+  folder_name <- "../models/regressionTree/img"
   
   if (!dir.exists(folder_name)) {
     
@@ -195,7 +195,9 @@ generateOptimalRegressionTree <- function(dataframe, splitfactor, target_var, sc
   }
   splittedData <- splittingDataframe(dataframe = dataframe, splitfactor = splitfactor )
   trainData <- splittedData$trainData
+  cat("Summe traindata:", dim(trainData),"\n")
   testData <- splittedData$testData
+  cat("Summe testdata:", dim(testData),"\n")
   
   
   formula <- as.formula(paste(target_var, "~."))
@@ -282,6 +284,7 @@ generateOptimalRegressionTree <- function(dataframe, splitfactor, target_var, sc
   dev.off()
   
   pred <- predict(optimal_tree, newdata = testData)
+  cat("Predictions: ", pred, "\n")
   actual <- testData[[target_var]]
   observed_vs_predicted(path_name, actual, pred)
 
@@ -362,9 +365,9 @@ result_with_trans_optima_with_scaling <- generateOptimalRegressionTree(spotify_s
 
 # Model für spätere Verwendung im Dataproduct
 rt_model_trans <- result_with_trans_optima_with_scaling$optimal_tree
-writeLines(capture.output(summary(rt_model_trans)), "../../data/RDataModels/regressionTree/rt_model_trans_summary.txt")
-saveRDS(rt_model_trans, "../../data/RDataModels/regressionTree/rt_model_trans.rds")
-saveRDS(result_with_trans_optima_with_scaling, "../../data/RDataModels/regressionTree/rt_model_trans_results.rds")
+writeLines(capture.output(summary(rt_model_trans)), "../data/RDataModels/regressionTree/rt_model_trans_summary.txt")
+saveRDS(rt_model_trans, "../data/RDataModels/regressionTree/rt_model_trans.rds")
+saveRDS(result_with_trans_optima_with_scaling, "../data/RDataModels/regressionTree/rt_model_trans_results.rds")
 
 print(paste("cp (with transformation & with scaling): ", result_with_trans_optima_with_scaling$cp))
 print(paste("minsplit (with transformation & with scaling): ", result_with_trans_optima_with_scaling$minSplit))
@@ -410,9 +413,9 @@ result_without_trans_with_scaling <- generateOptimalRegressionTree(spotify_songs
 
 # Model für spätere Verwendung im Dataproduct
 rt_model <- result_without_trans_with_scaling$optimal_tree
-writeLines(capture.output(summary(rt_model)), "../../data/RDataModels/regressionTree/rt_model_summary.txt")
-saveRDS(rt_model, "../../data/RDataModels/regressionTree/rt_model.rds")
-saveRDS(result_without_trans_with_scaling, "../../data/RDataModels/regressionTree/rt_model_results.rds")
+writeLines(capture.output(summary(rt_model)), "../data/RDataModels/regressionTree/rt_model_summary.txt")
+saveRDS(rt_model, "../data/RDataModels/regressionTree/rt_model.rds")
+saveRDS(result_without_trans_with_scaling, "../data/RDataModels/regressionTree/rt_model_results.rds")
 
 print(paste("cp (without transformation & with scaling): ", result_without_trans_with_scaling$cp))
 print(paste("minsplit (without transformation &  with scaling): ", result_without_trans_with_scaling$minSplit))

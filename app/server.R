@@ -34,18 +34,18 @@ bagged_rt_model_trans_results <- readRDS("../data/RDataModels/baggedRegressionTr
 server <- function(input, output, session) {
   # Auflistung aller Modell ohne Transformationen
   modelleListe <- list(
-    "Multiple lineare Regression" = lm_model,
-    "k-Nearest Neighbors" = knn_model,
     "Regressionsbaum" = rt_model,
-    "Bagged-Regressionsbaum" = bagged_rt_model
+    "Bagged-Regressionsbaum" = bagged_rt_model,
+    "Multiple lineare Regression" = lm_model,
+    "k-Nearest Neighbors" = knn_model
   )
   
   # Auflistung aller Modell mit Transformationen
   modelleListeTrans <- list(
-    "Multiple lineare Regression" = lm_model_trans,
-    "k-Nearest Neighbors" = knn_model_trans,
     "Regressionsbaum" = rt_model_trans,
-    "Bagged-Regressionsbaum" = bagged_rt_model_trans
+    "Bagged-Regressionsbaum" = bagged_rt_model_trans,
+    "Multiple lineare Regression" = lm_model_trans,
+    "k-Nearest Neighbors" = knn_model_trans
   )
   
   # Auflistung aller verwendeter Resulsets ohne Transformationen
@@ -82,21 +82,21 @@ server <- function(input, output, session) {
   
   #### TODO: kann erst verwendet werden nach merge und Erstellung aller Observed vs Predicted Plots
   
-  # # Auflistung aller Observed vs Predicted Plots-Dateien ohne Transformationen
-  # observedVsPredictedList <- list(
-  #   "Multiple lineare Regression" = "www/lm_observed_vs_predicted.png",
-  #   "k-Nearest Neighbors" = "www/knn_observed_vs_predicted.png",
-  #   "Regressionsbaum" = "rt_observed_vs_predicted.png",
-  #   "Bagged-Regressionsbaum" = "bagged_rt_observed_vs_predicted.png"
-  # )
-  # 
-  # # Auflistung aller Observed vs Predicted Plots-Dateien mit Transformationen
-  # observedVsPredictedListTrans <- list(
-  #   "Multiple lineare Regression" = "www/lm_trans_observed_vs_predicted.png",
-  #   "k-Nearest Neighbors" = "www/knn_trans_observed_vs_predicted.png",
-  #   "Regressionsbaum" = "rt_trans_observed_vs_predicted.png",
-  #   "Bagged-Regressionsbaum" = "bagged_rt_trans_observed_vs_predicted.png"
-  # )
+  # Auflistung aller Observed vs Predicted Plots-Dateien ohne Transformationen
+  observedVsPredictedList <- list(
+    #"Multiple lineare Regression" = "lm_observed_vs_predicted.png",
+    "k-Nearest Neighbors" = "knn_observed_vs_predicted.png",
+    "Regressionsbaum" = "rt_observed_vs_predicted.png",
+    "Bagged-Regressionsbaum" = "bagged_rt_observed_vs_predicted.png"
+  )
+
+  # Auflistung aller Observed vs Predicted Plots-Dateien mit Transformationen
+  observedVsPredictedListTrans <- list(
+    #"Multiple lineare Regression" = "lm_trans_observed_vs_predicted.png",
+    "k-Nearest Neighbors" = "knn_trans_observed_vs_predicted.png",
+    "Regressionsbaum" = "rt_trans_observed_vs_predicted.png",
+    "Bagged-Regressionsbaum" = "bagged_rt_trans_observed_vs_predicted.png"
+  )
   
   # Plot des optimalen Regressionsbaums ohne Transformationen
   tree <- "optimalTree_without_trans.png"
@@ -165,12 +165,15 @@ server <- function(input, output, session) {
         }
       } # Anzeige Predicted vs Observed
       else if(input$gueteOptionen == "Predicted vs Observed") {
-        imgPath <- switch(input$modellAuswahl,
-                          #"Multiple lineare Regression" = "www/lm__observed_vs_predicted.png",
-                          #"k-Nearest Neighbors" = "www/knn__observed_vs_predicted.png",
-                          "Regressionsbaum" = "rt_observed_vs_predicted.png",
-                          "Bagged-Regressionsbaum" = "bagged_rt_observed_vs_predicted.png",
-                          NULL)
+        # Auswahl der entsprechenden Summary-Liste
+        observedVsPredictedFileList <- if(selectedDataOption() == "Daten mit Transformationen") {
+          observedVsPredictedListTrans
+        } else {
+          observedVsPredictedList
+        }
+        
+        imgPath <- observedVsPredictedFileList[[input$modellAuswahl]]
+        
         cat("Ausgewählte Datei: ", imgPath, "\n")
         
         if (!is.null(imgPath)) {
@@ -308,17 +311,20 @@ server <- function(input, output, session) {
   })
   
     # Vorhersage ohne transformierte Prädiktoren
-    vorhersageErgebnis <- eventReactive(input$vorhersageButton, {
+    
+    vorhersageErgebnis <- reactiveVal()
+    
+    observeEvent(input$vorhersageButton, {
       cat("Vorhersagebutton wurde gedrückt\n")
       
       ausgewaehltesModell <- modelleListe[[input$modellBestimmung]]
       cat("Ausgewähltes Modell: ", input$modellBestimmung, "\n")
       
       if(is.null(ausgewaehltesModell)){
-        return("Kein Modell vorhanden")
+        vorhersageErgebnis("Kein Modell vorhanden")
       }
       
-      eingaben <- reaktiveEingaben()
+      eingaben <- isolate(reaktiveEingaben())
       print(paste("Eingaben: ", eingaben))
       
       if (length(eingaben) == 0) {
@@ -326,29 +332,31 @@ server <- function(input, output, session) {
       }
       
       tryCatch({
-        vorhersage <- predict(ausgewaehltesModell, eingaben)
+        vorhersage <- predict(ausgewaehltesModell, newdata =  eingaben)
         vorhersageString <- paste(vorhersage, collapse = " ")
         cat("Vorhersage: ", vorhersageString, "\n")
+        vorhersageErgebnis(vorhersageString)
         
-        return(as.character(vorhersageString))
       }, error = function(e) {
         cat("Fehler bei der Vorhersage: ", e$message, "\n")
-        return(e$message)
+        vorhersageergebnis(e$message)
       })
     })
   
+    vorhersageErgebnisTrans <- reactiveVal()
+    
     # Vorhersage mit transformierten Prädiktoren
-    vorhersageErgebnisTrans <- eventReactive(input$transformationButton, {
+    observeEvent(input$transformationButton, {
       cat("Vorhersagebutton mit Transformationen wurde gedrückt\n")
       
       ausgewaehltesModellTrans <- modelleListeTrans[[input$modellBestimmung]]
       cat("Ausgewähltes Modell mit Transformationen: ", input$modellBestimmung, "\n")
       
       if(is.null(ausgewaehltesModellTrans)){
-        return("Kein Modell mit Transformationen vorhanden")
+        vorhersageergebnis("Kein Modell mit Transformationen vorhanden")
       }
       
-      eingaben <- reaktiveEingaben()
+      eingaben <- isolate(reaktiveEingaben())
       print(paste("Eingaben vor Transformation: ", eingaben))
       
       if (length(eingaben) == 0) {
@@ -358,14 +366,14 @@ server <- function(input, output, session) {
       eingabenTransformiert <- transformiereEingaben(eingaben)
       
       tryCatch({
-        vorhersage <- predict(ausgewaehltesModellTrans, eingabenTransformiert)
+        vorhersage <- predict(ausgewaehltesModellTrans, newdata = eingabenTransformiert)
         vorhersageString <- paste(exp(vorhersage), collapse = " ")
         cat("Vorhersage mit Transformationen: ", vorhersageString, "\n")
         
-        return(as.character(vorhersageString))
+        vorhersageErgebnisTrans(vorhersageString)
       }, error = function(e) {
         cat("Fehler bei der Vorhersage mit Transformationen: ", e$message, "\n")
-        return(e$message)
+        vorhersageErgebnisTrans(e$message)
       })
     })
   
@@ -392,26 +400,19 @@ server <- function(input, output, session) {
       return(eingaben)
     }
   
-  output$vorhersageOutputUI <- renderUI({
-    lokaleVorhersage <- NULL
-    
-    # Überprüfen, welcher Button gedrückt wurde (Vorhersage mit / ohne Transformation)
-    if(input$vorhersageButton > 0) {
-      lokaleVorhersage <- vorhersageErgebnis()
-      cat("Vorhersage; ", lokaleVorhersage)
-    } else if(input$transformationButton > 0) {
-      lokaleVorhersage <- vorhersageErgebnisTrans()
-    }
-    
-    # Anzeigen der Vorhersage, wenn sie vorhanden ist
-    if (!is.null(lokaleVorhersage)) {
-      wellPanel(
-        h3("Vorhersageergebnis:"),
-        p(lokaleVorhersage, style = "font-weight: bold;"),
-        br()
-      )
-    }
-  })
+    output$vorhersageOutputUI <- renderUI({
+      if (!is.null(vorhersageErgebnis()) && input$vorhersageButton > input$transformationButton) {
+        wellPanel(
+          h3("Vorhersageergebnis ohne Transformation:"),
+          p(vorhersageErgebnis(), style = "font-weight: bold;")
+        )
+      } else if (!is.null(vorhersageErgebnisTrans()) && input$transformationButton > input$vorhersageButton) {
+        wellPanel(
+          h3("Vorhersageergebnis mit Transformation:"),
+          p(vorhersageErgebnisTrans(), style = "font-weight: bold;")
+        )
+      }
+    })
   
   
   ########## Panel Über uns #########

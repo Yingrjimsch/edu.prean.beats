@@ -54,7 +54,7 @@ ui <- navbarPage(
   tabPanel(title = "Modellanwendung",
            h4(strong("Modellvorhersage anhand neuer Beobachtung")),
            selectInput("modellBestimmung", "Wählen Sie ein Modell:", 
-                       choices = c("Multiple lineare Regression", "k-Nearest Neighbors", "Regressionsbaum", "Bagged-Regressionsbaum")),
+                       choices = c("Multiple lineare Regression", "k-Nearest Neighbors", "Bagged-Regressionsbaum")),
            p("Für jeden Prädiktor kann der Wert aus der neuen Beobachtung eingetragen
                     werden und danach mittels", strong("Vorhersage ohne Transformationen"),
                     "die Vorhersage für die neue Beobachtung berechnet werden."),

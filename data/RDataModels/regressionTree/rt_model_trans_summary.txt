@@ -2,179 +2,179 @@ Call:
 rpart(formula = formula, data = trainData, method = "anova", 
     control = list(minsplit = best_minSplit, maxdepth = best_maxdepth, 
         cp = best_cp))
-  n= 759 
+  n= 664 
 
           CP nsplit rel error    xerror       xstd
-1 0.54908738      0 1.0000000 1.0029097 0.04460606
-2 0.07276464      1 0.4509126 0.4755154 0.02460271
-3 0.06328453      2 0.3781480 0.4140106 0.02252101
-4 0.03324086      3 0.3148635 0.3681926 0.02049109
-5 0.01790212      4 0.2816226 0.3291040 0.01824455
-6 0.01431391      5 0.2637205 0.3008282 0.01681197
-7 0.01092183      6 0.2494066 0.2785518 0.01563633
-8 0.01089415      7 0.2384847 0.2790817 0.01555879
-9 0.01000000      8 0.2275906 0.2753993 0.01546454
+1 0.54299377      0 1.0000000 1.0031728 0.04735283
+2 0.06889765      1 0.4570062 0.4598950 0.02521588
+3 0.06715331      2 0.3881086 0.4140368 0.02426193
+4 0.03260780      3 0.3209553 0.3667196 0.02293861
+5 0.01593430      4 0.2883475 0.3222549 0.02044058
+6 0.01440939      5 0.2724132 0.3217989 0.02053858
+7 0.01174119      6 0.2580038 0.3133652 0.02024630
+8 0.01082359      7 0.2462626 0.3123016 0.02167756
+9 0.01000000      8 0.2354390 0.3079076 0.02105460
 
 Variable importance
 in_spotify_playlists_log      in_deezer_playlists       in_apple_playlists      years_since_release 
-                      33                       21                       19                       15 
-        in_deezer_charts          in_apple_charts        in_spotify_charts           released_month 
-                       3                        3                        2                        2 
-        in_shazam_charts 
-                       2 
+                      32                       22                       19                       15 
+          released_month         in_deezer_charts        in_spotify_charts         in_shazam_charts 
+                       4                        3                        1                        1 
+           listeners_cum         released_weekday 
+                       1                        1 
 
-Node number 1: 759 observations,    complexity param=0.5490874
-  mean=19.52521, MSE=1.131979 
-  left son=2 (467 obs) right son=3 (292 obs)
+Node number 1: 664 observations,    complexity param=0.5429938
+  mean=19.53622, MSE=1.100244 
+  left son=2 (407 obs) right son=3 (257 obs)
   Primary splits:
-      in_spotify_playlists_log < 0.2520424   to the left,  improve=0.5490874, (0 missing)
-      in_deezer_playlists      < -0.2315108  to the left,  improve=0.4545517, (0 missing)
-      years_since_release      < -0.290172   to the left,  improve=0.3941860, (0 missing)
-      in_apple_playlists       < -0.1045129  to the left,  improve=0.3599725, (0 missing)
-      in_apple_charts          < -0.6601559  to the left,  improve=0.1153635, (0 missing)
+      in_spotify_playlists_log < 0.2540474   to the left,  improve=0.54299380, (0 missing)
+      in_deezer_playlists      < -0.2602041  to the left,  improve=0.45655150, (0 missing)
+      years_since_release      < -0.290172   to the left,  improve=0.40294090, (0 missing)
+      in_apple_playlists       < -0.2489425  to the left,  improve=0.35069480, (0 missing)
+      in_apple_charts          < -0.6601559  to the left,  improve=0.09885663, (0 missing)
   Surrogate splits:
-      in_deezer_playlists < -0.2827173  to the left,  agree=0.888, adj=0.709, (0 split)
-      in_apple_playlists  < -0.1045129  to the left,  agree=0.862, adj=0.640, (0 split)
-      years_since_release < -0.290172   to the left,  agree=0.802, adj=0.486, (0 split)
-      in_deezer_charts    < 0.9650728   to the left,  agree=0.651, adj=0.092, (0 split)
-      in_apple_charts     < 0.4062231   to the left,  agree=0.650, adj=0.089, (0 split)
+      in_deezer_playlists < -0.2602041  to the left,  agree=0.889, adj=0.712, (0 split)
+      in_apple_playlists  < -0.1045129  to the left,  agree=0.861, adj=0.642, (0 split)
+      years_since_release < -0.290172   to the left,  agree=0.797, adj=0.475, (0 split)
+      in_deezer_charts    < 0.9650728   to the left,  agree=0.649, adj=0.093, (0 split)
+      released_month      splits as  RLLLLLLLLRRL, agree=0.648, adj=0.089, (0 split)
 
-Node number 2: 467 observations,    complexity param=0.07276464
-  mean=18.9018, MSE=0.5646527 
-  left son=4 (308 obs) right son=5 (159 obs)
+Node number 2: 407 observations,    complexity param=0.06889765
+  mean=18.92202, MSE=0.5458903 
+  left son=4 (265 obs) right son=5 (142 obs)
   Primary splits:
-      in_spotify_playlists_log < -0.2811414  to the left,  improve=0.23708400, (0 missing)
-      years_since_release      < -0.3816682  to the left,  improve=0.18849830, (0 missing)
-      in_deezer_playlists      < -0.3339238  to the left,  improve=0.11634270, (0 missing)
-      in_apple_playlists       < -0.6764542  to the left,  improve=0.08001679, (0 missing)
-      released_month           splits as  LLLLLLLRRRRR, improve=0.07059582, (0 missing)
+      in_spotify_playlists_log < -0.2811414  to the left,  improve=0.22654870, (0 missing)
+      years_since_release      < -0.3816682  to the left,  improve=0.19004260, (0 missing)
+      in_deezer_playlists      < -0.3339238  to the left,  improve=0.12820820, (0 missing)
+      in_apple_playlists       < -0.6764542  to the left,  improve=0.07290439, (0 missing)
+      released_month           splits as  LLLLLLLRRRRR, improve=0.06841225, (0 missing)
   Surrogate splits:
-      in_apple_playlists  < -0.4107037  to the left,  agree=0.762, adj=0.302, (0 split)
-      in_deezer_playlists < -0.311852   to the left,  agree=0.754, adj=0.277, (0 split)
-      years_since_release < -0.290172   to the left,  agree=0.679, adj=0.057, (0 split)
-      in_deezer_charts    < 1.296038    to the left,  agree=0.675, adj=0.044, (0 split)
-      in_shazam_charts    < 1.070887    to the left,  agree=0.675, adj=0.044, (0 split)
+      in_apple_playlists  < -0.3991493  to the left,  agree=0.757, adj=0.303, (0 split)
+      in_deezer_playlists < -0.311852   to the left,  agree=0.757, adj=0.303, (0 split)
+      years_since_release < -0.290172   to the left,  agree=0.678, adj=0.077, (0 split)
+      in_deezer_charts    < 1.461521    to the left,  agree=0.668, adj=0.049, (0 split)
+      in_shazam_charts    < 1.070887    to the left,  agree=0.668, adj=0.049, (0 split)
 
-Node number 3: 292 observations,    complexity param=0.06328453
-  mean=20.52223, MSE=0.4236943 
-  left son=6 (198 obs) right son=7 (94 obs)
+Node number 3: 257 observations,    complexity param=0.06715331
+  mean=20.5089, MSE=0.4346068 
+  left son=6 (160 obs) right son=7 (97 obs)
   Primary splits:
-      in_spotify_playlists_log < 1.254805    to the left,  improve=0.4394831, (0 missing)
-      in_deezer_playlists      < 0.06513381  to the left,  improve=0.4259251, (0 missing)
-      in_apple_playlists       < 1.322452    to the left,  improve=0.2738426, (0 missing)
-      years_since_release      < -0.1986712  to the left,  improve=0.1647512, (0 missing)
-      listeners_cum            < -0.8974866  to the left,  improve=0.1016738, (0 missing)
+      in_deezer_playlists      < 0.06513381  to the left,  improve=0.4392327, (0 missing)
+      in_spotify_playlists_log < 1.254805    to the left,  improve=0.4382550, (0 missing)
+      in_apple_playlists       < 1.322452    to the left,  improve=0.2792442, (0 missing)
+      years_since_release      < -0.290172   to the left,  improve=0.1735921, (0 missing)
+      listeners_cum            < -0.8639659  to the left,  improve=0.1161148, (0 missing)
   Surrogate splits:
-      in_deezer_playlists < 0.1384121   to the left,  agree=0.908, adj=0.713, (0 split)
-      in_apple_playlists  < 1.362892    to the left,  agree=0.801, adj=0.383, (0 split)
-      years_since_release < 0.07583116  to the left,  agree=0.767, adj=0.277, (0 split)
-      released_weekday    splits as  RLLLLRR, agree=0.726, adj=0.149, (0 split)
-      released_month      splits as  RLLLLLLLLLLL, agree=0.719, adj=0.128, (0 split)
+      in_spotify_playlists_log < 1.258355    to the left,  agree=0.895, adj=0.722, (0 split)
+      in_apple_playlists       < 1.322452    to the left,  agree=0.770, adj=0.392, (0 split)
+      years_since_release      < -0.01566963 to the left,  agree=0.724, adj=0.268, (0 split)
+      released_weekday         splits as  RLLLRLR, agree=0.673, adj=0.134, (0 split)
+      released_month           splits as  RLLLLLLLLLLL, agree=0.661, adj=0.103, (0 split)
 
-Node number 4: 308 observations,    complexity param=0.03324086
-  mean=18.63891, MSE=0.4730975 
-  left son=8 (116 obs) right son=9 (192 obs)
+Node number 4: 265 observations,    complexity param=0.0326078
+  mean=18.66459, MSE=0.458099 
+  left son=8 (100 obs) right son=9 (165 obs)
   Primary splits:
-      years_since_release      < -0.3816682  to the left,  improve=0.19599770, (0 missing)
-      in_spotify_playlists_log < -1.281523   to the left,  improve=0.14910780, (0 missing)
-      released_month           splits as  RRRRRLLRRRRR, improve=0.11164740, (0 missing)
-      in_apple_playlists       < -0.7457805  to the left,  improve=0.07810235, (0 missing)
-      in_deezer_playlists      < -0.3339238  to the left,  improve=0.06496675, (0 missing)
+      years_since_release      < -0.3816682  to the left,  improve=0.19623350, (0 missing)
+      in_spotify_playlists_log < -1.206815   to the left,  improve=0.16461550, (0 missing)
+      released_month           splits as  RRRRRLLRRRRR, improve=0.10508220, (0 missing)
+      in_apple_playlists       < -0.7457805  to the left,  improve=0.08897298, (0 missing)
+      in_deezer_playlists      < -0.3365724  to the left,  improve=0.07594492, (0 missing)
   Surrogate splits:
-      in_shazam_charts         < -0.1814682  to the right, agree=0.808, adj=0.491, (0 split)
-      in_spotify_charts        < -0.2310165  to the right, agree=0.747, adj=0.328, (0 split)
-      in_deezer_charts         < -0.1933052  to the right, agree=0.721, adj=0.259, (0 split)
-      in_spotify_playlists_log < -1.213456   to the left,  agree=0.701, adj=0.207, (0 split)
-      released_month           splits as  RRLRRLRRRRRR, agree=0.695, adj=0.190, (0 split)
+      in_shazam_charts         < -0.1814682  to the right, agree=0.815, adj=0.51, (0 split)
+      in_spotify_charts        < -0.2820305  to the right, agree=0.743, adj=0.32, (0 split)
+      in_deezer_charts         < -0.1933052  to the right, agree=0.721, adj=0.26, (0 split)
+      in_spotify_playlists_log < -1.211793   to the left,  agree=0.698, adj=0.20, (0 split)
+      released_month           splits as  RLLRRLRRRRRR, agree=0.691, adj=0.18, (0 split)
 
-Node number 5: 159 observations,    complexity param=0.01092183
-  mean=19.41103, MSE=0.348814 
-  left son=10 (86 obs) right son=11 (73 obs)
+Node number 5: 142 observations,    complexity param=0.01174119
+  mean=19.40243, MSE=0.3552613 
+  left son=10 (98 obs) right son=11 (44 obs)
   Primary splits:
-      in_spotify_charts        < -0.5881119  to the left,  improve=0.16919380, (0 missing)
-      years_since_release      < -0.290172   to the left,  improve=0.13871660, (0 missing)
-      in_spotify_playlists_log < 0.01855285  to the left,  improve=0.12031980, (0 missing)
-      in_apple_charts          < -0.818138   to the left,  improve=0.09661111, (0 missing)
-      released_month           splits as  LLRLLLRRRLRR, improve=0.09395169, (0 missing)
+      years_since_release < -0.290172   to the left,  improve=0.1700329, (0 missing)
+      in_spotify_charts   < -0.5881119  to the left,  improve=0.1567915, (0 missing)
+      released_month      splits as  LLRRLLRRRRRR, improve=0.1171095, (0 missing)
+      in_apple_charts     < -0.818138   to the left,  improve=0.1074953, (0 missing)
+      in_shazam_charts    < -0.3526762  to the left,  improve=0.1035884, (0 missing)
   Surrogate splits:
-      in_apple_charts     < -0.6799037  to the left,  agree=0.767, adj=0.493, (0 split)
-      in_deezer_charts    < -0.3587795  to the left,  agree=0.755, adj=0.466, (0 split)
-      in_shazam_charts    < -0.2860953  to the left,  agree=0.742, adj=0.438, (0 split)
-      years_since_release < -0.3816682  to the right, agree=0.660, adj=0.260, (0 split)
-      released_month      splits as  LRRRLLLLLLLR, agree=0.629, adj=0.192, (0 split)
+      listeners_cum       < -0.9288751  to the right, agree=0.803, adj=0.364, (0 split)
+      released_month      splits as  LLLLLLLRRLRL, agree=0.746, adj=0.182, (0 split)
+      released_weekday    splits as  LLLRLLL, agree=0.732, adj=0.136, (0 split)
+      in_deezer_playlists < -0.2509339  to the left,  agree=0.718, adj=0.091, (0 split)
+      speechiness_.       < -0.6705691  to the right, agree=0.718, adj=0.091, (0 split)
 
-Node number 6: 198 observations,    complexity param=0.01089415
-  mean=20.22491, MSE=0.2722339 
-  left son=12 (109 obs) right son=13 (89 obs)
+Node number 6: 160 observations
+  mean=20.16871, MSE=0.2482826 
+
+Node number 7: 97 observations
+  mean=21.07004, MSE=0.2361763 
+
+Node number 8: 100 observations,    complexity param=0.0159343
+  mean=18.27946, MSE=0.4143949 
+  left son=16 (50 obs) right son=17 (50 obs)
   Primary splits:
-      in_spotify_playlists_log < 0.7440584   to the left,  improve=0.17364650, (0 missing)
-      in_deezer_playlists      < -0.07391833 to the left,  improve=0.13212850, (0 missing)
-      in_apple_playlists       < 0.952712    to the left,  improve=0.11186340, (0 missing)
-      listeners_cum            < -0.6800029  to the left,  improve=0.09976228, (0 missing)
-      years_since_release      < 1.585594    to the right, improve=0.09575589, (0 missing)
+      released_month           splits as  RRRRLLL-----, improve=0.28091540, (0 missing)
+      in_spotify_playlists_log < -1.099122   to the left,  improve=0.21217810, (0 missing)
+      in_deezer_playlists      < -0.3365724  to the left,  improve=0.11633960, (0 missing)
+      in_apple_playlists       < -0.7457805  to the left,  improve=0.10526320, (0 missing)
+      in_deezer_charts         < -0.3587795  to the left,  improve=0.09198205, (0 missing)
   Surrogate splits:
-      in_deezer_playlists < -0.2346008  to the left,  agree=0.753, adj=0.449, (0 split)
-      in_apple_playlists  < 0.4558741   to the left,  agree=0.727, adj=0.393, (0 split)
-      years_since_release < -0.1986712  to the left,  agree=0.687, adj=0.303, (0 split)
-      in_apple_charts     < 1.00853     to the left,  agree=0.621, adj=0.157, (0 split)
-      acousticness_.      < 0.8991524   to the left,  agree=0.621, adj=0.157, (0 split)
+      listeners_cum     < -0.4332725  to the right, agree=0.67, adj=0.34, (0 split)
+      key               splits as  RRLRRRLLRRRR, agree=0.66, adj=0.32, (0 split)
+      in_spotify_charts < 0.07506743  to the right, agree=0.65, adj=0.30, (0 split)
+      in_shazam_charts  < -0.1687861  to the right, agree=0.63, adj=0.26, (0 split)
+      danceability_.    < 0.4438574   to the right, agree=0.62, adj=0.24, (0 split)
 
-Node number 7: 94 observations
-  mean=21.14851, MSE=0.1642992 
-
-Node number 8: 116 observations,    complexity param=0.01790212
-  mean=18.24715, MSE=0.4369204 
-  left son=16 (56 obs) right son=17 (60 obs)
+Node number 9: 165 observations,    complexity param=0.01440939
+  mean=18.898, MSE=0.3402106 
+  left son=18 (22 obs) right son=19 (143 obs)
   Primary splits:
-      released_month           splits as  RRRRLLL-----, improve=0.3034759, (0 missing)
-      in_spotify_playlists_log < -1.50131    to the left,  improve=0.2019224, (0 missing)
-      in_apple_playlists       < -0.7457805  to the left,  improve=0.1041999, (0 missing)
-      listeners_cum            < 0.6979356   to the right, improve=0.1014167, (0 missing)
-      in_apple_charts          < -0.7588947  to the left,  improve=0.0936365, (0 missing)
+      in_apple_playlists  < -0.7573348  to the left,  improve=0.18753000, (0 missing)
+      in_spotify_charts   < -0.4860865  to the left,  improve=0.16182970, (0 missing)
+      in_apple_charts     < -0.6502821  to the left,  improve=0.12274630, (0 missing)
+      in_deezer_charts    < -0.3587795  to the left,  improve=0.09840924, (0 missing)
+      in_deezer_playlists < -0.3339238  to the left,  improve=0.09236679, (0 missing)
   Surrogate splits:
-      listeners_cum            < -0.4332725  to the right, agree=0.647, adj=0.268, (0 split)
-      in_spotify_playlists_log < -1.454189   to the left,  agree=0.647, adj=0.268, (0 split)
-      in_spotify_charts        < 0.07506743  to the right, agree=0.638, adj=0.250, (0 split)
-      key                      splits as  RRLRRRLLRRRR, agree=0.638, adj=0.250, (0 split)
-      in_shazam_charts         < -0.01026015 to the right, agree=0.629, adj=0.232, (0 split)
+      danceability_.           < -1.986591   to the left,  agree=0.885, adj=0.136, (0 split)
+      listeners_cum            < 2.202652    to the right, agree=0.879, adj=0.091, (0 split)
+      in_spotify_playlists_log < -0.2918807  to the right, agree=0.879, adj=0.091, (0 split)
+      in_spotify_charts        < 1.299403    to the right, agree=0.879, adj=0.091, (0 split)
+      released_month           splits as  LRRRRRRRRRRR, agree=0.873, adj=0.045, (0 split)
 
-Node number 9: 192 observations,    complexity param=0.01431391
-  mean=18.8756, MSE=0.3462064 
-  left son=18 (106 obs) right son=19 (86 obs)
+Node number 10: 98 observations
+  mean=19.23774, MSE=0.3006784 
+
+Node number 11: 44 observations
+  mean=19.76922, MSE=0.2818852 
+
+Node number 16: 50 observations
+  mean=17.93827, MSE=0.3025473 
+
+Node number 17: 50 observations
+  mean=18.62065, MSE=0.2934226 
+
+Node number 18: 22 observations
+  mean=18.25403, MSE=0.3646897 
+
+Node number 19: 143 observations,    complexity param=0.01082359
+  mean=18.99707, MSE=0.2628295 
+  left son=38 (120 obs) right son=39 (23 obs)
   Primary splits:
-      in_spotify_charts  < -0.5881119  to the left,  improve=0.18501290, (0 missing)
-      in_apple_playlists < -0.7457805  to the left,  improve=0.16460570, (0 missing)
-      listeners_cum      < -0.1602514  to the right, improve=0.11213910, (0 missing)
-      in_apple_charts    < -0.6502821  to the left,  improve=0.10739750, (0 missing)
-      danceability_.     < -1.301958   to the left,  improve=0.09942636, (0 missing)
+      in_spotify_charts        < -0.1800025  to the left,  improve=0.21038660, (0 missing)
+      in_apple_charts          < 0.3173582   to the left,  improve=0.13907620, (0 missing)
+      released_month           splits as  LLLLRLRRLLLL, improve=0.09082605, (0 missing)
+      in_spotify_playlists_log < -1.155669   to the left,  improve=0.08238986, (0 missing)
+      key                      splits as  RLRLLLRLRLRR, improve=0.08053070, (0 missing)
   Surrogate splits:
-      in_shazam_charts         < -0.3590169  to the left,  agree=0.703, adj=0.337, (0 split)
-      in_apple_charts          < 0.3173582   to the left,  agree=0.688, adj=0.302, (0 split)
-      in_deezer_charts         < -0.3587795  to the left,  agree=0.677, adj=0.279, (0 split)
-      listeners_cum            < -0.5125126  to the right, agree=0.646, adj=0.209, (0 split)
-      in_spotify_playlists_log < -0.8687339  to the right, agree=0.641, adj=0.198, (0 split)
+      in_deezer_charts         < -0.02782261 to the left,  agree=0.881, adj=0.261, (0 split)
+      in_apple_charts          < 1.235629    to the left,  agree=0.867, adj=0.174, (0 split)
+      in_shazam_charts         < 0.09753751  to the left,  agree=0.867, adj=0.174, (0 split)
+      in_spotify_playlists_log < -0.308749   to the left,  agree=0.846, adj=0.043, (0 split)
+      valence_.                < 1.856871    to the left,  agree=0.846, adj=0.043, (0 split)
 
-Node number 10: 86 observations
-  mean=19.18721, MSE=0.2864227 
+Node number 38: 120 observations
+  mean=18.89413, MSE=0.2159891 
 
-Node number 11: 73 observations
-  mean=19.67471, MSE=0.2937719 
-
-Node number 12: 109 observations
-  mean=20.02844, MSE=0.2248337 
-
-Node number 13: 89 observations
-  mean=20.46552, MSE=0.225118 
-
-Node number 16: 56 observations
-  mean=17.87023, MSE=0.3428603 
-
-Node number 17: 60 observations
-  mean=18.59894, MSE=0.2683599 
-
-Node number 18: 106 observations
-  mean=18.64764, MSE=0.3307375 
-
-Node number 19: 86 observations
-  mean=19.15658, MSE=0.2222715 
+Node number 39: 23 observations
+  mean=19.5342, MSE=0.1634188 
 

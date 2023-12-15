@@ -7,15 +7,15 @@ library(class)
 library(Metrics)
 library(kknn)
 library(caret)
-load("../../data/spotify_songs_cleaned_without_trans.RData")
-load("../../data/spotify_songs_cleaned_with_trans.RData")
-load("../../data/spotify_songs_cleaned_with_trans_optima.RData")
+load("../data/spotify_songs_cleaned_without_trans.RData")
+load("../data/spotify_songs_cleaned_with_trans.RData")
+load("../data/spotify_songs_cleaned_with_trans_optima.RData")
 
 str(spotify_songs_cleaned_without_trans)
 
 # Plot observed vs predicted values
 observed_vs_predicted <- function(path_name, actual, pred) {
-  full_filename <- paste0(path_name, "_observed_vs_predicted.png")
+  full_filename <- paste0(path_name, "_knn_observed_vs_predicted.png")
   png(file = full_filename, width = 800, height = 600)
   plot <- ggplot(data = NULL, aes(x = actual, y = pred)) +
     geom_text(label="★", color="orange", size=3) +  # Fügt die Punkte hinzu
@@ -27,11 +27,23 @@ observed_vs_predicted <- function(path_name, actual, pred) {
   dev.off()
 }
 
+# Rücktransformation der mittels Logarithmus transformierten Vorhersagen und akteulle Werte
+backtransformation <- function(pred, actual){
+  
+  log_pred <- pred 
+  log_actual <- actual  
+  
+  pred <- exp(log_pred)
+  actual <- exp(log_actual)
+  return (list(pred = pred, actual = actual))
+  
+}
+
 set.seed(69)  #für die Reproduzierbarkeit
 
-exec_knn <- function(data) {
+exec_knn <- function(data, isTargetTransformed = TRUE) {
   
-  folder_name <- "./img"
+  folder_name <- "../models/knn/img"
   
   if (!dir.exists(folder_name)) {
     
@@ -80,6 +92,12 @@ exec_knn <- function(data) {
   
   observed_vs_predicted(path_name, test_data$streams, knn_predictions)
   
+  if(isTargetTransformed){
+    backtrans <- backtransformation(knn_predictions, test_data$streams)
+    knn_predictions <- backtrans$pred
+    test_data$streams <- backtrans$actual
+  }
+  
   mse <- mean(test_data$streams - knn_predictions)^2
   rmse <- sqrt(mse)
   mae <- mae(test_data$streams, knn_predictions)
@@ -91,20 +109,20 @@ exec_knn <- function(data) {
   return(list(knn_model = knn_model, mae = mae, mse = mse, rmse = rmse))
 }
 
-results_without_trans <- exec_knn(spotify_songs_cleaned_without_trans)
+results_without_trans <- exec_knn(spotify_songs_cleaned_without_trans, isTargetTransformed = FALSE)
 # Model für spätere Verwendung im Dataproduct
 knn_model <- results_without_trans$knn_model
-writeLines(capture.output(summary(knn_model)), "../../data/RDataModels/knn/knn_model_summary.txt")
-saveRDS(knn_model, "../../data/RDataModels/knn/knn_model.rds")
-saveRDS(results_without_trans, "../../data/RDataModels/knn/knn_model_results.rds")
+writeLines(capture.output(summary(knn_model)), "../data/RDataModels/knn/knn_model_summary.txt")
+saveRDS(knn_model, "../data/RDataModels/knn/knn_model.rds")
+saveRDS(results_without_trans, "../data/RDataModels/knn/knn_model_results.rds")
 
 
 results_with_trans <- exec_knn(spotify_songs_cleaned_with_trans)
 
-results_with_trans_optima <- exec_knn(spotify_songs_cleaned_with_trans_optima)
+results_with_trans_optima <- exec_knn(spotify_songs_cleaned_with_trans_optima, isTargetTransformed = TRUE)
 # Model für spätere Verwendung im Dataproduct
 knn_model_trans <- results_with_trans_optima$knn_model
-writeLines(capture.output(summary(knn_model_trans)), "../../data/RDataModels/knn/knn_model_trans_summary.txt")
-saveRDS(knn_model_trans, "../../data/RDataModels/knn/knn_model_trans.rds")
-saveRDS(results_with_trans_optima, "../../data/RDataModels/knn/knn_model_trans_results.rds")
+writeLines(capture.output(summary(knn_model_trans)), "../data/RDataModels/knn/knn_model_trans_summary.txt")
+saveRDS(knn_model_trans, "../data/RDataModels/knn/knn_model_trans.rds")
+saveRDS(results_with_trans_optima, "../data/RDataModels/knn/knn_model_trans_results.rds")
 

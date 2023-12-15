@@ -15,10 +15,10 @@ rpart(formula = formula, data = trainData, method = "anova",
 8 0.01000000      7 0.1936990 0.2615976 0.03497012
 
 Variable importance
- in_deezer_playlists in_spotify_playlists   in_apple_playlists  years_since_release     in_deezer_charts 
-                  36                   31                   20                    7                    2 
-   in_spotify_charts      in_apple_charts 
-                   1                    1 
+ in_deezer_playlists in_spotify_playlists   in_apple_playlists  years_since_release 
+                  36                   31                   20                    7 
+    in_deezer_charts    in_spotify_charts      in_apple_charts 
+                   2                    1                    1 
 
 Node number 1: 759 observations,    complexity param=0.5814045
   mean=5.145656e+08, MSE=3.265393e+17 
