@@ -84,7 +84,7 @@ server <- function(input, output, session) {
   
   # Auflistung aller Observed vs Predicted Plots-Dateien ohne Transformationen
   observedVsPredictedList <- list(
-    #"Multiple lineare Regression" = "lm_observed_vs_predicted.png",
+    "Multiple lineare Regression" = "lm_observed_vs_predicted.png",
     "k-Nearest Neighbors" = "knn_observed_vs_predicted.png",
     "Regressionsbaum" = "rt_observed_vs_predicted.png",
     "Bagged-Regressionsbaum" = "bagged_rt_observed_vs_predicted.png"
@@ -92,7 +92,7 @@ server <- function(input, output, session) {
 
   # Auflistung aller Observed vs Predicted Plots-Dateien mit Transformationen
   observedVsPredictedListTrans <- list(
-    #"Multiple lineare Regression" = "lm_trans_observed_vs_predicted.png",
+    "Multiple lineare Regression" = "lm_trans_observed_vs_predicted.png",
     "k-Nearest Neighbors" = "knn_trans_observed_vs_predicted.png",
     "Regressionsbaum" = "rt_trans_observed_vs_predicted.png",
     "Bagged-Regressionsbaum" = "bagged_rt_trans_observed_vs_predicted.png"
@@ -339,7 +339,7 @@ server <- function(input, output, session) {
         
       }, error = function(e) {
         cat("Fehler bei der Vorhersage: ", e$message, "\n")
-        vorhersageergebnis(e$message)
+        vorhersageErgebnis(e$message)
       })
     })
   
@@ -353,7 +353,7 @@ server <- function(input, output, session) {
       cat("Ausgewähltes Modell mit Transformationen: ", input$modellBestimmung, "\n")
       
       if(is.null(ausgewaehltesModellTrans)){
-        vorhersageergebnis("Kein Modell mit Transformationen vorhanden")
+        vorhersageErgebnis("Kein Modell mit Transformationen vorhanden")
       }
       
       eingaben <- isolate(reaktiveEingaben())

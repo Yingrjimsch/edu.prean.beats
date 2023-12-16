@@ -166,6 +166,7 @@ generateBaggedRegressionTree <- function(dataframe, splitfactor, target_var, met
     dev.off()
     
     pred <- predict(bagged_tree, newdata = testData)
+    cat("Predictions: ", pred, "\n")
     actual <- testData[[target_var]]
     observed_vs_predicted(path_name, actual, pred)
 
