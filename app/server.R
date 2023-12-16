@@ -3,6 +3,7 @@ library("shiny")
 library("rpart")
 library("rpart.plot")
 library("MASS")
+library(caret)
 
 # Laden der Datensätze
 #load("../data/spotify_songs_cleaned_with_trans.RData")
@@ -282,7 +283,6 @@ server <- function(input, output, session) {
       eingabenNamen <- names(data)[-length(names(data))]
       cat("EingabeNamen: ", eingabenNamen, "\n")
       eingabenDF <- setNames(as.data.frame(t(eingabenWerte), stringsAsFactors = FALSE), eingabenNamen)
-
       # Datentypen aus den Trainingsdaten ableiten und konvertieren
       for (spalte in names(eingabenDF)) {
         typ <- class(data[[spalte]])
@@ -294,7 +294,6 @@ server <- function(input, output, session) {
           eingabenDF[[spalte]] <- factor(eingabenDF[[spalte]], levels = levels(data[[spalte]]))
         }
       }
-
       return(eingabenDF)
     })
 
@@ -326,7 +325,6 @@ server <- function(input, output, session) {
       
       eingaben <- isolate(reaktiveEingaben())
       print(paste("Eingaben: ", eingaben))
-      
       if (length(eingaben) == 0) {
         return("Keine Eingaben vorhanden")
       }
