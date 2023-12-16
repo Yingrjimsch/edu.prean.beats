@@ -9,6 +9,8 @@ library("MASS")
 #load("../data/spotify_songs_cleaned_with_trans_optima.RData")
 load("../data/spotify_songs_cleaned_without_trans.RData")
 
+str(spotify_songs_cleaned_without_trans)
+
 
 # Laden der Modelle
 lm_model <- readRDS("../data/RDataModels/regression/lm_model.rds")
@@ -32,6 +34,7 @@ bagged_rt_model_trans_results <- readRDS("../data/RDataModels/baggedRegressionTr
 
 # server
 server <- function(input, output, session) {
+  vorhersaheTrans <- FALSE
   # Auflistung aller Modell ohne Transformationen
   modelleListe <- list(
     "Regressionsbaum" = rt_model,
@@ -80,7 +83,6 @@ server <- function(input, output, session) {
     "Bagged-Regressionsbaum" = "www/bagged_rt_model_trans_summary.txt"
   )
   
-  #### TODO: kann erst verwendet werden nach merge und Erstellung aller Observed vs Predicted Plots
   
   # Auflistung aller Observed vs Predicted Plots-Dateien ohne Transformationen
   observedVsPredictedList <- list(
@@ -224,7 +226,7 @@ server <- function(input, output, session) {
     }
   })
   
-  ########## Panel Modellanwednung #########
+  ########## Panel Modellanwendnung #########
   
   # Daten ohne Transformationen als Standard
   data <- reactive({
@@ -306,7 +308,7 @@ server <- function(input, output, session) {
                uiOutput("vorhersageOutputUI")
         ),
         column(4,
-               actionButton("transformationButton", "Vorhersage mit Transformierten"))
+               actionButton("transformationButton", "Vorhersage mit Transformation"))
       )
   })
   
@@ -316,6 +318,8 @@ server <- function(input, output, session) {
     
     observeEvent(input$vorhersageButton, {
       cat("Vorhersagebutton wurde gedrückt\n")
+      vorhersaheTrans <- FALSE
+      cat("vorhersaheTrans: ", vorhersaheTrans)
       
       ausgewaehltesModell <- modelleListe[[input$modellBestimmung]]
       cat("Ausgewähltes Modell: ", input$modellBestimmung, "\n")
@@ -333,7 +337,7 @@ server <- function(input, output, session) {
       
       tryCatch({
         vorhersage <- predict(ausgewaehltesModell, newdata =  eingaben)
-        vorhersageString <- paste(vorhersage, collapse = " ")
+        vorhersageString <- paste(vorhersage, " Streams", collapse = " ")
         cat("Vorhersage: ", vorhersageString, "\n")
         vorhersageErgebnis(vorhersageString)
         
@@ -367,7 +371,7 @@ server <- function(input, output, session) {
       
       tryCatch({
         vorhersage <- predict(ausgewaehltesModellTrans, newdata = eingabenTransformiert)
-        vorhersageString <- paste(exp(vorhersage), collapse = " ")
+        vorhersageString <- paste(exp(vorhersage), " Streams", collapse = " ")
         cat("Vorhersage mit Transformationen: ", vorhersageString, "\n")
         
         vorhersageErgebnisTrans(vorhersageString)
@@ -400,7 +404,7 @@ server <- function(input, output, session) {
       return(eingaben)
     }
   
-    output$vorhersageOutputUI <- renderUI({
+    output$vorhersageOutputUI <- renderUi({
       if (!is.null(vorhersageErgebnis()) && input$vorhersageButton > input$transformationButton) {
         wellPanel(
           h3("Vorhersageergebnis ohne Transformation:"),
