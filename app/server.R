@@ -120,8 +120,7 @@ server <- function(input, output, session) {
   ########## Panel Home #########
   output$titelbild <- renderUI({
     imgPath <- "titelbild.png"
-    div(style = "text-align: center;",
-    shiny::tags$img(src = imgPath, alt = "Titelbild", width = "auto%", height = "auto"))
+    shiny::tags$img(src = imgPath, alt = "Titelbild", width = "auto%", height = "auto")
    })
   
   
