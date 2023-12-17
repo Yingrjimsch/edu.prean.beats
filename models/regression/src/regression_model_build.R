@@ -1,5 +1,5 @@
 #install.packages("leaps") Install if package not installed
-library(leaps)
+library("leaps")
 
 BASE_DIR <- "./models/regression/"
 DIR_DATA_CLEANING <- "./data/"

@@ -1,3 +1,9 @@
+# Installieren der packages falls diese noch nicht vorhanden
+
+# install.packages("shiny")
+# install.packages("shinythemes")
+# install.packages("bslib")
+
 library("shiny")
 library("shinythemes")
 library("bslib")
@@ -171,7 +177,7 @@ ui <- navbarPage(
                "Anzahl der gesprochenen Worte im Song")
              ),
            ),
-  tabPanel(title = "Modelleistungen",
+  tabPanel(title = "Modellleistungen",
            h4(strong("Ergebnisse zur Leistung der einzelnen Modelle")),
            selectInput("modellAuswahl", "Wählen Sie ein Modell:", 
                        choices = c("Multiple lineare Regression", "k-Nearest Neighbors", "Regressionsbaum", "Bagged-Regressionsbaum")),

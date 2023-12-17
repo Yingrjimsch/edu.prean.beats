@@ -1,5 +1,6 @@
-#install.packages("leaps") Install if package not installed
-library(leaps)
+# install.packages("leaps") Install if package not installed
+# install.packages("ggplot2")
+library("leaps")
 library("ggplot2")
 
 # Define directories

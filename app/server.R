@@ -1,13 +1,12 @@
+# Installieren der packages falls diese noch nicht vorhanden
+# install.packages("shiny")
+# install.packages("caret")
+
 # verwendete Bibliotheken
 library("shiny")
-library("rpart")
-library("rpart.plot")
-library("MASS")
 library("caret")
 
-# Laden der Datensätze
-#load("../data/spotify_songs_cleaned_with_trans.RData")
-#load("../data/spotify_songs_cleaned_with_trans_optima.RData")
+# Laden der Datensatzes
 load("../data/spotify_songs_cleaned_without_trans.RData")
 
 
@@ -141,15 +140,6 @@ server <- function(input, output, session) {
                   choices = c("Predicted vs Observed", "Results", "Summary"))
     }
   })
-  
-  # # Anzeige der Modellgüte basierend auf der Auswahl
-  # output$modellGueteErgebnis <- renderUI({
-  #   HTML( paste0("<hr><strong>Ausgewählter Datensatz:</strong><span style='margin-left: 25px;'>", input$datensatzAuswahl1,
-  #                "<br>",
-  #                "<hr><strong>Ausgewähltes Modell:</strong><span style='margin-left: 25px;'>", input$modellAuswahl, 
-  #                "<br>",
-  #                "<hr><strong>Ausgewählte Modellgüte-Parameter:</strong><span style='margin-left: 25px;'>", paste(input$gueteOptionen, collapse = ", ")))
-  # })
   
   # Anzeige der verschiedenen Guetemasse
   output$dynamischeModellGuete <- renderUI({

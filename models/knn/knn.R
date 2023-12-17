@@ -1,12 +1,13 @@
-# Install packages if not available
+# Installieren der packages falls diese noch nicht vorhanden
+
 #install.packages("class")
 #install.packages("Metrics")
 #install.packages("kknn")
 #install.packages("caret")
-library(class)
-library(Metrics)
-library(kknn)
-library(caret)
+library("class")
+library("Metrics")
+library("kknn")
+library("caret")
 load("../data/spotify_songs_cleaned_without_trans.RData")
 load("../data/spotify_songs_cleaned_with_trans.RData")
 load("../data/spotify_songs_cleaned_with_trans_optima.RData")

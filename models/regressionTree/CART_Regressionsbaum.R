@@ -9,7 +9,17 @@
 ###############################################################################
 
 ###################### Laden der notwendigen Libriaries #######################
-# install.packages("rpart.plot") Install this package on first run
+# Installieren der packages falls diese noch nicht vorhanden
+
+# install.packages("rpart") 
+# install.packages("rpart.plot") 
+# install.packages("dplyr") 
+# install.packages("ipred") 
+# install.packages("caret") 
+# install.packages("Metrics") 
+# install.packages("ggplot2") 
+# install.packages("RColorBrewer") 
+
 library("rpart")
 library("rpart.plot")
 library("dplyr")       

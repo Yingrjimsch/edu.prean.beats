@@ -1,3 +1,6 @@
+# Installieren der packages falls diese noch nicht vorhanden
+#install.packages("shiny")
+
 library("shiny")
 
 # Source UI and Server scripts
