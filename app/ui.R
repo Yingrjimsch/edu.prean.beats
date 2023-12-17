@@ -101,7 +101,7 @@ ui <- navbarPage(
            selectInput("modellBestimmung", "Wählen Sie ein Modell:", 
                        choices = c("Multiple lineare Regression", "k-Nearest Neighbors", "Regressionsbaum", "Bagged-Regressionsbaum")),
            p("Für jeden Prädiktor kann der Wert aus der neuen Beobachtung eingetragen
-                    werden und danach mittels", strong("Vorhersage ohne Transformationen"),
+                    werden und danach mittels", strong("Vorhersage ohne Transformationen"), "oder ", strong("Vorhersage mit Transformationen"),
                     "die Vorhersage für die neue Beobachtung berechnet werden."),
            uiOutput("vorhersageBereich"),
            mainPanel(uiOutput("dynamischeInputs")),
