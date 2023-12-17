@@ -3,14 +3,12 @@ library("shiny")
 library("rpart")
 library("rpart.plot")
 library("MASS")
-library(caret)
+library("caret")
 
 # Laden der Datensätze
 #load("../data/spotify_songs_cleaned_with_trans.RData")
 #load("../data/spotify_songs_cleaned_with_trans_optima.RData")
 load("../data/spotify_songs_cleaned_without_trans.RData")
-
-str(spotify_songs_cleaned_without_trans)
 
 
 # Laden der Modelle
@@ -35,7 +33,13 @@ bagged_rt_model_trans_results <- readRDS("../data/RDataModels/baggedRegressionTr
 
 # server
 server <- function(input, output, session) {
-  vorhersaheTrans <- FALSE
+  
+  # reactiveVal um festzuhalten, welcher Button gedrückt wurde
+  letzteVorhersage <- reactiveVal()
+  # reactiveVal um das Vorhersageergebnis je nach gedrücktem Button reaktiv anzuzeigen
+  vorhersageErgebnis <- reactiveVal()
+  vorhersageErgebnisTrans <- reactiveVal()
+  
   # Auflistung aller Modell ohne Transformationen
   modelleListe <- list(
     "Regressionsbaum" = rt_model,
@@ -116,7 +120,8 @@ server <- function(input, output, session) {
   ########## Panel Home #########
   output$titelbild <- renderUI({
     imgPath <- "titelbild.png"
-    shiny::tags$img(src = imgPath, alt = "Titelbild", width = "100%", height = "auto")
+    div(style = "text-align: center;",
+    shiny::tags$img(src = imgPath, alt = "Titelbild", width = "auto%", height = "auto"))
    })
   
   
@@ -124,28 +129,28 @@ server <- function(input, output, session) {
   # Auswahl der Gueteoption
   output$modellGueteOptionen <- renderUI({
     if(input$modellAuswahl == "Multiple lineare Regression") {
-      selectInput("gueteOptionen", "Wählen Sie die Modellgüte-Parameter:", 
+      selectInput("gueteOptionen", "Wählen Sie den Modellgüte-Parameter:", 
                   choices = c("Predicted vs Observed", "Results", "Summary"))
     } else if(input$modellAuswahl == "k-Nearest Neighbors") {
-      selectInput("gueteOptionen", "Wählen Sie die Modellgüte-Parameter:", 
+      selectInput("gueteOptionen", "Wählen Sie den Modellgüte-Parameter:", 
                   choices = c("Predicted vs Observed", "Results", "Summary"))
     } else if(input$modellAuswahl == "Regressionsbaum") {
-      selectInput("gueteOptionen", "Wählen Sie die Modellgüte-Parameter:", 
+      selectInput("gueteOptionen", "Wählen Sie den Modellgüte-Parameter:", 
                   choices = c("Predicted vs Observed", "Results", "Summary", "Tree"))
     } else if(input$modellAuswahl == "Bagged-Regressionsbaum") {
-      selectInput("gueteOptionen", "Wählen Sie die Modellgüte-Parameter:", 
+      selectInput("gueteOptionen", "Wählen Sie den Modellgüte-Parameter:", 
                   choices = c("Predicted vs Observed", "Results", "Summary"))
     }
   })
   
-  # Anzeige der Modellgüte basierend auf der Auswahl
-  output$modellGueteErgebnis <- renderUI({
-    HTML( paste0("<hr><strong>Ausgewählter Datensatz:</strong><span style='margin-left: 25px;'>", input$datensatzAuswahl1,
-                 "<br>",
-                 "<hr><strong>Ausgewähltes Modell:</strong><span style='margin-left: 25px;'>", input$modellAuswahl, 
-                 "<br>",
-                 "<hr><strong>Ausgewählte Modellgüte-Parameter:</strong><span style='margin-left: 25px;'>", paste(input$gueteOptionen, collapse = ", ")))
-  })
+  # # Anzeige der Modellgüte basierend auf der Auswahl
+  # output$modellGueteErgebnis <- renderUI({
+  #   HTML( paste0("<hr><strong>Ausgewählter Datensatz:</strong><span style='margin-left: 25px;'>", input$datensatzAuswahl1,
+  #                "<br>",
+  #                "<hr><strong>Ausgewähltes Modell:</strong><span style='margin-left: 25px;'>", input$modellAuswahl, 
+  #                "<br>",
+  #                "<hr><strong>Ausgewählte Modellgüte-Parameter:</strong><span style='margin-left: 25px;'>", paste(input$gueteOptionen, collapse = ", ")))
+  # })
   
   # Anzeige der verschiedenen Guetemasse
   output$dynamischeModellGuete <- renderUI({
@@ -199,7 +204,7 @@ server <- function(input, output, session) {
          }
         results <- resultsList[[input$modellAuswahl]]
         #cat("Results: ", results$rmse)
-        statHtml <- paste("<hr> MAE: ", results$mae, "<hr>", "MSE: ", results$mse, "<hr>" , "RMSE: ", results$rmse, collapse = "<hr>")
+        statHtml <- paste("<hr> <strong>MAE: </strong>", results$mae, "<hr>", "<strong>MSE: </strong>", results$mse, "<hr>" , "<strong>RMSE: </strong>", results$rmse, collapse = "<hr>")
         HTML(statHtml)
       } # Anzeige des Tree Plots beim Regressionsbaumes
       else if("Regressionsbaum" %in% input$modellAuswahl && "Tree" %in% input$gueteOptionen) {
@@ -313,12 +318,8 @@ server <- function(input, output, session) {
   
     # Vorhersage ohne transformierte Prädiktoren
     
-    vorhersageErgebnis <- reactiveVal()
-    
     observeEvent(input$vorhersageButton, {
       cat("Vorhersagebutton wurde gedrückt\n")
-      vorhersaheTrans <- FALSE
-      cat("vorhersaheTrans: ", vorhersaheTrans)
       
       ausgewaehltesModell <- modelleListe[[input$modellBestimmung]]
       cat("Ausgewähltes Modell: ", input$modellBestimmung, "\n")
@@ -343,9 +344,9 @@ server <- function(input, output, session) {
         cat("Fehler bei der Vorhersage: ", e$message, "\n")
         vorhersageErgebnis(e$message)
       })
+      letzteVorhersage("ohne")
     })
   
-    vorhersageErgebnisTrans <- reactiveVal()
     
     # Vorhersage mit transformierten Prädiktoren
     observeEvent(input$transformationButton, {
@@ -377,6 +378,7 @@ server <- function(input, output, session) {
         cat("Fehler bei der Vorhersage mit Transformationen: ", e$message, "\n")
         vorhersageErgebnisTrans(e$message)
       })
+      letzteVorhersage("mit")
     })
   
     transformiereEingaben <- function(eingaben) {
@@ -402,19 +404,21 @@ server <- function(input, output, session) {
       return(eingaben)
     }
   
-    output$vorhersageOutputUI <- renderUi({
-      if (!is.null(vorhersageErgebnis()) && input$vorhersageButton > input$transformationButton) {
+    # Rendern des Vorhersageoutputs
+    output$vorhersageOutputUI <- renderUI({
+      if (letzteVorhersage() == "ohne" && !is.null(vorhersageErgebnis()) && vorhersageErgebnis() != "") {
         wellPanel(
           h3("Vorhersageergebnis ohne Transformation:"),
           p(vorhersageErgebnis(), style = "font-weight: bold;")
         )
-      } else if (!is.null(vorhersageErgebnisTrans()) && input$transformationButton > input$vorhersageButton) {
+      } else if (letzteVorhersage() == "mit" && !is.null(vorhersageErgebnisTrans()) && vorhersageErgebnisTrans() != "") {
         wellPanel(
           h3("Vorhersageergebnis mit Transformation:"),
           p(vorhersageErgebnisTrans(), style = "font-weight: bold;")
         )
       }
     })
+    
   
   
   ########## Panel Über uns #########

@@ -22,24 +22,32 @@ ui <- navbarPage(
               strong("Semesterarbeit Modul Predictive Analytics HS23")),
            br(),
            uiOutput("titelbild"),
+           a("data-science-in-the-music-industry", href = "https://godatadrive.com/blog/data-science-in-the-music-industry", target = "_blank"),
            br(),
            p(style="text-align: center;","Annaheim, Fabian C. | Nobel, Gabriel | von Wartburg Rebekka | Waldburger, Safiyya")
   ),
   tabPanel(title = "Bedienungsanleitung",
+           h2(strong("Herzlich Willkommen", HTML("&#x1F39D;"), HTML("&#x1F39C;"), HTML("&#x1F39D;"))),
            p(style="text-align: justify; font-size = 25px",
-             "Herzlich willkommen auf unserer Predictive Analytics Website, Ihrem umfassenden Werkzeug für datengetriebene Entscheidungen und zukunftsweisende Vorhersagen bezüglich Spotify Hits. Unsere Plattform bietet eine Vielzahl von Funktionen, um Ihnen Einblicke in unsere Semeseterarbeit zu verschaffen."),
+             "Wir, das Team von ", strong("Von Beats zur Beliebtheit"), " begrüsst Sie auf unserer Predictive Analytics Website Ihrem Werkzeug für datengetriebene Entscheidungen und zukunftsweisende Vorhersagen bezüglich Spotify Songs und Beliebtheit.
+              Unsere Plattform bietet eine Vielzahl von Funktionen, um Ihnen Einblicke in unsere Semeseterarbeit zu verschaffen."),
            hr(),
            h4(strong("Datenbeschreibung")),
            p(style="text-align: justify; font-size = 25px",
-             "Unter der Menüoption \"Datenbeschreibung\" erhalten Sie einen detaillierten Überblick über die Prädiktoren, die in unseren Modellen verwendet werden. Diese Transparenz ermöglicht es Ihnen hoffentlich, die Daten besser zu verstehen."),
+             "Unter der Menüoption ", strong("Datenbeschreibung"), "erhalten Sie einen detaillierten Überblick über die Prädiktoren, die in unseren Modellen verwendet werden.
+              Diese Transparenz ermöglicht es Ihnen hoffentlich, die Daten besser zu verstehen."),
            hr(),
            h4(strong("Modellleistungen")),
            p(style="text-align: justify; font-size = 25px",
-             "In der Sektion \"Modellleistungen\" präsentieren wir Ihnen visuell ansprechende Plots zwischen Observed vs Predicted, Summary und Results der verschiedenen Modelle, die wir anbieten. Von Regressionsbäumen über Bagged Regressionsbäume bis hin zu K-nearest Neighbours und Multiple linear regression – wir ermöglichen Ihnen einen direkten Vergleich der Leistungsfähigkeit dieser Modelle. Unsere intuitiven Grafiken geben Ihnen die Möglichkeit, die Stärken und Schwächen der Modelle auf einen Blick zu erfassen."),
+             "Unter ", strong("Modellleistungen"), "präsentieren wir Ihnen visuell ansprechende Plots zwischen Observed vs Predicted, Summary und Results der verschiedenen Methoden, welche wir in dieser Semesterarbeit verwendet haben.
+              (Multiple linear Regression, k-nearest Neighbours, Regressionsbaum und Bagged-Regressionsbaum).
+              Wir ermöglichen Ihnen einen direkten Vergleich der Leistungsfähigkeit dieser Modelle. Unsere intuitiven Grafiken geben Ihnen die Möglichkeit, die Stärken und Schwächen der Modelle auf einen Blick zu erfassen."),
            hr(),
            h4(strong("Modellanwendung")),
            p(style="text-align: justify; font-size = 25px",
-             "Die \"Modellanwendung\" ist der Ort, an dem Sie die Kontrolle übernehmen können. Hier können Sie die verschiedenen Prädiktoren sowohl individuell anpassen als auch optimal transformieren und sehen sofort, wie sich diese Änderungen auf die Vorhersage auswirken. Unser interaktives Interface erlaubt es Ihnen, Szenarien zu simulieren und die Auswirkungen verschiedener Entscheidungen auf Ihre Zielvariablen zu testen. Dieser Abschnitt ist Ihr Werkzeug, um die Erkenntnisse aus den Modellen in die Praxis umzusetzen."),
+             "Die ", strong("Modellanwendung"), "ist der Ort, an dem Sie die Kontrolle übernehmen können. Hier können Sie die verschiedenen Prädiktoren sowohl individuell anpassen als auch optimal transformieren und sehen sofort, wie sich diese Änderungen auf die Vorhersage auswirken.
+              Unser interaktives Interface erlaubt es Ihnen, Szenarien zu simulieren und die Auswirkungen verschiedener Entscheidungen auf Ihre Zielvariablen zu testen.
+              Dieser Abschnitt ist Ihr Werkzeug, um die Erkenntnisse aus den Modellen in die Praxis umzusetzen."),
            hr(),
            p(strong("Bitte beachten Sie, dass der detaillierte Bericht einen tieferen Einblick in Ihre Semesterarbeit gewährt, indem er spezifische Aspekte und Zusammenhänge aufschlüsselt. Trotz der nützlichen Einblicke sollten Sie sich bewusst sein, dass die präsentierten Regressionsmodelle aufgrund ihrer Komplexität und begrenzten Daten möglicherweise nicht die höchste Genauigkeit aufweisen."))),
   tabPanel(title = "Datenbeschreibung",
@@ -48,9 +56,9 @@ ui <- navbarPage(
             <a href='https://www.kaggle.com/datasets/nelgiriyewithana/top-spotify-songs-2023' target='_blank'>Kaggle</a>. 
              Während der Datenaufbereitung wurden einige Prädiktoren entfernt, modifiziert oder neu hinzugefügt.<br>
              Um eine bessere Annäherung an die Normalverteilung zu erreichen und die Modellleistung bei einigen Methoden optimieren zu können,
-             wurden zusätzlich bestimmte Prädiktoren auch transformiert verwendet. Um den Vergleich diesbezüglich zu erhalten kann
-             in den Abschnitten Modellleistung und Modellanwendung die Prädiktoren mit und ohne Transformation verwendet. <br>
-             Insgesamt sind 21 Prädiktoren verbleiben, welche für das Training der Modelle und zur Vorhersage der Anzahl an Streams verwendet. <br><br>
+             wurden zusätzlich bestimmte Prädiktoren auch transformiert verwendet. Um den Vergleich diesbezüglich zu erhalten können Sie
+             in den Abschnitten Modellleistung und Modellanwendung die Prädiktoren mit und ohne Transformation verwenden. <br>
+             Insgesamt sind 21 Prädiktoren verbleiben, welche für das Training der Modelle und zur Vorhersage der Anzahl an Streams verwendet werden. <br><br>
              Im Folgenden finden Sie eine Liste dieser Prädiktoren mit einer kurzen Erläuterung zu ihrer Bedeutung.")),
            tags$ul(
              tags$li(strong("listeners_cum:"), "Monatliche Anzahl Streams pro Interpret:in des Songs. Sind an einem Song mehrere Interpreten beteiligt, wird der mean aus den Werten verwendet"),
@@ -76,10 +84,10 @@ ui <- navbarPage(
            )),
   tabPanel(title = "Modelleistungen",
            h4(strong("Ergebnisse zur Leistung der einzelnen Modelle")),
-           selectInput("datensatzAuswahl", "Wählen Sie einen Datensatz:", 
-                       choices = c("Daten mit Transformationen", "Daten ohne Transformationen")),
            selectInput("modellAuswahl", "Wählen Sie ein Modell:", 
                        choices = c("Multiple lineare Regression", "k-Nearest Neighbors", "Regressionsbaum", "Bagged-Regressionsbaum")),
+           selectInput("datensatzAuswahl", "Wählen Sie einen Datensatz:", 
+                       choices = c("Daten mit Transformationen", "Daten ohne Transformationen")),
            uiOutput("modellGueteOptionen"),
            uiOutput("modellGueteErgebnis"),
            br(),br(),
@@ -103,7 +111,8 @@ ui <- navbarPage(
   tabPanel(title = "Über uns",
            h4(strong("Das Team von \"Von Beats zur Beliebtheit\"")),
            tableOutput("team"),
-           uiOutput("teambild")
+           uiOutput("teambild"),
+           a("data-science-in-the-music-industry", href = "https://godatadrive.com/blog/data-science-in-the-music-industry", target = "_blank")
            )
   
 )
