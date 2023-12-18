@@ -37,7 +37,7 @@ Branch: Bitte ein Branch pro Task alla `feat/kurzbeschreibung-task`
 | Literaturvergleich der Resultate | Doku | | |
 | Korrekturen gemäss Rückmeldung Semestearbeit Teil 2 | Korrekturen | vonwareb | Fertig | fix/corrections-according-review-part-2
 | Erstellung Shiny- App | Data Product | vonwareb | Fertig | feat/spotify-songs-app
-| Abstract | Doku | waldbsaf | | 
+| Abstract | Doku | waldbsaf | Fertig | 
 | Schlussteil | Doku | annahfab / vonwareb | Fertig | 
 
 ## Contributers
