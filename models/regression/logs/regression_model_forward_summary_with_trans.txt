@@ -1,0 +1,43 @@
+Call:
+lm(formula = streams ~ in_spotify_playlists_log + in_apple_charts_boxcox + 
+    artist_count + listeners_cum_sqrt + released_month + in_spotify_charts + 
+    in_apple_playlists_boxcox + speechiness_._boxcox + liveness_._log + 
+    in_deezer_charts, data = new_data)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-1.2321 -0.3037  0.0187  0.3173  1.1665 
+
+Coefficients:
+                            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)                1.482e+01  1.951e-01  75.963  < 2e-16 ***
+in_spotify_playlists_log   6.123e-01  2.419e-02  25.313  < 2e-16 ***
+in_apple_charts_boxcox     2.964e-02  5.144e-03   5.761 1.26e-08 ***
+artist_count2             -1.164e-01  4.157e-02  -2.800 0.005259 ** 
+artist_count3             -2.395e-01  6.445e-02  -3.717 0.000218 ***
+artist_count4             -4.447e-01  1.461e-01  -3.043 0.002428 ** 
+artist_count5             -2.601e-01  2.130e-01  -1.222 0.222304    
+artist_count6              7.633e-01  4.739e-01   1.611 0.107711    
+listeners_cum_sqrt        -3.213e-05  8.129e-06  -3.952 8.54e-05 ***
+released_monthFebruary     1.599e-01  8.633e-02   1.853 0.064341 .  
+released_monthMarch        1.622e-01  7.684e-02   2.111 0.035130 *  
+released_monthApril        1.658e-01  8.286e-02   2.000 0.045845 *  
+released_monthMay          1.878e-01  6.969e-02   2.694 0.007227 ** 
+released_monthJune         1.027e-01  8.091e-02   1.269 0.204744    
+released_monthJuly         2.254e-01  9.044e-02   2.492 0.012924 *  
+released_monthAugust       3.780e-01  9.475e-02   3.989 7.34e-05 ***
+released_monthSeptember    3.242e-01  8.741e-02   3.709 0.000225 ***
+released_monthOctober      2.564e-01  7.968e-02   3.218 0.001351 ** 
+released_monthNovember     1.367e-01  7.649e-02   1.787 0.074380 .  
+released_monthDecember     1.758e-01  7.919e-02   2.220 0.026776 *  
+in_spotify_charts          3.195e-03  1.292e-03   2.472 0.013664 *  
+in_apple_playlists_boxcox  1.715e-02  8.300e-03   2.066 0.039235 *  
+speechiness_._boxcox      -8.180e-02  4.619e-02  -1.771 0.077013 .  
+liveness_._log            -4.391e-02  2.826e-02  -1.554 0.120703    
+in_deezer_charts          -6.001e-03  4.051e-03  -1.482 0.138901    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.4659 on 690 degrees of freedom
+Multiple R-squared:  0.8002,	Adjusted R-squared:  0.7932 
+F-statistic: 115.1 on 24 and 690 DF,  p-value: < 2.2e-16

@@ -79,7 +79,7 @@ test_models <- function(dataset, indices_file, isTransformed) {
             # Print evaluation metrics
             cat(sprintf("Model: %s\nRMSE: %f\nMAE: %f\nMAPE: %f\nMSE: %f\nR-squared: %f\nAdjusted R-squared: %f\nF-statistic: %f\nAIC: %f\nBIC: %f\n\n",
                         model_type, rmse, mae, mape, mse, r_squared, adj_r_squared, f_statistic, aic_value, bic_value))
-        
+
             saveRDS(list(regression = predictions, mae = mae, mse = mse, rmse = rmse), sprintf("%sartifacts/results_%s_%s.rds", BASE_DIR, model_type, basename(gsub(".RData", "", dataset$data))))
         }
     }

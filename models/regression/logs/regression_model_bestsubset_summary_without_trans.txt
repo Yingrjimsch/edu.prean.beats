@@ -1,0 +1,24 @@
+Call:
+lm(formula = best_model_formula, data = new_data)
+
+Residuals:
+       Min         1Q     Median         3Q        Max 
+-669407145 -115081916  -28154382   86154616  685441878 
+
+Coefficients:
+                      Estimate Std. Error t value Pr(>|t|)    
+(Intercept)          342045197   42012510   8.142 1.79e-15 ***
+artist_count         -35287468    7798529  -4.525 7.10e-06 ***
+years_since_release   -5462690     742511  -7.357 5.29e-13 ***
+in_spotify_playlists     42887       1744  24.596  < 2e-16 ***
+in_spotify_charts      4512708     475523   9.490  < 2e-16 ***
+in_apple_playlists     2434440     136990  17.771  < 2e-16 ***
+in_shazam_charts       -586847      57360 -10.231  < 2e-16 ***
+danceability_.        -1401301     504142  -2.780  0.00559 ** 
+energy_.              -1152899     443136  -2.602  0.00947 ** 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 186400000 on 699 degrees of freedom
+Multiple R-squared:  0.8425,	Adjusted R-squared:  0.8407 
+F-statistic: 467.5 on 8 and 699 DF,  p-value: < 2.2e-16
