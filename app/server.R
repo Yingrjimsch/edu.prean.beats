@@ -413,8 +413,8 @@ server <- function(input, output, session) {
   ########## Panel Über uns #########
   teamData <- reactive({
     data.frame(
-      Name = c("Annaheim, Fabian C.", "Nobel Gabriel", "von Wartburg Rebekka", "Waldburger Safiyya"),
-      EMail = c("annahfab@students.zhaw.ch", "nobelgab@students.zhaw.ch", "vonwareb@students.zhaw,ch", "waldbsaf@students.zhaw.ch")
+      Name = c("Annaheim, Fabian C.", "Nobel, Gabriel", "von Wartburg, Rebekka", "Waldburger, Safiyya"),
+      EMail = c("annahfab@students.zhaw.ch", "nobelgab@students.zhaw.ch", "vonwareb@students.zhaw.ch", "waldbsaf@students.zhaw.ch")
     )
   })
   

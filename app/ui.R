@@ -29,7 +29,7 @@ ui <- navbarPage(
            br(),
            h2(style="text-align: center;",
               strong(HTML("&#x1F39C;"),HTML("&#x1F39D;"), "Von Beats zur Beliebtheit", HTML("&#x1F39D;"), HTML("&#x1F39C;")),),
-           p(style="text-align: center;","Annaheim, Fabian C. | Nobel, Gabriel | von Wartburg Rebekka | Waldburger, Safiyya"),
+           p(style="text-align: center;","Annaheim, Fabian C. | Nobel, Gabriel | von Wartburg, Rebekka | Waldburger, Safiyya"),
            br(),
            div(style = "text-align: center;",
            uiOutput("titelbild"),
@@ -51,19 +51,19 @@ ui <- navbarPage(
            h4(strong("Modellleistungen")),
            p(style="text-align: justify; font-size = 25px",
              "Unter ", strong("Modellleistungen"), "präsentieren wir Ihnen visuell ansprechende Plots zwischen Observed vs Predicted, Summary und Results der verschiedenen Methoden, welche wir in dieser Semesterarbeit verwendet haben.
-              (Multiple linear Regression, k-nearest Neighbours, Regressionsbaum und Bagged-Regressionsbaum).
+              (Multiple linear Regression,", em("K"), "-Nearest Neighbours, Regressionsbaum und Bagged-Regressionsbaum).
               Diese ermöglichen Ihnen einen direkten Vergleich der Leistungsfähigkeit der angewendeten Methoden. Unsere intuitiven Grafiken geben Ihnen die Möglichkeit, die Stärken und Schwächen der Modelle auf einen Blick erfassen zu können."),
            hr(),
            h4(strong("Modellanwendung")),
            p(style="text-align: justify; font-size = 25px",
              "Die ", strong("Modellanwendung"), "ist der Ort, an dem Sie die Kontrolle übernehmen können. Hier können Sie die verschiedenen Prädiktoren sowohl individuell anpassen als auch optimal transformieren und sehen sofort, wie sich diese Änderungen auf die Vorhersage auswirken.
-              Zu beachten ist dabei jedoch, dass Vorhersagen nur mittels der Methoden", strong("Multiple lineare Regression"), "und", strong("k-nearest Neighbours"), "möglich sind.
+              Zu beachten ist dabei jedoch, dass Vorhersagen nur mittels der Methoden", strong("Multiple lineare Regression"), "und", strong(em("K"), "-Nearest Neighbours"), "möglich sind.
               Auf die Thematik, weshalb die baumbasierten Methoden",  strong("Regressionsbaum"), "und", strong("Bagged-Regressionsbaum"), "wird in der Semesterarbeit vertieft eingegangen.
               Unser interaktives Interface erlaubt es Ihnen, Szenarien zu simulieren und die Auswirkungen verschiedener Entscheidungen auf Ihre Zielvariablen zu testen.
               Dieser Abschnitt ist Ihr Werkzeug, um die Erkenntnisse aus den Modellen in die Praxis umzusetzen."),
            hr(),
            h5(strong("Hinweis:")),
-           p("Bitte beachten Sie, dass der detaillierte Bericht einen tieferen Einblick in Ihre Semesterarbeit gewährt,
+           p("Bitte beachten Sie, dass der detaillierte Bericht einen tieferen Einblick in die Semesterarbeit des Teams", strong("Von Beats zur Beliebtheit"), "gewährt,
              indem er spezifische Aspekte und Zusammenhänge aufschlüsselt.
              Trotz der nützlichen Einblicke sollten Sie sich bewusst sein, dass die präsentierten Regressionsmodelle aufgrund ihrer Komplexität und begrenzten Daten möglicherweise nicht die höchste Genauigkeit aufweisen.")),
   tabPanel(title = "Datenbeschreibung",
@@ -74,7 +74,7 @@ ui <- navbarPage(
              Um eine bessere Annäherung an die Normalverteilung zu erreichen und die Modellleistung bei einigen Methoden optimieren zu können,
              wurden zusätzlich bestimmte Prädiktoren auch transformiert verwendet. <br>
              In den Menüoptionen <strong>Modellleistung</strong> und <strong>Modellanwendung </strong> wird Ihnen der Vergleich der Prädiktoren mit und ohne Transformation ermöglicht. <br>
-             Insgesamt sind schlussendlich 21 Prädiktoren vorhanden, welche für das Training der Modelle und zur Vorhersage der Anzahl an Streams verwendet werden. <br><br>
+             Insgesamt sind schlussendlich 21 Prädiktoren vorhanden, welche für das Training der Modelle verwndet wurden und zur Vorhersage der Anzahl an Streams genutzt werden. <br><br>
              Im Folgenden finden Sie eine Liste dieser Prädiktoren mit einer kurzen Erläuterung zu ihrer Bedeutung:")),
            tags$ul(
              tags$li(
@@ -105,7 +105,7 @@ ui <- navbarPage(
              tags$li(
                strong("in_spotify_playlists:"),
                div(style = "margin-left: 20px;",
-                "Anzahl der Spotify-Playlists, in denen der Song enthalten ist.", em("Wurde auch transformiert mittels Log verwendet"))
+                "Anzahl der Spotify-Playlists, in denen der Song enthalten ist.", em("Wurde auch transformiert mittels Logarithmus verwendet"))
               ),
              tags$li(
                strong("in_spotify_charts:"), 
@@ -135,7 +135,7 @@ ui <- navbarPage(
              tags$li(
                strong("bpm:"),
                div(style = "margin-left: 20px;",
-               "Beats per Minute, ein Mass für das Songtempo.", em("Wurde auch transformiert mittels Log verwendet"))
+               "Beats per Minute, ein Mass für das Songtempo.", em("Wurde auch transformiert mittels Logarithmus verwendet"))
               ),
              tags$li(
                strong("key:"), 
@@ -174,13 +174,15 @@ ui <- navbarPage(
               ),
              tags$li(
                strong("speechiness_.:"),
+               div(style = "margin-left: 20px;",
                "Anzahl der gesprochenen Worte im Song")
              ),
+            ),
            ),
   tabPanel(title = "Modellleistungen",
            h4(strong("Ergebnisse zur Leistung der einzelnen Modelle")),
            selectInput("modellAuswahl", "Wählen Sie ein Modell:", 
-                       choices = c("Multiple lineare Regression", "k-Nearest Neighbors", "Regressionsbaum", "Bagged-Regressionsbaum")),
+                       choices = c("Multiple lineare Regression", "K-Nearest Neighbors", "Regressionsbaum", "Bagged-Regressionsbaum")),
            selectInput("datensatzAuswahl", "Wählen Sie einen Datensatz:", 
                        choices = c("Daten mit Transformationen", "Daten ohne Transformationen")),
            uiOutput("modellGueteOptionen"),
@@ -194,8 +196,7 @@ ui <- navbarPage(
   tabPanel(title = "Modellanwendung",
            h4(strong("Modellvorhersage anhand neuer Beobachtung")),
            selectInput("modellBestimmung", "Wählen Sie ein Modell:", 
-                       #choices = c("Multiple lineare Regression", "k-Nearest Neighbors", "Regressionsbaum", "Bagged-Regressionsbaum")),
-                       choices = c("Multiple lineare Regression", "k-Nearest Neighbors")),
+                       choices = c("Multiple lineare Regression", "K-Nearest Neighbors")),
            p("Für jeden Prädiktor kann der Wert aus der neuen Beobachtung eingetragen
                     werden und danach mittels", strong("Vorhersage ohne Transformationen"), "oder ", strong("Vorhersage mit Transformationen"),
                     "die Vorhersage für die neue Beobachtung berechnet werden."),
@@ -205,7 +206,8 @@ ui <- navbarPage(
   )
   ,
   tabPanel(title = "Über uns",
-           h4(strong("Das Team von \"Von Beats zur Beliebtheit\"")),
+           h3(strong(HTML("&#x1F39D;"), HTML("&#x1F39C;"), "Von Beats zur Beliebtheit", HTML("&#x1F39D;"), HTML("&#x1F39C;"))),
+           h4(strong("Das Team")),
            tableOutput("team"),
            uiOutput("teambild"),
            a("data-science-in-the-music-industry", href = "https://godatadrive.com/blog/data-science-in-the-music-industry", target = "_blank")
